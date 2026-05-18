@@ -19,15 +19,6 @@ const RolSchema = z.object({
   rol: z.enum(['director', 'utp', 'profesor', 'apoderado', 'admin_kiva360']),
 })
 
-const IntegSchema = z.object({
-  sige: z.boolean(),
-  sae: z.boolean(),
-  junaeb: z.boolean(),
-  sige_user: z.string().optional(),
-  sae_user: z.string().optional(),
-  junaeb_user: z.string().optional(),
-})
-
 // ── Tipos auxiliares ──────────────────────────────────────────
 
 type EstablecimientoInsert = {
@@ -38,6 +29,10 @@ type EstablecimientoInsert = {
   comuna: string
   director: string
   plan: string
+}
+
+type EstablecimientoCreated = {
+  id: string
 }
 
 type PerfilUpsert = {
@@ -97,7 +92,7 @@ export async function guardarColegio(
     .from('establecimientos')
     .select('id')
     .eq('rbd', parsed.data.rbd)
-    .single()
+    .maybeSingle()
 
   if (existing) {
     return {
@@ -108,7 +103,6 @@ export async function guardarColegio(
     }
   }
 
-  // Datos del establecimiento
   const establecimientoData: EstablecimientoInsert = {
     rbd: parsed.data.rbd,
     nombre: parsed.data.nombre,
@@ -119,17 +113,16 @@ export async function guardarColegio(
     plan: 'completo',
   }
 
-  // Crear establecimiento
   const response = await supabase
     .from('establecimientos')
     .insert(establecimientoData as any)
     .select('id')
     .single()
 
-  const establecimiento = response.data
+  const establecimiento = response.data as EstablecimientoCreated | null
   const error = response.error
 
-  if (error || !establecimiento) {
+  if (error || !establecimiento?.id) {
     console.error('Error creando establecimiento:', error)
 
     return {
@@ -138,7 +131,6 @@ export async function guardarColegio(
     }
   }
 
-  // Guardar metadata
   await supabase.auth.updateUser({
     data: {
       establecimiento_id: establecimiento.id,
@@ -176,7 +168,7 @@ export async function guardarRol(
     }
   }
 
-  const establecimiento_id = user.user_metadata?.establecimiento_id
+  const establecimiento_id = user.user_metadata?.establecimiento_id as string | undefined
 
   if (!establecimiento_id) {
     return {
@@ -233,7 +225,7 @@ export async function guardarIntegraciones(
     return { error: 'No autenticado', success: false }
   }
 
-  const establecimiento_id = user.user_metadata?.establecimiento_id
+  const establecimiento_id = user.user_metadata?.establecimiento_id as string | undefined
 
   if (!establecimiento_id) {
     return {
@@ -251,7 +243,7 @@ export async function guardarIntegraciones(
     junaeb_user: (formData.get('junaeb_user') as string) || undefined,
   }
 
-  const updateData: Record<string, string | boolean | undefined> = {}
+  const updateData: Record<string, string> = {}
 
   if (data.sige_user) updateData.sige_user = data.sige_user
   if (data.sae_user) updateData.sae_user = data.sae_user
