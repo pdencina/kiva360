@@ -1,16 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
 export function LoginForm() {
-  const router = useRouter()
-  const [email,    setEmail]    = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,21 +22,22 @@ export function LoginForm() {
       password,
     })
 
-if (error) {
-  setError(
-    error.message === 'Invalid login credentials'
-      ? 'Correo o contraseña incorrectos'
-      : 'Error al iniciar sesión. Intenta nuevamente.'
-  )
-  setLoading(false)
-  return
-}
+    if (error) {
+      setError(
+        error.message === 'Invalid login credentials'
+          ? 'Correo o contraseña incorrectos'
+          : 'Error al iniciar sesión. Intenta nuevamente.'
+      )
+      setLoading(false)
+      return
+    }
 
-setTimeout(() => {
-  window.location.assign('/dashboard')
-}, 300)
+    setTimeout(() => {
+      window.location.assign('/dashboard')
+    }, 300)
+  }
 
-return (
+  return (
     <form onSubmit={handleLogin} className="flex flex-col gap-4">
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-1.5">
@@ -47,7 +46,7 @@ return (
         <input
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="director@colegio.cl"
           required
           autoComplete="email"
@@ -67,7 +66,7 @@ return (
         <input
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
           required
           autoComplete="current-password"
