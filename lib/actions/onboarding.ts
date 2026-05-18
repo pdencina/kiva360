@@ -21,28 +21,9 @@ const RolSchema = z.object({
 
 // ── Tipos auxiliares ──────────────────────────────────────────
 
-type EstablecimientoInsert = {
-  rbd: string
-  nombre: string
-  tipo: string
-  region: string
-  comuna: string
-  director: string
-  plan: string
-}
-
 type EstablecimientoCreated = {
   id: string
 }
-
-type PerfilUpsert = {
-  id: string
-  establecimiento_id: string
-  nombre: string
-  rol: string
-}
-
-// ── Tipo del estado del onboarding ───────────────────────────
 
 export type OnboardingState = {
   error: string | null
@@ -57,6 +38,7 @@ export async function guardarColegio(
   formData: FormData
 ): Promise<OnboardingState> {
   const supabase = await createClient()
+  const db = supabase as any
 
   const {
     data: { user },
@@ -87,8 +69,7 @@ export async function guardarColegio(
     }
   }
 
-  // Verificar si el RBD ya existe
-  const { data: existing } = await supabase
+  const { data: existing } = await db
     .from('establecimientos')
     .select('id')
     .eq('rbd', parsed.data.rbd)
@@ -103,19 +84,17 @@ export async function guardarColegio(
     }
   }
 
-  const establecimientoData: EstablecimientoInsert = {
-    rbd: parsed.data.rbd,
-    nombre: parsed.data.nombre,
-    tipo: parsed.data.tipo,
-    region: parsed.data.region,
-    comuna: parsed.data.comuna,
-    director: parsed.data.director,
-    plan: 'completo',
-  }
-
-  const response = await supabase
+  const response = await db
     .from('establecimientos')
-    .insert(establecimientoData as any)
+    .insert({
+      rbd: parsed.data.rbd,
+      nombre: parsed.data.nombre,
+      tipo: parsed.data.tipo,
+      region: parsed.data.region,
+      comuna: parsed.data.comuna,
+      director: parsed.data.director,
+      plan: 'completo',
+    })
     .select('id')
     .single()
 
@@ -148,6 +127,7 @@ export async function guardarRol(
   formData: FormData
 ): Promise<OnboardingState> {
   const supabase = await createClient()
+  const db = supabase as any
 
   const {
     data: { user },
@@ -177,19 +157,17 @@ export async function guardarRol(
     }
   }
 
-  const perfilData: PerfilUpsert = {
-    id: user.id,
-    establecimiento_id,
-    nombre:
-      user.user_metadata?.nombre ??
-      user.email?.split('@')[0] ??
-      'Usuario',
-    rol: parsed.data.rol,
-  }
-
-  const { error } = await supabase
+  const { error } = await db
     .from('perfiles')
-    .upsert(perfilData as any)
+    .upsert({
+      id: user.id,
+      establecimiento_id,
+      nombre:
+        user.user_metadata?.nombre ??
+        user.email?.split('@')[0] ??
+        'Usuario',
+      rol: parsed.data.rol,
+    })
 
   if (error) {
     console.error('Error guardando perfil:', error)
@@ -216,6 +194,7 @@ export async function guardarIntegraciones(
   formData: FormData
 ): Promise<OnboardingState> {
   const supabase = await createClient()
+  const db = supabase as any
 
   const {
     data: { user },
@@ -250,10 +229,19 @@ export async function guardarIntegraciones(
   if (data.junaeb_user) updateData.junaeb_user = data.junaeb_user
 
   if (Object.keys(updateData).length > 0) {
-    await supabase
+    const { error } = await db
       .from('establecimientos')
-      .update(updateData as any)
+      .update(updateData)
       .eq('id', establecimiento_id)
+
+    if (error) {
+      console.error('Error guardando integraciones:', error)
+
+      return {
+        error: 'Error al guardar integraciones. Intenta nuevamente.',
+        success: false,
+      }
+    }
   }
 
   await supabase.auth.updateUser({
