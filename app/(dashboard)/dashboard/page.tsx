@@ -8,16 +8,14 @@ import {
 } from '@/lib/actions/dashboard'
 import { createClient } from '@/lib/supabase/server'
 import { formatFecha } from '@/lib/utils'
-import { StatCard       } from '@/components/dashboard/StatCard'
-import { AsistenciaBar  } from '@/components/dashboard/AsistenciaBar'
-import { EvalItem       } from '@/components/dashboard/EvalItem'
-import { IntegStatus    } from '@/components/dashboard/IntegStatus'
-import { QuickActions   } from '@/components/dashboard/QuickActions'
+import { StatCard } from '@/components/dashboard/StatCard'
+import { AsistenciaBar } from '@/components/dashboard/AsistenciaBar'
+import { EvalItem } from '@/components/dashboard/EvalItem'
+import { IntegStatus } from '@/components/dashboard/IntegStatus'
+import { QuickActions } from '@/components/dashboard/QuickActions'
 
 export const metadata: Metadata = { title: 'Dashboard' }
-
-// Revalidar cada 5 minutos
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 type EvaluacionProxima = {
   id: string | number
@@ -31,9 +29,11 @@ type EvaluacionProxima = {
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
 
-  // Cargar todos los datos en paralelo
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   const [stats, asistencia, evaluacionesRaw, integraciones] = await Promise.all([
     getDashboardStats(),
     getAsistenciaPorCurso(),
@@ -43,16 +43,23 @@ export default async function DashboardPage() {
 
   const evaluaciones = evaluacionesRaw as EvaluacionProxima[]
 
-  const nombreCorto = user?.user_metadata?.nombre?.split(' ')[0]
-    ?? user?.email?.split('@')[0]
-    ?? 'Profe'
+  const nombreCorto =
+    user?.user_metadata?.nombre?.split(' ')[0] ??
+    user?.email?.split('@')[0] ??
+    'Profe'
 
   const hoy = formatFecha(new Date(), "EEEE d 'de' MMMM 'de' yyyy")
 
+  const asistenciaPromedio =
+    asistencia.length > 0
+      ? Math.round(
+          asistencia.reduce((acc, curso) => acc + (curso.porcentaje ?? 0), 0) /
+            asistencia.length
+        )
+      : null
+
   return (
     <div className="space-y-5">
-
-      {/* Saludo */}
       <div>
         <h1 className="font-serif text-3xl text-gray-900 mb-0.5">
           Hola, {nombreCorto} 👋
@@ -60,78 +67,82 @@ export default async function DashboardPage() {
         <p className="text-sm text-gray-400 capitalize">{hoy}</p>
       </div>
 
-      {/* Banner SIMCE */}
       <div className="rounded-2xl bg-gradient-to-r from-[#0A1929] via-[#0D47A1] to-[#1565C0] p-5 flex items-center justify-between gap-4">
         <div>
           <h3 className="font-semibold text-white mb-1">
-            📋 SIMCE 2025 se acerca — 42 días
+            📊 Panel operativo Kiva360
           </h3>
           <p className="text-sm text-blue-200 leading-relaxed">
-            3°A tiene 78% de logro en Comprensión Lectora. 3 OA requieren refuerzo urgente antes de la prueba.
+            Métricas reales de alumnos, cursos, asistencia, evaluaciones e integraciones.
           </p>
         </div>
         <Link
-          href="/planificacion"
+          href="/asistencia"
           className="flex-shrink-0 bg-white text-blue-800 text-sm font-bold px-4 py-2 rounded-xl hover:bg-blue-50 transition-colors"
         >
-          Ver plan de refuerzo
+          Registrar asistencia
         </Link>
       </div>
 
-      {/* Quick Actions */}
       <QuickActions />
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
           icon="👥"
           value={stats.totalAlumnos.toLocaleString('es-CL')}
           label="Estudiantes activos"
           accent="blue"
-          tag="↑ 12 nuevos este mes"
+          tag={`${stats.totalCursos} cursos activos`}
           tagColor="green"
         />
+
         <StatCard
           icon="✅"
           value={stats.pctAsistenciaHoy !== null ? `${stats.pctAsistenciaHoy}%` : '—'}
           label="Asistencia hoy"
           accent="green"
-          tag="↑ +1.2% vs semana"
-          tagColor="green"
+          tag={`${stats.presentesHoy} presentes · ${stats.ausentesHoy} ausentes`}
+          tagColor={stats.ausentesHoy > 0 ? 'yellow' : 'green'}
         />
+
         <StatCard
-          icon="⭐"
-          value="5,8"
-          label="Promedio general"
+          icon="📝"
+          value={String(stats.evalPendientes)}
+          label="Evaluaciones próximas"
           accent="purple"
-          tag="↑ +0.3 vs mes ant."
+          tag="Próximos 7 días"
           tagColor="green"
         />
+
         <StatCard
           icon="⚠️"
           value={String(stats.alertas)}
           label="Alertas activas"
           accent="red"
-          tag="3 críticas"
-          tagColor="yellow"
+          tag={stats.alertas > 0 ? 'Requiere revisión' : 'Sin alertas'}
+          tagColor={stats.alertas > 0 ? 'yellow' : 'green'}
         />
       </div>
 
-      {/* Fila principal */}
-      <div className="grid grid-cols-[2fr_1fr] gap-4">
-
-        {/* Asistencia por curso */}
+      <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900">📊 Asistencia por curso — Hoy</h2>
-            <Link href="/libro" className="text-sm text-blue-600 hover:underline font-medium">
-              Ver todos →
+            <div>
+              <h2 className="font-semibold text-gray-900">📊 Asistencia por curso</h2>
+              {asistenciaPromedio !== null && (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Promedio general: {asistenciaPromedio}%
+                </p>
+              )}
+            </div>
+            <Link href="/asistencia" className="text-sm text-blue-600 hover:underline font-medium">
+              Ver asistencia →
             </Link>
           </div>
 
           {asistencia.length > 0 ? (
             <div className="space-y-0">
-              {asistencia.map(curso => (
+              {asistencia.map((curso) => (
                 <AsistenciaBar
                   key={curso.cursoId}
                   nombre={curso.nombre}
@@ -142,45 +153,35 @@ export default async function DashboardPage() {
               ))}
             </div>
           ) : (
-            /* Fallback con datos demo si no hay registros hoy */
-            <div className="space-y-0">
-              {[
-                { nombre:'1°A', pct:96, p:29, t:30 },
-                { nombre:'2°B', pct:88, p:28, t:32 },
-                { nombre:'3°A', pct:94, p:33, t:35 },
-                { nombre:'4°C', pct:76, p:26, t:34 },
-                { nombre:'5°A', pct:91, p:33, t:36 },
-                { nombre:'6°B', pct:65, p:26, t:40 },
-              ].map(c => (
-                <AsistenciaBar
-                  key={c.nombre}
-                  nombre={c.nombre}
-                  porcentaje={c.pct}
-                  presentes={c.p}
-                  total={c.t}
-                />
-              ))}
+            <div className="rounded-2xl border border-dashed border-gray-200 p-8 text-center">
+              <div className="text-3xl mb-2">📚</div>
+              <h3 className="font-semibold text-gray-800">Aún no hay asistencia registrada</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Crea cursos y alumnos, luego registra la asistencia del día.
+              </p>
+              <Link href="/asistencia" className="btn btn-primary mt-4">
+                Ir a asistencia
+              </Link>
             </div>
           )}
         </div>
 
-        {/* Panel derecho */}
         <div className="space-y-4">
-
-          {/* Integraciones */}
           <IntegStatus integ={integraciones} />
 
-          {/* Evaluaciones próximas */}
           <div className="card">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-semibold text-gray-900 text-sm">📝 Evaluaciones próximas</h2>
+              <h2 className="font-semibold text-gray-900 text-sm">
+                📝 Evaluaciones próximas
+              </h2>
               <Link href="/evaluaciones" className="text-xs text-blue-600 hover:underline">
                 Ver todas →
               </Link>
             </div>
+
             <div className="space-y-0">
               {evaluaciones.length > 0 ? (
-                evaluaciones.map(ev => (
+                evaluaciones.map((ev) => (
                   <EvalItem
                     key={ev.id}
                     titulo={ev.titulo}
@@ -190,18 +191,31 @@ export default async function DashboardPage() {
                   />
                 ))
               ) : (
-                <>
-                  <EvalItem titulo="Control de Fracciones" asignatura="Matemáticas" curso="3°A" fecha="Hoy" />
-                  <EvalItem titulo="Comprensión Lectora"   asignatura="Lenguaje"    curso="5°B" fecha="Mañana" />
-                  <EvalItem titulo="Ecosistemas"           asignatura="Cs. Naturales" curso="4°C" fecha="Vie 23" />
-                </>
+                <div className="rounded-xl bg-gray-50 p-4 text-sm text-gray-500">
+                  No hay evaluaciones próximas.
+                </div>
               )}
             </div>
           </div>
 
+          <div className="card">
+            <h2 className="font-semibold text-gray-900 text-sm mb-3">
+              🚀 Próximas acciones
+            </h2>
+            <div className="space-y-2 text-sm">
+              <Link href="/cursos" className="block rounded-xl bg-gray-50 px-3 py-2 hover:bg-blue-50">
+                Crear o revisar cursos
+              </Link>
+              <Link href="/alumnos" className="block rounded-xl bg-gray-50 px-3 py-2 hover:bg-blue-50">
+                Administrar alumnos
+              </Link>
+              <Link href="/evaluaciones" className="block rounded-xl bg-gray-50 px-3 py-2 hover:bg-blue-50">
+                Programar evaluación
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
-
     </div>
   )
 }
