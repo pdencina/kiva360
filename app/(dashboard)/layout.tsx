@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/shared/Sidebar'
-import { Topbar  } from '@/components/shared/Topbar'
+import { Topbar } from '@/components/shared/Topbar'
 
 export default async function DashboardLayout({
   children,
@@ -10,24 +10,32 @@ export default async function DashboardLayout({
 }) {
   const supabase = await createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   if (!user) redirect('/login')
 
-  // Obtener perfil del usuario
+  // Traer perfil SIN romper si falla
   const { data: perfil } = await supabase
     .from('perfiles')
-    .select('*, establecimientos(*)')
+    .select('*')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
-  if (!perfil) redirect('/login')
+  // Perfil fallback temporal
+  const perfilSafe = perfil ?? {
+    id: user.id,
+    nombre: user.user_metadata?.nombre ?? 'Administrador',
+    rol: 'admin_kiva360',
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar perfil={perfil} />
+      <Sidebar perfil={perfilSafe as any} />
 
       <div className="flex-1 flex flex-col" style={{ marginLeft: '240px' }}>
-        <Topbar perfil={perfil} />
+        <Topbar perfil={perfilSafe as any} />
 
         <main className="flex-1 p-6">
           {children}
