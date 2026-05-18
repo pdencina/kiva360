@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { getNotasCurso, guardarNota } from '@/lib/actions/libro'
 import { calcularPromedio } from '@/lib/utils/notas'
+import { cn, formatNota, colorNota } from '@/lib/utils'
 
 interface Props {
   cursoId:     string
@@ -11,15 +12,48 @@ interface Props {
 
 type NotaMap = Map<string, Map<string, number | null>> // alumno_id → eval_id → nota
 
+type NotaRow = {
+  evaluacion_id: string
+  alumno_id: string
+  nota: number | null
+}
+
+type EvaluacionRow = {
+  id: string
+  titulo: string
+  tipo?: string | null
+  ponderacion: number | null
+  asignatura?: string | null
+  fecha?: string | null
+  oa_asociados?: unknown
+}
+
+type AlumnoRow = {
+  id: string
+  nombre?: string | null
+  apellido_paterno?: string | null
+  apellido_materno?: string | null
+  alumno_sep?: boolean | null
+  numero?: number
+  nombre_completo: string
+}
+
+type NotasCursoData = {
+  evaluaciones: EvaluacionRow[]
+  alumnos: AlumnoRow[]
+  notas: NotaRow[]
+}
+
 export function TabNotas({ cursoId, cursoNombre }: Props) {
-  const [datos,   setDatos]   = useState<Awaited<ReturnType<typeof getNotasCurso>> | null>(null)
+  const [datos,   setDatos]   = useState<NotasCursoData | null>(null)
   const [notas,   setNotas]   = useState<NotaMap>(new Map())
   const [loading, setLoading] = useState(true)
   const [saving,  setSaving]  = useState<string | null>(null)  // evalId-alumnoId
 
   useEffect(() => {
     setLoading(true)
-    getNotasCurso(cursoId, new Date().getFullYear()).then(d => {
+    getNotasCurso(cursoId, new Date().getFullYear()).then(raw => {
+      const d = raw as NotasCursoData
       setDatos(d)
       // Construir mapa de notas
       const m: NotaMap = new Map()
