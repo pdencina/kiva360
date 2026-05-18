@@ -34,8 +34,9 @@ if (error) {
   return
 }
 
-window.location.href = '/dashboard'
-}
+setTimeout(() => {
+  window.location.assign('/dashboard')
+}, 300)
 
 return (
     <form onSubmit={handleLogin} className="flex flex-col gap-4">
