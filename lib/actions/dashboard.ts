@@ -3,13 +3,40 @@
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
 
+// ── Tipos locales para evitar inferencias never[] en Supabase ───────────────
+
+type AsistenciaRegistro = {
+  estado: string | null
+}
+
+type CursoBasico = {
+  id: string | number
+  nombre: string
+}
+
+type AlumnoBasico = {
+  id: string | number
+}
+
+type SigeDeclaracion = {
+  estado: string | null
+  tipo: string | null
+  periodo_fin?: string | null
+}
+
+type EstablecimientoIntegraciones = {
+  sige_user?: string | null
+  sae_user?: string | null
+  junaeb_user?: string | null
+}
+
 // ── Stats generales del dashboard ────────────────────────────
 
 export async function getDashboardStats() {
   const supabase = await createClient()
   const hoy = format(new Date(), 'yyyy-MM-dd')
 
-  const [alumnos, asistenciaHoy, evaluacionesPendientes, alertas] = await Promise.all([
+  const [alumnos, asistenciaHoy, evaluacionesPendientes] = await Promise.all([
 
     // Total alumnos activos
     supabase
@@ -28,17 +55,11 @@ export async function getDashboardStats() {
       .from('evaluaciones')
       .select('id', { count: 'exact', head: true })
       .lt('fecha', hoy),
-
-    // Alertas: alumnos con +3 inasistencias seguidas
-    supabase
-      .from('alumnos')
-      .select('id', { count: 'exact', head: true })
-      .eq('activo', true),
   ])
 
   // Calcular % asistencia
-  const registros = asistenciaHoy.data ?? []
-  const presentes = registros.filter(r => r.estado === 'P').length
+  const registros = (asistenciaHoy.data ?? []) as AsistenciaRegistro[]
+  const presentes = registros.filter((r) => r.estado === 'P').length
   const totalAsist = registros.length
   const pctAsistencia = totalAsist > 0
     ? Math.round((presentes / totalAsist) * 1000) / 10
@@ -58,38 +79,40 @@ export async function getAsistenciaPorCurso() {
   const supabase = await createClient()
   const hoy = format(new Date(), 'yyyy-MM-dd')
 
-  const { data: cursos } = await supabase
+  const { data: cursosData } = await supabase
     .from('cursos')
     .select('id, nombre')
     .eq('activo', true)
     .eq('anio', new Date().getFullYear())
     .order('nombre')
 
-  if (!cursos?.length) return []
+  const cursos = (cursosData ?? []) as CursoBasico[]
+
+  if (!cursos.length) return []
 
   const resultados = await Promise.all(
     cursos.map(async (curso) => {
+      const { data: alumnosData } = await supabase
+        .from('alumnos')
+        .select('id')
+        .eq('curso_id', curso.id)
+        .eq('activo', true)
+
+      const alumnoIds = ((alumnosData ?? []) as AlumnoBasico[]).map((a) => a.id)
+
       const { data } = await supabase
         .from('asistencia')
         .select('estado')
         .eq('fecha', hoy)
-        .in(
-          'alumno_id',
-          (await supabase
-            .from('alumnos')
-            .select('id')
-            .eq('curso_id', curso.id)
-            .eq('activo', true)
-          ).data?.map(a => a.id) ?? []
-        )
+        .in('alumno_id', alumnoIds)
 
-      const registros  = data ?? []
-      const presentes  = registros.filter(r => r.estado === 'P').length
-      const total      = registros.length
+      const registros = (data ?? []) as AsistenciaRegistro[]
+      const presentes = registros.filter((r) => r.estado === 'P').length
+      const total = registros.length
 
       return {
-        cursoId:  curso.id,
-        nombre:   curso.nombre,
+        cursoId: curso.id,
+        nombre: curso.nombre,
         presentes,
         total,
         porcentaje: total > 0 ? Math.round((presentes / total) * 100) : null,
@@ -97,7 +120,7 @@ export async function getAsistenciaPorCurso() {
     })
   )
 
-  return resultados.filter(r => r.total > 0)
+  return resultados.filter((r) => r.total > 0)
 }
 
 // ── Actividad reciente ────────────────────────────────────────
@@ -138,12 +161,14 @@ export async function getEstadoIntegraciones() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
 
-  const { data: establecimiento } = await supabase
+  const { data: establecimientoData } = await supabase
     .from('establecimientos')
     .select('sige_user, sae_user, junaeb_user')
     .single()
 
-  const { data: sigeDecl } = await supabase
+  const establecimiento = establecimientoData as EstablecimientoIntegraciones | null
+
+  const { data: sigeDeclData } = await supabase
     .from('sige_declaraciones')
     .select('estado, tipo, periodo_fin')
     .eq('estado', 'pendiente')
@@ -151,7 +176,9 @@ export async function getEstadoIntegraciones() {
     .limit(1)
     .maybeSingle()
 
-  const { data: saePost } = await supabase
+  const sigeDecl = sigeDeclData as SigeDeclaracion | null
+
+  const saePost = await supabase
     .from('sae_postulantes')
     .select('id', { count: 'exact', head: true })
     .eq('estado_matricula', 'pendiente')
@@ -163,8 +190,8 @@ export async function getEstadoIntegraciones() {
     },
     sae: {
       conectado:   !!establecimiento?.sae_user,
-      alerta:      (saePost?.count ?? 0) > 0
-                   ? `${saePost?.count} postulantes esperando`
+      alerta:      (saePost.count ?? 0) > 0
+                   ? `${saePost.count} postulantes esperando`
                    : null,
     },
     junaeb: {
