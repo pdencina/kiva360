@@ -51,7 +51,7 @@ export function LoginForm() {
           placeholder="director@colegio.cl"
           required
           autoComplete="email"
-          className="input"
+          className="input h-14 text-base rounded-2xl bg-gray-50 border-gray-100 focus:bg-white"
         />
       </div>
 
@@ -71,7 +71,7 @@ export function LoginForm() {
           placeholder="••••••••"
           required
           autoComplete="current-password"
-          className="input"
+          className="input h-14 text-base rounded-2xl bg-gray-50 border-gray-100 focus:bg-white"
         />
       </div>
 
@@ -85,7 +85,7 @@ export function LoginForm() {
         type="submit"
         disabled={loading}
         className={cn(
-          'btn btn-primary w-full justify-center py-3 text-base mt-2',
+          'btn btn-primary w-full justify-center h-14 text-base mt-3 rounded-2xl shadow-lg shadow-primary-700/20',
           loading && 'opacity-60 cursor-not-allowed'
         )}
       >
