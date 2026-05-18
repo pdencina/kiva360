@@ -7,7 +7,7 @@ import {
   getEstadoIntegraciones,
 } from '@/lib/actions/dashboard'
 import { createClient } from '@/lib/supabase/server'
-import { formatFecha, colorAsistencia } from '@/lib/utils'
+import { formatFecha } from '@/lib/utils'
 import { StatCard       } from '@/components/dashboard/StatCard'
 import { AsistenciaBar  } from '@/components/dashboard/AsistenciaBar'
 import { EvalItem       } from '@/components/dashboard/EvalItem'
@@ -19,20 +19,31 @@ export const metadata: Metadata = { title: 'Dashboard' }
 // Revalidar cada 5 minutos
 export const revalidate = 300
 
+type EvaluacionProxima = {
+  id: string | number
+  titulo: string
+  asignatura: string
+  fecha?: string | null
+  cursos?: {
+    nombre?: string | null
+  } | null
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   // Cargar todos los datos en paralelo
-const [stats, asistencia, evaluacionesRaw, integraciones] = await Promise.all([
-  getDashboardStats(),
-  getAsistenciaPorCurso(),
-  getEvaluacionesProximas(),
-  getEstadoIntegraciones(),
-])
+  const [stats, asistencia, evaluacionesRaw, integraciones] = await Promise.all([
+    getDashboardStats(),
+    getAsistenciaPorCurso(),
+    getEvaluacionesProximas(),
+    getEstadoIntegraciones(),
+  ])
 
-const evaluaciones: any[] = evaluacionesRaw ?? []
+  const evaluaciones = evaluacionesRaw as EvaluacionProxima[]
 
+  const nombreCorto = user?.user_metadata?.nombre?.split(' ')[0]
     ?? user?.email?.split('@')[0]
     ?? 'Profe'
 
@@ -174,7 +185,7 @@ const evaluaciones: any[] = evaluacionesRaw ?? []
                     key={ev.id}
                     titulo={ev.titulo}
                     asignatura={ev.asignatura}
-                    curso={(ev.cursos as any)?.nombre ?? ''}
+                    curso={ev.cursos?.nombre ?? ''}
                     fecha={ev.fecha ?? ''}
                   />
                 ))
