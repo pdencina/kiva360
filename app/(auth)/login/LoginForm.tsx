@@ -35,8 +35,9 @@ if (error) {
 }
 
 window.location.href = '/dashboard'
+}
 
-  return (
+return (
     <form onSubmit={handleLogin} className="flex flex-col gap-4">
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-1.5">
