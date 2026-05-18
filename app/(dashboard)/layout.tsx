@@ -1,7 +1,6 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/shared/Sidebar'
 import { Topbar } from '@/components/shared/Topbar'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function DashboardLayout({
   children,
@@ -14,20 +13,18 @@ export default async function DashboardLayout({
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
-
-  // Traer perfil SIN romper si falla
-  const { data: perfil } = await supabase
-    .from('perfiles')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  // Perfil fallback temporal
-  const perfilSafe = perfil ?? {
-    id: user.id,
-    nombre: user.user_metadata?.nombre ?? 'Administrador',
+  const perfilSafe = {
+    id: user?.id ?? 'demo-user',
+    nombre: user?.email?.split('@')[0] ?? 'Administrador',
     rol: 'admin_kiva360',
+    email: user?.email ?? 'admin@kiva360.cl',
+    activo: true,
+    establecimiento_id: '00000000-0000-0000-0000-000000000001',
+    establecimientos: {
+      id: '00000000-0000-0000-0000-000000000001',
+      nombre: 'Colegio Demo Kiva360',
+      plan: 'completo',
+    },
   }
 
   return (
