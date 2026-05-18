@@ -24,14 +24,15 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Cargar todos los datos en paralelo
-  const [stats, asistencia, evaluaciones, integraciones] = await Promise.all([
-    getDashboardStats(),
-    getAsistenciaPorCurso(),
-    getEvaluacionesProximas(),
-    getEstadoIntegraciones(),
-  ])
+const [stats, asistencia, evaluacionesRaw, integraciones] = await Promise.all([
+  getDashboardStats(),
+  getAsistenciaPorCurso(),
+  getEvaluacionesProximas(),
+  getEstadoIntegraciones(),
+])
 
-  const nombreCorto = user?.user_metadata?.nombre?.split(' ')[0]
+const evaluaciones: any[] = evaluacionesRaw ?? []
+
     ?? user?.email?.split('@')[0]
     ?? 'Profe'
 
