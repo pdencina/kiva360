@@ -2,14 +2,12 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/supabase'
 
-// Tipado explícito para cookies de Supabase
 type CookieToSet = {
   name: string
   value: string
   options?: CookieOptions
 }
 
-// Para React Server Components y Server Actions
 export async function createClient() {
   const cookieStore = await cookies()
 
@@ -28,8 +26,8 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             })
           } catch {
-            // En Server Components no se pueden setear cookies
-            // El middleware/proxy se encarga de esto
+            // Server Components no siempre permiten setear cookies.
+            // Middleware se encarga del refresh de sesión.
           }
         },
       },
@@ -37,7 +35,6 @@ export async function createClient() {
   )
 }
 
-// Para operaciones admin (bypass RLS) — SOLO en Route Handlers seguros
 export async function createAdminClient() {
   const cookieStore = await cookies()
 
@@ -49,12 +46,10 @@ export async function createAdminClient() {
         getAll() {
           return cookieStore.getAll()
         },
-
         setAll(_: CookieToSet[]) {
           // noop
         },
       },
-
       auth: {
         autoRefreshToken: false,
         persistSession: false,
