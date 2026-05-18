@@ -1,0 +1,1 @@
+export { AsistenciaBar } from './StatCard'

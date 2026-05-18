@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --sidebar-width: 240px;
+    --topbar-height: 54px;
+  }
+
+  /* Scrollbar personalizado */
+  ::-webkit-scrollbar        { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track  { background: transparent; }
+  ::-webkit-scrollbar-thumb  { background: #CFD8DC; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #90A4AE; }
+}
+
+@layer components {
+  /* Card base reutilizable */
+  .card {
+    @apply bg-white rounded-2xl border border-gray-200 p-5 transition-shadow duration-200;
+  }
+  .card:hover {
+    @apply shadow-md;
+  }
+
+  /* Pill / Badge */
+  .pill {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold whitespace-nowrap;
+  }
+
+  /* Tabla estilo Kiva360 */
+  .kiva360-table th {
+    @apply bg-gray-50 px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wide whitespace-nowrap;
+  }
+  .kiva360-table td {
+    @apply px-3 py-2.5 border-b border-gray-100 text-sm text-gray-800;
+  }
+  .kiva360-table tr:last-child td {
+    @apply border-b-0;
+  }
+  .kiva360-table tr:hover td {
+    @apply bg-blue-50/30;
+  }
+
+  /* Botones */
+  .btn {
+    @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-150 border-none cursor-pointer;
+  }
+  .btn-primary {
+    @apply bg-primary-700 text-white shadow-sm hover:bg-primary-800 hover:-translate-y-px;
+  }
+  .btn-outline {
+    @apply bg-white text-gray-800 border border-gray-200 hover:border-primary-500 hover:text-primary-700;
+  }
+  .btn-success {
+    @apply bg-green-700 text-white hover:bg-green-800;
+  }
+  .btn-danger {
+    @apply bg-red-50 text-red-700 border border-red-200 hover:bg-red-100;
+  }
+
+  /* Input base */
+  .input {
+    @apply w-full border border-gray-200 rounded-xl px-3 py-2 text-sm font-sans outline-none transition-all duration-150
+           focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15;
+  }
+}

@@ -1,0 +1,1 @@
+export { IntegStatus } from './StatCard'
