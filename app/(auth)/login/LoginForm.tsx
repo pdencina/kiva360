@@ -24,19 +24,17 @@ export function LoginForm() {
       password,
     })
 
-    if (error) {
-      setError(
-        error.message === 'Invalid login credentials'
-          ? 'Correo o contraseña incorrectos'
-          : 'Error al iniciar sesión. Intenta nuevamente.'
-      )
-      setLoading(false)
-      return
-    }
+if (error) {
+  setError(
+    error.message === 'Invalid login credentials'
+      ? 'Correo o contraseña incorrectos'
+      : 'Error al iniciar sesión. Intenta nuevamente.'
+  )
+  setLoading(false)
+  return
+}
 
-    router.push('/dashboard')
-    router.refresh()
-  }
+window.location.href = '/dashboard'
 
   return (
     <form onSubmit={handleLogin} className="flex flex-col gap-4">
