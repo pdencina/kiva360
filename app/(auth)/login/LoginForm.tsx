@@ -32,9 +32,8 @@ export function LoginForm() {
       return
     }
 
-    setTimeout(() => {
-      window.location.assign('/dashboard')
-    }, 300)
+    // Forzar refresh completo para que el servidor lea cookies actualizadas.
+    window.location.replace('/dashboard')
   }
 
   return (

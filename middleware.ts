@@ -60,12 +60,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && pathname === '/login') {
-    const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
-    return NextResponse.redirect(url)
-  }
-
+  // No redirigir login -> dashboard desde middleware.
+  // Esto evita loops cuando Supabase demora en persistir la cookie en Vercel.
   return response
 }
 
