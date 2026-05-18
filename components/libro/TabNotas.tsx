@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { getNotasCurso, guardarNota, calcularPromedio } from '@/lib/actions/libro'
-import { cn, formatNota, colorNota } from '@/lib/utils'
+import { getNotasCurso, guardarNota } from '@/lib/actions/libro'
+import { calcularPromedio } from '@/lib/utils/notas'
 
 interface Props {
   cursoId:     string

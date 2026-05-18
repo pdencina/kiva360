@@ -245,12 +245,6 @@ export async function guardarNota(
   return { success: true }
 }
 
-// Calcular promedio ponderado de un alumno
-export function calcularPromedio(
-  notas: { evaluacion_id: string; nota: number | null }[],
-  evaluaciones: { id: string; ponderacion: number | null }[]
-): number | null {
-  const evalMap = new Map(evaluaciones.map(e => [e.id, e.ponderacion ?? 0]))
 
   let suma = 0
   let totalPond = 0
