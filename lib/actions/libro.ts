@@ -246,19 +246,6 @@ export async function guardarNota(
 }
 
 
-  let suma = 0
-  let totalPond = 0
-
-  for (const n of notas) {
-    if (n.nota === null) continue
-    const pond = evalMap.get(n.evaluacion_id) ?? 0
-    suma      += n.nota * pond
-    totalPond += pond
-  }
-
-  if (totalPond === 0) return null
-  return Math.round((suma / totalPond) * 10) / 10
-}
 
 // ─────────────────────────────────────────────────────────────
 // CURSOS
