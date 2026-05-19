@@ -52,7 +52,7 @@ export function TabNotas({ cursoId, cursoNombre }: Props) {
 
   useEffect(() => {
     setLoading(true)
-    getNotasCurso(cursoId, new Date().getFullYear()).then(raw => {
+    getNotasCurso(cursoId).then(raw => {
       const d = raw as NotasCursoData
       setDatos(d)
       // Construir mapa de notas
