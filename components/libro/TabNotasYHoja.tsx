@@ -4,7 +4,8 @@
 // TabNotas
 // ═══════════════════════════════════════════════════════════════
 import { useState, useEffect, useRef } from 'react'
-import { getNotasCurso, guardarNota, calcularPromedio } from '@/lib/actions/libro'
+import { getNotasCurso, guardarNota } from '@/lib/actions/libro'
+import { calcularPromedio } from '@/lib/utils/notas'
 
 type NotaMap = Map<string, Map<string, number | null>>
 
