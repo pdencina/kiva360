@@ -1,7 +1,10 @@
 'use client'
 
+//
 import { useTransition } from 'react'
-import { completarOnboarding } from '@/lib/actions/onboarding'
+...
+const [isPending, startTransition] = useTransition()
+startTransition(() => { completarOnboarding() })
 
 interface StepExitoProps { nombreUsuario: string }
 
