@@ -1,3 +1,5 @@
+export const revalidate = 0  // Sin caché
+export const dynamic = 'force-dynamic'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { getCursosDelColegio } from '@/lib/actions/libro'
