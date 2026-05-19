@@ -1,27 +1,23 @@
 'use client'
 
+// ═══════════════════════════════════════════════════════
+// StepRol
+// ═══════════════════════════════════════════════════════
 import { useState, useActionState, useTransition } from 'react'
 import { guardarRol } from '@/lib/actions/onboarding'
 import type { OnboardingState } from '@/lib/actions/onboarding'
-import { cn } from '@/lib/utils'
-import type { Rol } from '@/types'
 
-interface Props {
-  onSuccess: () => void
-  onBack:    () => void
-}
-
-const ROLES: { value: Rol; icon: string; nombre: string; desc: string }[] = [
-  { value: 'director',    icon: '🏫', nombre: 'Director/a',    desc: 'Visión completa del establecimiento' },
-  { value: 'utp',         icon: '📋', nombre: 'UTP',           desc: 'Gestión curricular y pedagógica' },
-  { value: 'profesor',    icon: '👩‍🏫', nombre: 'Profesor/a',    desc: 'Clases, notas y comunicación' },
-  { value: 'apoderado',   icon: '👨‍👩‍👧', nombre: 'Apoderado/a',  desc: 'Notas y comunicación familiar' },
+const ROLES = [
+  { value: 'director',  icon: '🏫', nombre: 'Director/a',   desc: 'Visión completa del establecimiento' },
+  { value: 'utp',       icon: '📋', nombre: 'UTP',          desc: 'Gestión curricular y pedagógica' },
+  { value: 'profesor',  icon: '👩‍🏫', nombre: 'Profesor/a',   desc: 'Clases, notas y comunicación' },
+  { value: 'apoderado', icon: '👨‍👩‍👧', nombre: 'Apoderado/a', desc: 'Notas y comunicación familiar' },
 ]
 
-const initialState: OnboardingState = { error: null, success: false }
+interface StepRolProps { onSuccess: () => void; onBack: () => void }
 
-export function StepRol({ onSuccess, onBack }: Props) {
-  const [rolSeleccionado, setRol] = useState<Rol>('director')
+export function StepRol({ onSuccess, onBack }: StepRolProps) {
+  const [rolSeleccionado, setRol] = useState('director')
   const [, startTransition] = useTransition()
 
   const [state, action, isPending] = useActionState(
@@ -30,67 +26,53 @@ export function StepRol({ onSuccess, onBack }: Props) {
       if (result.success) startTransition(() => onSuccess())
       return result
     },
-    initialState
+    { error: null, success: false }
   )
 
   return (
-    <form action={action} className="p-8">
+    <form action={action} style={{ padding: '2rem' }}>
       <input type="hidden" name="rol" value={rolSeleccionado} />
 
-      <div className="mb-6">
-        <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 mb-1">
-          <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">2</span>
-          Paso 2 de 4
+      <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+          <span style={{ width: '22px', height: '22px', background: '#EEF2FF', borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.68rem', fontWeight: 700, color: '#6366F1' }}>2</span>
+          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#6366F1' }}>Paso 2 de 4</span>
         </div>
-        <h2 className="font-serif text-2xl text-gray-900 mb-1">
+        <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em', marginBottom: '0.3rem' }}>
           ¿Cuál es tu rol en el colegio?
         </h2>
-        <p className="text-sm text-gray-500">
-          Esto personaliza el dashboard y los módulos que verás al ingresar.
-        </p>
+        <p style={{ fontSize: '0.78rem', color: '#94A3B8' }}>Personaliza el dashboard según tu función.</p>
       </div>
 
       {state.error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
-          {state.error}
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '9px', padding: '0.7rem 1rem', fontSize: '0.78rem', color: '#DC2626', marginBottom: '1rem' }}>
+          ⚠️ {state.error}
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3 mb-8">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
         {ROLES.map(rol => (
-          <button
-            key={rol.value}
-            type="button"
-            onClick={() => setRol(rol.value)}
-            className={cn(
-              'text-left border rounded-xl p-4 transition-all cursor-pointer group',
-              rolSeleccionado === rol.value
-                ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
-                : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50'
-            )}
-          >
-            <div className="text-2xl mb-2">{rol.icon}</div>
-            <div className={cn(
-              'font-semibold text-sm mb-0.5',
-              rolSeleccionado === rol.value ? 'text-blue-700' : 'text-gray-800'
-            )}>
+          <button key={rol.value} type="button" onClick={() => setRol(rol.value)} style={{
+            textAlign: 'left', padding: '1rem', border: `2px solid ${rolSeleccionado === rol.value ? '#6366F1' : '#E5E7EB'}`,
+            borderRadius: '12px', background: rolSeleccionado === rol.value ? '#EEF2FF' : 'white',
+            cursor: 'pointer', transition: 'all 0.15s',
+            boxShadow: rolSeleccionado === rol.value ? '0 0 0 3px rgba(99,102,241,0.15)' : 'none',
+          }}>
+            <div style={{ fontSize: '1.5rem', marginBottom: '0.4rem' }}>{rol.icon}</div>
+            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: rolSeleccionado === rol.value ? '#4F46E5' : '#0F172A', marginBottom: '0.2rem' }}>
               {rol.nombre}
             </div>
-            <div className="text-xs text-gray-400">{rol.desc}</div>
+            <div style={{ fontSize: '0.7rem', color: '#94A3B8' }}>{rol.desc}</div>
           </button>
         ))}
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-        <button type="button" onClick={onBack} className="btn btn-outline">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1.2rem', borderTop: '1px solid #F1F5F9' }}>
+        <button type="button" onClick={onBack} style={{ padding: '0.6rem 1.1rem', background: 'white', color: '#475569', border: '1.5px solid #E5E7EB', borderRadius: '9px', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>
           ← Anterior
         </button>
-        <div className="text-xs text-gray-400">Paso 2 de 4</div>
-        <button
-          type="submit"
-          disabled={isPending}
-          className={cn('btn btn-primary px-8', isPending && 'opacity-60 cursor-not-allowed')}
-        >
+        <span style={{ fontSize: '0.7rem', color: '#CBD5E1' }}>Paso 2 de 4</span>
+        <button type="submit" disabled={isPending} style={{ padding: '0.6rem 1.6rem', background: 'linear-gradient(135deg, #6366F1, #8B5CF6)', color: 'white', border: 'none', borderRadius: '9px', fontSize: '0.875rem', fontWeight: 700, cursor: isPending ? 'not-allowed' : 'pointer', opacity: isPending ? 0.6 : 1 }}>
           {isPending ? 'Guardando...' : 'Siguiente →'}
         </button>
       </div>

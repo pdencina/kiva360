@@ -7,15 +7,20 @@ export default async function OnboardingPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
-
-  // Si ya completó el onboarding → dashboard
   if (user.user_metadata?.onboarding_complete) redirect('/dashboard')
 
-  // Recuperar paso actual
   const stepActual = (user.user_metadata?.onboarding_step as number) ?? 1
 
   return (
-    <main className="min-h-screen bg-[#0A1929] flex items-center justify-center p-4">
+    <main style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0B1120 0%, #1E1B4B 50%, #0B1120 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1.5rem',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+    }}>
       <OnboardingClient
         stepInicial={stepActual}
         nombreUsuario={user.user_metadata?.nombre ?? user.email?.split('@')[0] ?? 'Usuario'}
