@@ -1,8 +1,5 @@
 'use client'
 
-// ═══════════════════════════════════════════════════════
-// StepRol
-// ═══════════════════════════════════════════════════════
 import { useState, useActionState, useTransition } from 'react'
 import { guardarRol } from '@/lib/actions/onboarding'
 import type { OnboardingState } from '@/lib/actions/onboarding'

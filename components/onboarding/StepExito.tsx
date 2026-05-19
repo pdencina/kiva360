@@ -1,7 +1,6 @@
-// ═══════════════════════════════════════════════════════
-// StepExito
-// ═══════════════════════════════════════════════════════
-import { useTransition as useT } from 'react'
+'use client'
+
+import { useTransition } from 'react'
 import { completarOnboarding } from '@/lib/actions/onboarding'
 
 interface StepExitoProps { nombreUsuario: string }

@@ -1,7 +1,8 @@
-// ═══════════════════════════════════════════════════════
-// StepIntegraciones
-// ═══════════════════════════════════════════════════════
+'use client'
+
+import { useState, useActionState, useTransition } from 'react'
 import { guardarIntegraciones } from '@/lib/actions/onboarding'
+import type { OnboardingState } from '@/lib/actions/onboarding'
 
 const INTEGS = [
   { id: 'sige',   icon: '🔗', nombre: 'SIGE',   sub: 'MINEDUC',         desc: 'Matrícula, declaración asistencia y actas' },
