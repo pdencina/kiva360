@@ -1,18 +1,15 @@
 'use client'
 
-//
 import { useTransition } from 'react'
-...
-const [isPending, startTransition] = useTransition()
-startTransition(() => { completarOnboarding() })
+import { completarOnboarding } from '@/lib/actions/onboarding'
 
 interface StepExitoProps { nombreUsuario: string }
 
 export function StepExito({ nombreUsuario }: StepExitoProps) {
-  const [isPending, startT] = useT()
+  const [isPending, startTransition] = useTransition()
 
   const handleIr = () => {
-    startT(() => { completarOnboarding() })
+    startTransition(() => { completarOnboarding() })
   }
 
   const LOGROS = [
@@ -24,7 +21,6 @@ export function StepExito({ nombreUsuario }: StepExitoProps) {
 
   return (
     <div style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-      {/* Ícono animado */}
       <div style={{
         width: '64px', height: '64px', background: '#F0FDF4', borderRadius: '50%',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -40,7 +36,6 @@ export function StepExito({ nombreUsuario }: StepExitoProps) {
         Tu colegio quedó configurado correctamente. Todo está conectado y listo para usar.
       </p>
 
-      {/* Logros */}
       <div style={{ width: '100%', maxWidth: '380px', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.8rem' }}>
         {LOGROS.map((logro, i) => (
           <div key={i} style={{
@@ -59,10 +54,10 @@ export function StepExito({ nombreUsuario }: StepExitoProps) {
         padding: '0.75rem 2.5rem',
         background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
         color: 'white', border: 'none', borderRadius: '10px',
-        fontSize: '1rem', fontWeight: 700, cursor: isPending ? 'not-allowed' : 'pointer',
+        fontSize: '1rem', fontWeight: 700,
+        cursor: isPending ? 'not-allowed' : 'pointer',
         opacity: isPending ? 0.6 : 1,
         boxShadow: '0 4px 16px rgba(99,102,241,0.4)',
-        transition: 'all 0.2s',
       }}>
         {isPending ? 'Entrando...' : 'Ir al Dashboard →'}
       </button>
