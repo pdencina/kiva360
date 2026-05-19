@@ -3,49 +3,60 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { cn } from '@/lib/utils'
 
 export function LoginForm() {
   const router = useRouter()
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
   const [loading,  setLoading]  = useState(false)
+  const [debug,    setDebug]    = useState<string | null>(null)
   const [error,    setError]    = useState<string | null>(null)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setDebug(null)
 
-    const supabase = createClient()
+    try {
+      const supabase = createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+      setDebug('1. Supabase client creado ✓')
 
-    if (error) {
-      setError(
-        error.message === 'Invalid login credentials'
-          ? 'Correo o contraseña incorrectos'
-          : error.message === 'Email not confirmed'
-          ? 'Debes confirmar tu correo antes de ingresar'
-          : 'Error al iniciar sesión. Intenta nuevamente.'
-      )
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (signInError) {
+        setDebug(`ERROR en signIn: ${signInError.message} (${signInError.status})`)
+        setError(signInError.message)
+        setLoading(false)
+        return
+      }
+
+      setDebug(`2. Login OK ✓ — user: ${data.user?.email} — session: ${data.session ? 'SÍ' : 'NO'}`)
+
+      if (!data.session) {
+        setDebug('ERROR: Login OK pero sin sesión — revisa Email Confirmation en Supabase')
+        setError('Sin sesión activa. ¿Confirmaste tu correo en Supabase?')
+        setLoading(false)
+        return
+      }
+
+      setDebug('3. Haciendo router.refresh()...')
+      router.refresh()
+
+      await new Promise(r => setTimeout(r, 300))
+
+      setDebug('4. Redirigiendo a /dashboard...')
+      router.push('/dashboard')
+
+    } catch (err: any) {
+      setDebug(`EXCEPCIÓN: ${err?.message ?? JSON.stringify(err)}`)
+      setError('Error inesperado. Ver debug.')
       setLoading(false)
-      return
     }
-
-    // ⚠️ FIX CRÍTICO para Vercel:
-    // router.refresh() fuerza a Next.js a re-leer las cookies del servidor
-    // Sin esto, el middleware no ve la sesión nueva y redirige de vuelta al login
-    router.refresh()
-
-    // Pequeña espera para que las cookies se propaguen antes del redirect
-    await new Promise(r => setTimeout(r, 100))
-
-    // Verificar si hay un redirect pendiente en la URL
-    const params = new URLSearchParams(window.location.search)
-    const redirect = params.get('redirect') ?? '/dashboard'
-
-    router.push(redirect)
   }
 
   return (
@@ -58,19 +69,16 @@ export function LoginForm() {
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          placeholder="director@colegio.cl"
+          placeholder="admin@kiva360.cl"
           required
           autoComplete="email"
-          className="input"
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-500"
         />
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-sm font-bold text-gray-700">Contraseña</label>
-          <a href="/recover" className="text-xs text-blue-600 hover:underline">
-            ¿Olvidaste tu contraseña?
-          </a>
         </div>
         <input
           type="password"
@@ -79,9 +87,16 @@ export function LoginForm() {
           placeholder="••••••••"
           required
           autoComplete="current-password"
-          className="input"
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-500"
         />
       </div>
+
+      {/* ── DEBUG BOX — quitar después de resolver ── */}
+      {debug && (
+        <div className="bg-gray-900 text-green-400 rounded-xl px-4 py-3 text-xs font-mono whitespace-pre-wrap">
+          {debug}
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
@@ -92,10 +107,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className={cn(
-          'btn btn-primary w-full justify-center py-3 text-base mt-1',
-          loading && 'opacity-60 cursor-not-allowed'
-        )}
+        className="w-full bg-blue-600 text-white rounded-xl py-3 text-sm font-bold disabled:opacity-60"
       >
         {loading ? 'Ingresando...' : 'Ingresar'}
       </button>
