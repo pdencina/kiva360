@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 
 export default async function DashboardLayout({
   children,
@@ -13,30 +14,30 @@ export default async function DashboardLayout({
   const nombre   = user.email?.split('@')[0] ?? 'Usuario'
   const iniciales = nombre.slice(0, 2).toUpperCase()
 
-  const navGroups = [
+  const NAV = [
     {
       section: 'Principal',
       items: [
-        { icon: '🏠', label: 'Inicio',          href: '/dashboard' },
-        { icon: '📒', label: 'Libro de Clases', href: '/libro' },
-        { icon: '📝', label: 'Evaluaciones',    href: '/evaluaciones', badge: 3 },
-        { icon: '🗓️', label: 'Planificación',   href: '/planificacion' },
+        { href: '/dashboard',         icon: '⊞', label: 'Inicio'          },
+        { href: '/libro',             icon: '▦',  label: 'Libro de Clases' },
+        { href: '/evaluaciones',      icon: '✎',  label: 'Evaluaciones',   badge: 3  },
+        { href: '/planificacion',     icon: '◫',  label: 'Planificación'   },
       ]
     },
     {
-      section: 'Integración MINEDUC',
+      section: 'Integración',
       items: [
-        { icon: '🔗', label: 'SIGE',   href: '/integraciones/sige' },
-        { icon: '🎓', label: 'SAE',    href: '/integraciones/sae' },
-        { icon: '🍽️', label: 'JUNAEB', href: '/integraciones/junaeb', badge: 2 },
+        { href: '/integraciones/sige',   icon: '⬡', label: 'SIGE'   },
+        { href: '/integraciones/sae',    icon: '⬢', label: 'SAE'    },
+        { href: '/integraciones/junaeb', icon: '⬟', label: 'JUNAEB', badge: 2 },
       ]
     },
     {
       section: 'Comunidad',
       items: [
-        { icon: '💬', label: 'Comunicación', href: '/comunicacion', badge: 5 },
-        { icon: '👨‍👩‍👧', label: 'Familias',     href: '/familias' },
-        { icon: '📊', label: 'Reportes',     href: '/reportes' },
+        { href: '/comunicacion', icon: '◉', label: 'Comunicación', badge: 5 },
+        { href: '/familias',     icon: '◈', label: 'Familias'      },
+        { href: '/reportes',     icon: '◧', label: 'Reportes'      },
       ]
     },
   ]
@@ -44,181 +45,122 @@ export default async function DashboardLayout({
   return (
     <>
       <style>{`
-        .nav-item {
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-          padding: 0.55rem 1rem;
-          color: #90A4AE;
-          font-size: 0.8rem;
-          text-decoration: none;
-          transition: background 0.15s, color 0.15s;
-        }
-        .nav-item:hover {
-          background: rgba(255,255,255,0.06);
-          color: #B0BEC5;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+
+        .sidebar { width: 220px; background: #0B1120; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; border-right: 1px solid rgba(99,102,241,0.15); }
+
+        .sidebar-logo { padding: 1.2rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.6rem; }
+        .logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, #6366F1, #8B5CF6); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: white; letter-spacing: -0.05em; }
+        .logo-text { font-size: 1rem; font-weight: 700; color: white; letter-spacing: -0.02em; }
+        .logo-sub  { font-size: 0.55rem; color: #6366F1; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .sidebar-user { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.6rem; }
+        .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #6366F1, #8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: white; flex-shrink: 0; }
+        .user-name { font-size: 0.75rem; color: #E2E8F0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-role { font-size: 0.6rem; color: #6366F1; }
+
+        .nav-section { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(99,102,241,0.4); padding: 0.9rem 1rem 0.25rem; }
+
+        .nav-link { display: flex; align-items: center; gap: 0.6rem; padding: 0.48rem 1rem; font-size: 0.78rem; color: #94A3B8; text-decoration: none; transition: all 0.15s; position: relative; border-radius: 0; }
+        .nav-link:hover { color: #E2E8F0; background: rgba(99,102,241,0.08); }
+        .nav-link.active { color: #A5B4FC; background: rgba(99,102,241,0.12); border-right: 2px solid #6366F1; }
+        .nav-icon { font-size: 0.9rem; width: 16px; text-align: center; flex-shrink: 0; }
+        .nav-badge { margin-left: auto; background: #6366F1; color: white; font-size: 0.55rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 10px; min-width: 16px; text-align: center; }
+
+        .sidebar-footer { padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
+        .integ-label { font-size: 0.55rem; color: rgba(99,102,241,0.4); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+        .integ-chips { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+        .integ-chip { font-size: 0.58rem; font-weight: 600; padding: 0.12rem 0.45rem; border-radius: 4px; background: rgba(16,185,129,0.1); color: #10B981; border: 1px solid rgba(16,185,129,0.2); }
+        .signout-btn { display: block; text-align: center; font-size: 0.7rem; color: #475569; text-decoration: none; padding: 0.35rem; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); transition: all 0.15s; }
+        .signout-btn:hover { color: #94A3B8; background: rgba(255,255,255,0.06); }
+
+        .main { margin-left: 220px; min-height: 100vh; display: flex; flex-direction: column; background: #F8FAFC; }
+
+        .topbar { height: 50px; background: white; border-bottom: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; position: sticky; top: 0; z-index: 90; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .topbar-left { font-size: 0.78rem; color: #94A3B8; }
+        .topbar-left strong { color: #1E293B; font-weight: 600; }
+        .topbar-right { display: flex; align-items: center; gap: 0.6rem; }
+        .year-badge { background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white; font-size: 0.65rem; font-weight: 700; padding: 0.22rem 0.65rem; border-radius: 6px; letter-spacing: 0.05em; }
+        .notif-btn { width: 32px; height: 32px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 0.85rem; transition: all 0.15s; }
+        .notif-btn:hover { background: #F1F5F9; }
+        .notif-dot { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; background: #EF4444; border-radius: 50%; border: 1.5px solid white; }
+
+        .page-content { flex: 1; padding: 1.5rem; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .page-content > * { animation: fadeIn 0.25s ease; }
       `}</style>
 
-      <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui' }}>
-
-        {/* SIDEBAR */}
-        <aside style={{
-          width: '240px', background: '#0A1929',
-          display: 'flex', flexDirection: 'column',
-          position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 100,
-        }}>
-
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
+        <aside className="sidebar">
           {/* Logo */}
-          <div style={{
-            padding: '1.2rem 1rem',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-            display: 'flex', alignItems: 'center', gap: '0.6rem'
-          }}>
-            <div style={{
-              width: '34px', height: '34px',
-              background: 'linear-gradient(135deg,#1976D2,#42A5F5)',
-              borderRadius: '9px', display: 'flex',
-              alignItems: 'center', justifyContent: 'center', fontSize: '1rem'
-            }}>📚</div>
+          <div className="sidebar-logo">
+            <div className="logo-mark">K</div>
             <div>
-              <div style={{ color: 'white', fontWeight: '700', fontSize: '1.1rem', lineHeight: 1 }}>
-                Kiva360
-              </div>
-              <div style={{ color: '#64B5F6', fontSize: '0.55rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: '600' }}>
-                Educación Chile
-              </div>
+              <div className="logo-text">Kiva360</div>
+              <div className="logo-sub">Educación Chile</div>
             </div>
           </div>
 
           {/* Usuario */}
-          <div style={{
-            padding: '0.8rem 1rem',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-            display: 'flex', alignItems: 'center', gap: '0.6rem'
-          }}>
-            <div style={{
-              width: '32px', height: '32px', borderRadius: '50%',
-              background: '#1565C0', display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontSize: '0.7rem', fontWeight: '800', flexShrink: 0
-            }}>{iniciales}</div>
+          <div className="sidebar-user">
+            <div className="user-avatar">{iniciales}</div>
             <div style={{ minWidth: 0 }}>
-              <div style={{
-                color: '#E3F2FD', fontSize: '0.75rem', fontWeight: '600',
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
-              }}>
-                {user.email}
-              </div>
-              <div style={{ color: '#64B5F6', fontSize: '0.62rem' }}>Administrador</div>
+              <div className="user-name">{user.email}</div>
+              <div className="user-role">Administrador</div>
             </div>
           </div>
 
           {/* Nav */}
-          <nav style={{ flex: 1, padding: '0.5rem 0', overflowY: 'auto' }}>
-            {navGroups.map(group => (
+          <nav style={{ flex: 1, overflowY: 'auto', padding: '0.25rem 0' }}>
+            {NAV.map(group => (
               <div key={group.section}>
-                <div style={{
-                  fontSize: '0.58rem', fontWeight: '700',
-                  letterSpacing: '0.15em', textTransform: 'uppercase',
-                  color: '#1E3A5F', padding: '0.8rem 1rem 0.3rem'
-                }}>
-                  {group.section}
-                </div>
+                <div className="nav-section">{group.section}</div>
                 {group.items.map(item => (
-                  <a key={item.href} href={item.href} className="nav-item">
-                    <span style={{ fontSize: '0.95rem', width: '18px', textAlign: 'center', flexShrink: 0 }}>
-                      {item.icon}
-                    </span>
+                  <Link key={item.href} href={item.href} className="nav-link">
+                    <span className="nav-icon">{item.icon}</span>
                     <span style={{ flex: 1 }}>{item.label}</span>
-                    {item.badge && (
-                      <span style={{
-                        background: '#E53935', color: 'white',
-                        fontSize: '0.58rem', fontWeight: '800',
-                        padding: '0.1rem 0.4rem', borderRadius: '10px',
-                        minWidth: '18px', textAlign: 'center'
-                      }}>
-                        {item.badge}
-                      </span>
-                    )}
-                  </a>
+                    {item.badge && <span className="nav-badge">{item.badge}</span>}
+                  </Link>
                 ))}
               </div>
             ))}
           </nav>
 
           {/* Footer */}
-          <div style={{ padding: '0.8rem 1rem', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-            <div style={{
-              fontSize: '0.58rem', color: '#1E3A5F', fontWeight: '700',
-              marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.1em'
-            }}>
-              Integraciones activas
+          <div className="sidebar-footer">
+            <div className="integ-label">Integraciones</div>
+            <div className="integ-chips">
+              <span className="integ-chip">SIGE ●</span>
+              <span className="integ-chip">SAE ●</span>
+              <span className="integ-chip">JUNAEB ●</span>
             </div>
-            <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.7rem' }}>
-              {['SIGE ●', 'SAE ●', 'JUNAEB ●'].map(chip => (
-                <span key={chip} style={{
-                  fontSize: '0.58rem', fontWeight: '700',
-                  padding: '0.15rem 0.5rem', borderRadius: '4px',
-                  background: 'rgba(0,137,123,0.1)', color: '#4DB6AC',
-                  border: '1px solid rgba(0,137,123,0.2)'
-                }}>{chip}</span>
-              ))}
-            </div>
-            <a href="/api/auth/signout" style={{
-              display: 'block', fontSize: '0.72rem', color: '#546E7A',
-              textDecoration: 'none', textAlign: 'center',
-              padding: '0.4rem', borderRadius: '6px',
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.06)'
-            }}>
+            <Link href="/api/auth/signout" className="signout-btn">
               Cerrar sesión
-            </a>
+            </Link>
           </div>
         </aside>
 
-        {/* MAIN */}
-        <main style={{ marginLeft: '240px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
+        <div className="main">
           {/* Topbar */}
-          <div style={{
-            height: '52px', background: 'white',
-            borderBottom: '1px solid #E2E8F0',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '0 1.5rem', position: 'sticky', top: 0, zIndex: 90,
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
-              Kiva360 <strong style={{ color: '#0F172A' }}>· Dashboard</strong>
+          <header className="topbar">
+            <div className="topbar-left">
+              Kiva360 <strong>· Dashboard</strong>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
-              <div style={{
-                background: '#1976D2', color: 'white',
-                fontSize: '0.68rem', fontWeight: '800',
-                padding: '0.25rem 0.7rem', borderRadius: '6px'
-              }}>2026</div>
-              <div style={{
-                width: '32px', height: '32px',
-                background: '#F1F5F9', borderRadius: '8px',
-                display: 'flex', alignItems: 'center',
-                justifyContent: 'center', position: 'relative'
-              }}>
-                🔔
-                <span style={{
-                  position: 'absolute', top: '5px', right: '5px',
-                  width: '7px', height: '7px', background: '#E53935',
-                  borderRadius: '50%', border: '2px solid white'
-                }} />
+            <div className="topbar-right">
+              <div className="year-badge">2026</div>
+              <div className="notif-btn">
+                🔔<div className="notif-dot" />
               </div>
             </div>
-          </div>
+          </header>
 
-          {/* Contenido de la página */}
-          <div style={{ flex: 1, background: '#F0F4F8' }}>
+          {/* Contenido */}
+          <div className="page-content">
             {children}
           </div>
-
-        </main>
+        </div>
       </div>
     </>
   )
