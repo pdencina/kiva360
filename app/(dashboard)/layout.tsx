@@ -11,7 +11,7 @@ export default async function DashboardLayout({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const nombre   = user.email?.split('@')[0] ?? 'Usuario'
+  const nombre    = user.email?.split('@')[0] ?? 'Usuario'
   const iniciales = nombre.slice(0, 2).toUpperCase()
 
   const NAV = [
@@ -27,8 +27,8 @@ export default async function DashboardLayout({
     {
       section: 'Integración',
       items: [
-        { href: '/integraciones/sige',   icon: '⬡', label: 'SIGE'   },
-        { href: '/integraciones/sae',    icon: '⬢', label: 'SAE'    },
+        { href: '/integraciones/sige',   icon: '⬡', label: 'SIGE'    },
+        { href: '/integraciones/sae',    icon: '⬢', label: 'SAE'     },
         { href: '/integraciones/junaeb', icon: '⬟', label: 'JUNAEB', badge: 2 },
       ]
     },
@@ -51,7 +51,7 @@ export default async function DashboardLayout({
         .sidebar { width: 220px; background: #0B1120; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; border-right: 1px solid rgba(99,102,241,0.15); }
 
         .sidebar-logo { padding: 1.2rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.6rem; }
-        .logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, #6366F1, #8B5CF6); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: white; letter-spacing: -0.05em; }
+        .logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, #6366F1, #8B5CF6); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: white; }
         .logo-text { font-size: 1rem; font-weight: 700; color: white; letter-spacing: -0.02em; }
         .logo-sub  { font-size: 0.55rem; color: #6366F1; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
 
@@ -62,9 +62,8 @@ export default async function DashboardLayout({
 
         .nav-section { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(99,102,241,0.4); padding: 0.9rem 1rem 0.25rem; }
 
-        .nav-link { display: flex; align-items: center; gap: 0.6rem; padding: 0.48rem 1rem; font-size: 0.78rem; color: #94A3B8; text-decoration: none; transition: all 0.15s; position: relative; border-radius: 0; }
+        .nav-link { display: flex; align-items: center; gap: 0.6rem; padding: 0.48rem 1rem; font-size: 0.78rem; color: #94A3B8; text-decoration: none; transition: all 0.15s; }
         .nav-link:hover { color: #E2E8F0; background: rgba(99,102,241,0.08); }
-        .nav-link.active { color: #A5B4FC; background: rgba(99,102,241,0.12); border-right: 2px solid #6366F1; }
         .nav-icon { font-size: 0.9rem; width: 16px; text-align: center; flex-shrink: 0; }
         .nav-badge { margin-left: auto; background: #6366F1; color: white; font-size: 0.55rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 10px; min-width: 16px; text-align: center; }
 
@@ -73,23 +72,18 @@ export default async function DashboardLayout({
         .integ-chips { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
         .integ-chip { font-size: 0.58rem; font-weight: 600; padding: 0.12rem 0.45rem; border-radius: 4px; background: rgba(16,185,129,0.1); color: #10B981; border: 1px solid rgba(16,185,129,0.2); }
         .signout-btn { display: block; text-align: center; font-size: 0.7rem; color: #475569; text-decoration: none; padding: 0.35rem; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); transition: all 0.15s; }
-        .signout-btn:hover { color: #94A3B8; background: rgba(255,255,255,0.06); }
+        .signout-btn:hover { color: #94A3B8; }
 
         .main { margin-left: 220px; min-height: 100vh; display: flex; flex-direction: column; background: #F8FAFC; }
 
         .topbar { height: 50px; background: white; border-bottom: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; position: sticky; top: 0; z-index: 90; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .topbar-left { font-size: 0.78rem; color: #94A3B8; }
-        .topbar-left strong { color: #1E293B; font-weight: 600; }
         .topbar-right { display: flex; align-items: center; gap: 0.6rem; }
-        .year-badge { background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white; font-size: 0.65rem; font-weight: 700; padding: 0.22rem 0.65rem; border-radius: 6px; letter-spacing: 0.05em; }
-        .notif-btn { width: 32px; height: 32px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 0.85rem; transition: all 0.15s; }
-        .notif-btn:hover { background: #F1F5F9; }
+        .year-badge { background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white; font-size: 0.65rem; font-weight: 700; padding: 0.22rem 0.65rem; border-radius: 6px; }
+        .notif-btn { width: 32px; height: 32px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 0.85rem; }
         .notif-dot { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; background: #EF4444; border-radius: 50%; border: 1.5px solid white; }
 
         .page-content { flex: 1; padding: 1.5rem; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .page-content > * { animation: fadeIn 0.25s ease; }
       `}</style>
 
       <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -112,17 +106,17 @@ export default async function DashboardLayout({
             </div>
           </div>
 
-          {/* Nav */}
+          {/* Nav — usa <a> para evitar interceptación del middleware */}
           <nav style={{ flex: 1, overflowY: 'auto', padding: '0.25rem 0' }}>
             {NAV.map(group => (
               <div key={group.section}>
                 <div className="nav-section">{group.section}</div>
                 {group.items.map(item => (
-                  <Link key={item.href} href={item.href} className="nav-link">
+                  <a key={item.href} href={item.href} className="nav-link">
                     <span className="nav-icon">{item.icon}</span>
                     <span style={{ flex: 1 }}>{item.label}</span>
                     {item.badge && <span className="nav-badge">{item.badge}</span>}
-                  </Link>
+                  </a>
                 ))}
               </div>
             ))}
@@ -136,9 +130,9 @@ export default async function DashboardLayout({
               <span className="integ-chip">SAE ●</span>
               <span className="integ-chip">JUNAEB ●</span>
             </div>
-            <Link href="/api/auth/signout" className="signout-btn">
+            <a href="/api/auth/signout" className="signout-btn">
               Cerrar sesión
-            </Link>
+            </a>
           </div>
         </aside>
 
@@ -146,7 +140,9 @@ export default async function DashboardLayout({
           {/* Topbar */}
           <header className="topbar">
             <div className="topbar-left">
-              Kiva360 <strong>· Dashboard</strong>
+              <span style={{ fontWeight: 600, color: '#1E293B' }}>Kiva360</span>
+              <span style={{ margin: '0 0.4rem', color: '#CBD5E1' }}>·</span>
+              <span>Panel de gestión escolar</span>
             </div>
             <div className="topbar-right">
               <div className="year-badge">2026</div>
