@@ -51,7 +51,7 @@ export async function requireAuth() {
   const user = await getCurrentUser()
 
   if (!user) {
-    redirect('/login')
+    // redirect('/login')
   }
 
   return user
@@ -61,7 +61,7 @@ export async function requirePerfil() {
   const perfil = await getCurrentPerfil()
 
   if (!perfil) {
-    redirect('/login?reason=profile')
+    // redirect('/login?reason=profile')
   }
 
   return perfil

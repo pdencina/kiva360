@@ -7,21 +7,8 @@ type CookieToSet = {
   options?: CookieOptions
 }
 
-const protectedPaths = [
-  '/dashboard',
-  '/cursos',
-  '/alumnos',
-  '/asistencia',
-  '/evaluaciones',
-  '/libro',
-  '/planificacion',
-  '/comunicacion',
-  '/integraciones',
-  '/reportes',
-]
-
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request })
+  let response = NextResponse.next()
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,12 +19,6 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet: CookieToSet[]) {
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value)
-          })
-
-          response = NextResponse.next({ request })
-
           cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options)
           })
@@ -46,27 +27,11 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  await supabase.auth.getUser()
 
-  const pathname = request.nextUrl.pathname
-  const isProtected = protectedPaths.some((path) => pathname.startsWith(path))
-
-  if (isProtected && !user) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    url.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(url)
-  }
-
-  // No redirigir login -> dashboard desde middleware.
-  // Esto evita loops cuando Supabase demora en persistir la cookie en Vercel.
   return response
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 }
