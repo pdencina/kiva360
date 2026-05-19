@@ -33,12 +33,9 @@ export function LoginForm() {
       return
     }
 
-    // ✅ Hard redirect — fuerza al browser a recargar completamente
-    // con todas las cookies de sesión ya seteadas
-    // Esto evita el loop que causa router.push() en Vercel
-    const params = new URLSearchParams(window.location.search)
-    const redirect = params.get('redirect') ?? '/dashboard'
-    window.location.href = redirect
+    // Hard redirect directo a /dashboard sin parámetros
+    // El middleware detecta la sesión y deja pasar
+    window.location.href = '/dashboard'
   }
 
   return (

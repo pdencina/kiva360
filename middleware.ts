@@ -3,9 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
+    request: { headers: request.headers },
   })
 
   const supabase = createServerClient(
@@ -20,9 +18,7 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
-          response = NextResponse.next({
-            request,
-          })
+          response = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           )
@@ -31,19 +27,16 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Refrescar sesión — no usar getSession() en middleware
   const { data: { user } } = await supabase.auth.getUser()
-
   const { pathname } = request.nextUrl
 
-  // Si va al dashboard sin sesión → login
+  // Sin sesión intentando entrar al dashboard → login
   if (!user && pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Si está en login CON sesión → dashboard
-  // ⚠️ Solo redirigir si viene del login directo, no si tiene ?redirect
-  if (user && pathname === '/login' && !request.nextUrl.searchParams.get('redirect')) {
+  // CON sesión en cualquier ruta de auth → dashboard siempre
+  if (user && (pathname === '/login' || pathname === '/register' || pathname === '/')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
@@ -51,8 +44,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/login',
-  ],
+  matcher: ['/', '/login', '/register', '/dashboard/:path*'],
 }
