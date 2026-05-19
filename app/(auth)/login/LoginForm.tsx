@@ -26,13 +26,13 @@ export default function LoginForm() {
         password,
       })
 
-      if (error) {
-        setError(error.message)
-        setLoading(false)
-        return
-      }
+if (error) {
+  setError(error.message)
+  setLoading(false)
+  return
+}
 
-      router.push('/dashboard')
+window.location.href = '/dashboard'
       router.refresh()
     } catch (err) {
       setError('Error inesperado')
