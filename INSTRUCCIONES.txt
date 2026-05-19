@@ -1,0 +1,20 @@
+REEMPLAZAR / CREAR ESTOS ARCHIVOS
+
+1) lib/supabase/server.ts
+2) lib/supabase/client.ts
+3) app/api/auth/login/route.ts
+4) app/(auth)/login/LoginForm.tsx
+5) app/test/page.tsx
+
+Luego:
+
+git add .
+git commit -m "fix auth with server side login route"
+git push origin main
+
+Prueba:
+1) Abre /login
+2) Ingresa admin@kiva360.cl + password
+3) Debe llevar a /dashboard
+4) Abre /test
+5) Debe mostrar JSON del usuario, no null
