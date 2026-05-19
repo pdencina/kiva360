@@ -1,308 +1,215 @@
 'use client'
 
-import { useState, useEffect, useCallback, useTransition } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { getAsistenciaSemana, guardarAsistencia } from '@/lib/actions/libro'
-import { format, parseISO } from 'date-fns'
-import { es } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
 
 type Estado = 'P' | 'A' | 'J'
+const CICLO: Estado[] = ['P', 'A', 'J']
+const LABEL: Record<Estado, string> = { P: 'Presente', A: 'Ausente', J: 'Justificado' }
+
+const CHIP_STYLE: Record<Estado, React.CSSProperties> = {
+  P: { background: '#E8F5E9', color: '#2E7D32', border: '1px solid #A5D6A7' },
+  A: { background: '#FFEBEE', color: '#C62828', border: '1px solid #FFCDD2' },
+  J: { background: '#FFF8E1', color: '#E65100', border: '1px solid #FFE082' },
+}
+
+const PCT_COLOR = (p: number | null) =>
+  !p ? '#94A3B8' : p >= 90 ? '#2E7D32' : p >= 75 ? '#E65100' : '#C62828'
 
 interface Props {
-  cursoId:        string
-  cursoNombre:    string
-  onVerHojaVida:  (alumnoId: string) => void
+  cursoId:     string
+  cursoNombre: string
+  onVerHoja:   (id: string) => void
 }
 
-const ESTADO_LABEL: Record<Estado, string> = { P: 'Presente', A: 'Ausente', J: 'Justificado' }
-const ESTADO_CLASS: Record<Estado, string> = {
-  P: 'bg-green-100 text-green-800 border-green-200',
-  A: 'bg-red-100   text-red-700   border-red-200',
-  J: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-}
+export function TabAsistencia({ cursoId, cursoNombre, onVerHoja }: Props) {
+  const [datos,    setDatos]    = useState<Awaited<ReturnType<typeof getAsistenciaSemana>> | null>(null)
+  const [cambios,  setCambios]  = useState<Record<string, Record<string, Estado>>>({})
+  const [loading,  setLoading]  = useState(true)
+  const [guardando,setGuardando]= useState(false)
+  const [guardado, setGuardado] = useState(false)
 
-const CICLO: Estado[] = ['P', 'A', 'J']
+  const hoy = new Date().toISOString().split('T')[0]
 
-export function TabAsistencia({ cursoId, cursoNombre, onVerHojaVida }: Props) {
-  const [datos,     setDatos]     = useState<Awaited<ReturnType<typeof getAsistenciaSemana>> | null>(null)
-  const [cambios,   setCambios]   = useState<Record<string, Record<string, Estado>>>({})
-  const [loading,   setLoading]   = useState(true)
-  const [guardando, setGuardando] = useState(false)
-  const [guardado,  setGuardado]  = useState(false)
-  const [, startTransition]       = useTransition()
-
-  const fechaHoy = format(new Date(), 'yyyy-MM-dd')
-
-  // Cargar datos
   useEffect(() => {
-    setLoading(true)
-    setCambios({})
-    getAsistenciaSemana(cursoId).then(d => {
-      setDatos(d)
-      setLoading(false)
-    })
+    setLoading(true); setCambios({})
+    getAsistenciaSemana(cursoId).then(d => { setDatos(d); setLoading(false) })
   }, [cursoId])
 
-  // Obtener estado actual (cambio pendiente o dato original)
-  const getEstado = useCallback(
-    (alumnoId: string, fecha: string): Estado | null => {
-      return (cambios[alumnoId]?.[fecha] ?? datos?.alumnos.find(a => a.id === alumnoId)?.semana[fecha] ?? null) as Estado | null
-    },
-    [cambios, datos]
-  )
+  const getEstado = useCallback((alumnoId: string, fecha: string): Estado | null => {
+    const cambio = cambios[alumnoId]?.[fecha]
+    if (cambio) return cambio
+    const orig = datos?.alumnos.find(a => a.id === alumnoId)?.semana[fecha]
+    return (orig as Estado) ?? null
+  }, [cambios, datos])
 
-  // Ciclar al hacer clic: null → P → A → J → P
-  const toggleEstado = (alumnoId: string, fecha: string) => {
-    const actual   = getEstado(alumnoId, fecha)
-    const idx      = actual ? CICLO.indexOf(actual) : -1
-    const siguiente = CICLO[(idx + 1) % CICLO.length]
-
-    setCambios(prev => ({
-      ...prev,
-      [alumnoId]: { ...prev[alumnoId], [fecha]: siguiente },
-    }))
+  const toggle = (alumnoId: string, fecha: string) => {
+    if (fecha !== hoy) return
+    const actual = getEstado(alumnoId, fecha)
+    const idx = actual ? CICLO.indexOf(actual) : -1
+    const next = CICLO[(idx + 1) % CICLO.length]
+    setCambios(prev => ({ ...prev, [alumnoId]: { ...prev[alumnoId], [fecha]: next } }))
     setGuardado(false)
   }
 
-  // Marcar todos presentes en una fecha
-  const marcarTodosPresentes = (fecha: string) => {
+  const marcarTodos = () => {
     if (!datos) return
-    const nuevos = { ...cambios }
-    for (const a of datos.alumnos) {
-      if (!nuevos[a.id]) nuevos[a.id] = {}
-      nuevos[a.id][fecha] = 'P'
-    }
-    setCambios(nuevos)
-    setGuardado(false)
+    const n = { ...cambios }
+    datos.alumnos.forEach(a => { if (!n[a.id]) n[a.id] = {}; n[a.id][hoy] = 'P' })
+    setCambios(n); setGuardado(false)
   }
 
-  // Guardar todos los cambios
   const guardar = async () => {
     if (!datos) return
     setGuardando(true)
-
-    // Consolidar todos los registros: combinar originales + cambios
-    const todosLosRegistros: { alumno_id: string; estado: Estado }[] = []
-
-    for (const alumno of datos.alumnos) {
-      const estadoHoy = getEstado(alumno.id, fechaHoy)
-      if (estadoHoy) {
-        todosLosRegistros.push({ alumno_id: alumno.id, estado: estadoHoy })
-      }
+    const registros = datos.alumnos
+      .map(a => ({ alumno_id: a.id, estado: getEstado(a.id, hoy) ?? 'P' }))
+    const result = await guardarAsistencia({ cursoId, fecha: hoy, registros })
+    if (result.success) {
+      setGuardado(true); setCambios({})
+      const nuevos = await getAsistenciaSemana(cursoId)
+      setDatos(nuevos)
     }
-
-    if (todosLosRegistros.length === 0) {
-      setGuardando(false)
-      return
-    }
-
-    startTransition(async () => {
-      const result = await guardarAsistencia({
-        cursoId,
-        fecha: fechaHoy,
-        registros: todosLosRegistros,
-      })
-
-      if (result.success) {
-        setGuardado(true)
-        setCambios({})
-        // Recargar datos
-        const nuevos = await getAsistenciaSemana(cursoId)
-        setDatos(nuevos)
-      }
-      setGuardando(false)
-    })
+    setGuardando(false)
   }
 
-  // Calcular stats de hoy
-  const statsHoy = datos?.alumnos.reduce(
-    (acc, a) => {
-      const e = getEstado(a.id, fechaHoy)
-      if (e === 'P') acc.p++
-      else if (e === 'A') acc.a++
-      else if (e === 'J') acc.j++
-      else acc.sin++
-      return acc
-    },
-    { p: 0, a: 0, j: 0, sin: 0 }
+  const stats = datos?.alumnos.reduce((acc, a) => {
+    const e = getEstado(a.id, hoy)
+    if (e === 'P') acc.p++; else if (e === 'A') acc.a++; else if (e === 'J') acc.j++; else acc.sin++
+    return acc
+  }, { p: 0, a: 0, j: 0, sin: 0 })
+
+  const total   = datos?.alumnos.length ?? 0
+  const pctHoy  = stats && total > 0 ? Math.round((stats.p / total) * 100) : null
+  const hayPend = Object.keys(cambios).length > 0
+
+  const formatFecha = (f: string) => {
+    const d = new Date(f + 'T12:00:00')
+    return d.toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' })
+  }
+
+  if (loading) return (
+    <div style={{ background: 'white', borderRadius: '14px', padding: '1.5rem', border: '1px solid #E2E8F0' }}>
+      <div style={{ background: '#F1F5F9', height: '20px', borderRadius: '8px', width: '40%', marginBottom: '1rem' }} />
+      {[...Array(6)].map((_, i) => <div key={i} style={{ background: '#F8FAFC', height: '44px', borderRadius: '8px', marginBottom: '0.5rem' }} />)}
+    </div>
   )
-
-  const total     = datos?.alumnos.length ?? 0
-  const pctHoy    = statsHoy && total > 0
-    ? Math.round(((statsHoy.p) / total) * 100)
-    : null
-
-  const hayPendientes = Object.keys(cambios).length > 0
-
-  if (loading) {
-    return (
-      <div className="card animate-pulse">
-        <div className="h-6 bg-gray-100 rounded w-1/3 mb-4" />
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-10 bg-gray-50 rounded mb-2" />
-        ))}
-      </div>
-    )
-  }
 
   if (!datos) return null
 
   return (
-    <div className="space-y-4">
-      {/* Header con stats y acciones */}
-      <div className="card">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="font-semibold text-gray-900">
-              {cursoNombre} · {format(new Date(), "EEEE d 'de' MMMM", { locale: es })}
-            </h2>
-            <div className="flex items-center gap-3 mt-1">
-              {statsHoy && (
-                <>
-                  <span className="text-xs text-green-700 font-semibold">{statsHoy.p} presentes</span>
-                  {statsHoy.a > 0 && <span className="text-xs text-red-600 font-semibold">{statsHoy.a} ausentes</span>}
-                  {statsHoy.j > 0 && <span className="text-xs text-yellow-700 font-semibold">{statsHoy.j} justificados</span>}
-                  {statsHoy.sin > 0 && <span className="text-xs text-gray-400">{statsHoy.sin} sin marcar</span>}
-                  {pctHoy !== null && (
-                    <span className={cn(
-                      'text-xs font-bold px-2 py-0.5 rounded-full',
-                      pctHoy >= 90 ? 'bg-green-100 text-green-800' :
-                      pctHoy >= 75 ? 'bg-yellow-100 text-yellow-800' :
-                                     'bg-red-100 text-red-700'
-                    )}>
-                      {pctHoy}% asistencia
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
+    <div style={{ background: 'white', borderRadius: '14px', border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+      {/* Header */}
+      <div style={{ padding: '1rem 1.2rem', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.8rem' }}>
+        <div>
+          <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.9rem' }}>
+            {cursoNombre} · {new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })}
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => marcarTodosPresentes(fechaHoy)}
-              className="btn btn-outline text-sm"
-            >
-              ✓ Todos presentes
-            </button>
-            <button
-              onClick={guardar}
-              disabled={guardando || !hayPendientes}
-              className={cn(
-                'btn btn-primary text-sm',
-                (!hayPendientes && !guardando) && 'opacity-50 cursor-not-allowed'
+          <div style={{ display: 'flex', gap: '0.8rem', marginTop: '0.3rem', fontSize: '0.75rem', flexWrap: 'wrap' }}>
+            {stats && <>
+              <span style={{ color: '#2E7D32', fontWeight: 600 }}>{stats.p} presentes</span>
+              {stats.a > 0 && <span style={{ color: '#C62828', fontWeight: 600 }}>{stats.a} ausentes</span>}
+              {stats.j > 0 && <span style={{ color: '#E65100', fontWeight: 600 }}>{stats.j} justificados</span>}
+              {stats.sin > 0 && <span style={{ color: '#94A3B8' }}>{stats.sin} sin marcar</span>}
+              {pctHoy !== null && (
+                <span style={{
+                  fontWeight: 700, padding: '0.1rem 0.5rem', borderRadius: '20px',
+                  background: pctHoy >= 90 ? '#E8F5E9' : pctHoy >= 75 ? '#FFF8E1' : '#FFEBEE',
+                  color: PCT_COLOR(pctHoy)
+                }}>{pctHoy}%</span>
               )}
-            >
-              {guardando ? 'Guardando...' : guardado ? '✓ Guardado' : '💾 Guardar'}
-            </button>
+            </>}
           </div>
         </div>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button onClick={marcarTodos} style={{
+            padding: '0.45rem 0.9rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 600,
+            background: 'white', border: '1px solid #E2E8F0', color: '#475569', cursor: 'pointer'
+          }}>✓ Todos presentes</button>
+          <button onClick={guardar} disabled={guardando || !hayPend} style={{
+            padding: '0.45rem 0.9rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 600,
+            background: guardado ? '#E8F5E9' : '#1976D2', color: guardado ? '#2E7D32' : 'white',
+            border: 'none', cursor: hayPend ? 'pointer' : 'not-allowed', opacity: (!hayPend && !guardando) ? 0.5 : 1
+          }}>
+            {guardando ? 'Guardando...' : guardado ? '✓ Guardado' : '💾 Guardar'}
+          </button>
+        </div>
+      </div>
 
-        {/* Tabla */}
-        <div className="overflow-x-auto">
-          <table className="kimen-table w-full">
-            <thead>
-              <tr>
-                <th className="w-8">N°</th>
-                <th>Estudiante</th>
-                <th className="w-8">SEP</th>
-                {datos.fechas.map(fecha => (
-                  <th key={fecha} className="text-center min-w-[72px]">
-                    <div className="text-[10px] text-gray-400 capitalize">
-                      {format(parseISO(fecha), 'EEE', { locale: es })}
-                    </div>
-                    <div className={cn(
-                      'font-bold',
-                      fecha === fechaHoy ? 'text-blue-600' : 'text-gray-600'
-                    )}>
-                      {format(parseISO(fecha), 'd MMM', { locale: es })}
-                    </div>
-                  </th>
-                ))}
-                <th className="text-center">% Mes</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {datos.alumnos.map(alumno => (
-                <tr key={alumno.id}>
-                  <td className="text-gray-400 text-xs tabular-nums">{alumno.numero}</td>
-                  <td className="font-semibold">{alumno.nombre_completo}</td>
-                  <td className="text-center">
-                    {alumno.alumno_sep && (
-                      <span className="text-[10px] font-bold bg-purple-100 text-purple-700 px-1 py-0.5 rounded">
-                        SEP
-                      </span>
-                    )}
-                  </td>
-
-                  {datos.fechas.map(fecha => {
-                    const estado = getEstado(alumno.id, fecha)
-                    const esHoy  = fecha === fechaHoy
-                    return (
-                      <td key={fecha} className="text-center">
-                        <button
-                          onClick={() => esHoy ? toggleEstado(alumno.id, fecha) : undefined}
-                          disabled={!esHoy}
-                          title={estado ? ESTADO_LABEL[estado] : 'Sin marcar'}
-                          className={cn(
-                            'w-9 h-7 rounded-lg text-xs font-bold border transition-all',
-                            estado
-                              ? ESTADO_CLASS[estado]
-                              : 'bg-gray-50 text-gray-300 border-gray-100',
-                            esHoy && 'cursor-pointer hover:scale-110 active:scale-95',
-                            !esHoy && 'cursor-default opacity-80'
-                          )}
-                        >
-                          {estado ?? '·'}
-                        </button>
-                      </td>
-                    )
-                  })}
-
-                  {/* % mes */}
-                  <td className="text-center">
-                    {alumno.pct_mes !== null ? (
-                      <span className={cn(
-                        'text-xs font-bold tabular-nums',
-                        alumno.pct_mes >= 90 ? 'text-teal-700' :
-                        alumno.pct_mes >= 75 ? 'text-yellow-700' :
-                                               'text-red-600'
-                      )}>
-                        {alumno.pct_mes}%
-                        {alumno.pct_mes < 75 && ' ⚠️'}
-                      </span>
-                    ) : (
-                      <span className="text-gray-300 text-xs">—</span>
-                    )}
-                  </td>
-
-                  {/* Hoja de vida */}
-                  <td>
-                    <button
-                      onClick={() => onVerHojaVida(alumno.id)}
-                      className="text-xs text-blue-500 hover:text-blue-700 hover:underline"
-                    >
-                      Ver →
-                    </button>
-                  </td>
-                </tr>
+      {/* Tabla */}
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+          <thead>
+            <tr style={{ background: '#F8FAFC' }}>
+              <th style={{ padding: '0.5rem 0.8rem', textAlign: 'left', fontWeight: 700, color: '#64748B', fontSize: '0.7rem', whiteSpace: 'nowrap' }}>N°</th>
+              <th style={{ padding: '0.5rem 0.8rem', textAlign: 'left', fontWeight: 700, color: '#64748B', fontSize: '0.7rem' }}>Estudiante</th>
+              <th style={{ padding: '0.5rem 0.4rem', textAlign: 'center', fontWeight: 700, color: '#64748B', fontSize: '0.7rem' }}>Info</th>
+              {datos.fechas.map(f => (
+                <th key={f} style={{ padding: '0.5rem 0.4rem', textAlign: 'center', minWidth: '70px' }}>
+                  <div style={{ fontSize: '0.62rem', color: '#94A3B8', textTransform: 'capitalize' }}>
+                    {new Date(f + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'short' })}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: f === hoy ? '#1976D2' : '#475569' }}>
+                    {new Date(f + 'T12:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short' })}
+                  </div>
+                </th>
               ))}
-            </tbody>
-          </table>
-        </div>
+              <th style={{ padding: '0.5rem 0.8rem', textAlign: 'center', fontWeight: 700, color: '#64748B', fontSize: '0.7rem' }}>% Mes</th>
+              <th style={{ padding: '0.5rem 0.8rem' }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {datos.alumnos.map((a, i) => (
+              <tr key={a.id} style={{ borderTop: '1px solid #F1F5F9' }}>
+                <td style={{ padding: '0.55rem 0.8rem', color: '#94A3B8', fontSize: '0.72rem' }}>{a.numero}</td>
+                <td style={{ padding: '0.55rem 0.8rem', fontWeight: 600, color: '#0F172A' }}>{a.nombre_completo}</td>
+                <td style={{ padding: '0.55rem 0.4rem', textAlign: 'center' }}>
+                  {a.alumno_sep && <span style={{ fontSize: '0.6rem', fontWeight: 700, background: '#EDE7F6', color: '#4527A0', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>SEP</span>}
+                  {a.beneficio_pae && <span style={{ fontSize: '0.6rem', fontWeight: 700, background: '#FFF3E0', color: '#BF360C', padding: '0.1rem 0.35rem', borderRadius: '4px', marginLeft: '2px' }}>PAE</span>}
+                </td>
+                {datos.fechas.map(f => {
+                  const estado = getEstado(a.id, f)
+                  const esHoy  = f === hoy
+                  return (
+                    <td key={f} style={{ padding: '0.55rem 0.4rem', textAlign: 'center' }}>
+                      <button
+                        onClick={() => toggle(a.id, f)}
+                        disabled={!esHoy}
+                        title={estado ? LABEL[estado] : 'Sin marcar'}
+                        style={{
+                          width: '36px', height: '26px', borderRadius: '6px',
+                          fontSize: '0.72rem', fontWeight: 700, cursor: esHoy ? 'pointer' : 'default',
+                          ...(estado ? CHIP_STYLE[estado] : { background: '#F8FAFC', color: '#CBD5E1', border: '1px solid #F1F5F9' }),
+                          transition: 'all 0.15s',
+                        }}
+                      >
+                        {estado ?? '·'}
+                      </button>
+                    </td>
+                  )
+                })}
+                <td style={{ padding: '0.55rem 0.8rem', textAlign: 'center', fontWeight: 700, color: PCT_COLOR(a.pct_mes), fontSize: '0.78rem', fontFamily: 'monospace' }}>
+                  {a.pct_mes !== null ? `${a.pct_mes}%${a.pct_mes < 75 ? ' ⚠️' : ''}` : '—'}
+                </td>
+                <td style={{ padding: '0.55rem 0.8rem' }}>
+                  <button onClick={() => onVerHoja(a.id)} style={{ fontSize: '0.72rem', color: '#1976D2', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
+                    Ver →
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        {/* Leyenda */}
-        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
-          <span className="text-xs text-gray-400 font-medium">Haz clic para cambiar:</span>
-          {(['P','A','J'] as Estado[]).map(e => (
-            <span key={e} className={cn(
-              'text-xs font-bold px-2 py-0.5 rounded border',
-              ESTADO_CLASS[e]
-            )}>
-              {e} = {ESTADO_LABEL[e]}
-            </span>
-          ))}
-        </div>
+      {/* Leyenda */}
+      <div style={{ padding: '0.7rem 1.2rem', borderTop: '1px solid #F1F5F9', display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 600 }}>Clic para cambiar:</span>
+        {(['P','A','J'] as Estado[]).map(e => (
+          <span key={e} style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.5rem', borderRadius: '5px', ...CHIP_STYLE[e] }}>
+            {e} = {LABEL[e]}
+          </span>
+        ))}
       </div>
     </div>
   )

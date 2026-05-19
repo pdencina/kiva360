@@ -1,34 +1,24 @@
+// ═══════════════════════════════════════════════════════════════
+// components/libro/SelectorCurso.tsx
+// ═══════════════════════════════════════════════════════════════
 'use client'
 
-import { cn } from '@/lib/utils'
-
-interface Curso {
-  id:     string
-  nombre: string
-  nivel:  string
-}
-
-interface Props {
-  cursos:   Curso[]
-  activo:   string
-  onChange: (id: string) => void
-}
+interface Curso { id: string; nombre: string; nivel: string }
+interface Props  { cursos: Curso[]; activo: string; onChange: (id: string) => void }
 
 export function SelectorCurso({ cursos, activo, onChange }: Props) {
   return (
-    <div className="flex gap-2 flex-wrap mb-5">
-      {cursos.map(curso => (
-        <button
-          key={curso.id}
-          onClick={() => onChange(curso.id)}
-          className={cn(
-            'px-3.5 py-1.5 rounded-xl text-sm font-semibold border transition-all',
-            curso.id === activo
-              ? 'bg-blue-600 text-white border-blue-600'
-              : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600'
-          )}
-        >
-          {curso.nombre}
+    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
+      {cursos.map(c => (
+        <button key={c.id} onClick={() => onChange(c.id)} style={{
+          padding: '0.35rem 0.9rem', borderRadius: '10px',
+          fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', border: 'none',
+          background: c.id === activo ? '#1976D2' : 'white',
+          color:      c.id === activo ? 'white'   : '#475569',
+          boxShadow:  c.id === activo ? '0 2px 8px rgba(25,118,210,0.3)' : '0 1px 3px rgba(0,0,0,0.08)',
+          transition: 'all 0.15s',
+        }}>
+          {c.nombre}
         </button>
       ))}
     </div>
