@@ -1,72 +1,90 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
-export default function LoginForm() {
-  const [email, setEmail] = useState('admin@kiva360.cl')
+export function LoginForm() {
+  const router = useRouter()
+  const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loading,  setLoading]  = useState(false)
+  const [error,    setError]    = useState<string | null>(null)
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
+    setError(null)
 
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
+    const supabase = createClient()
 
-    const result = await response.json()
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (!response.ok) {
-      setError(result.error ?? 'No se pudo iniciar sesión.')
+    if (error) {
+      setError(
+        error.message === 'Invalid login credentials'
+          ? 'Correo o contraseña incorrectos'
+          : error.message === 'Email not confirmed'
+          ? 'Debes confirmar tu correo antes de ingresar'
+          : 'Error al iniciar sesión. Intenta nuevamente.'
+      )
       setLoading(false)
       return
     }
 
-    window.location.replace('/dashboard')
+    // ⚠️ FIX CRÍTICO para Vercel:
+    // router.refresh() fuerza a Next.js a re-leer las cookies del servidor
+    // Sin esto, el middleware no ve la sesión nueva y redirige de vuelta al login
+    router.refresh()
+
+    // Pequeña espera para que las cookies se propaguen antes del redirect
+    await new Promise(r => setTimeout(r, 100))
+
+    // Verificar si hay un redirect pendiente en la URL
+    const params = new URLSearchParams(window.location.search)
+    const redirect = params.get('redirect') ?? '/dashboard'
+
+    router.push(redirect)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+    <form onSubmit={handleLogin} className="flex flex-col gap-4">
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-1.5">
           Correo electrónico
         </label>
         <input
           type="email"
-          placeholder="admin@kiva360.cl"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="director@colegio.cl"
           required
           autoComplete="email"
-          className="input h-14 text-base rounded-2xl bg-gray-50 border-gray-100 focus:bg-white"
+          className="input"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-bold text-gray-700 mb-1.5">
-          Contraseña
-        </label>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="text-sm font-bold text-gray-700">Contraseña</label>
+          <a href="/recover" className="text-xs text-blue-600 hover:underline">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
         <input
           type="password"
-          placeholder="••••••••"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
+          placeholder="••••••••"
           required
           autoComplete="current-password"
-          className="input h-14 text-base rounded-2xl bg-gray-50 border-gray-100 focus:bg-white"
+          className="input"
         />
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -75,7 +93,7 @@ export default function LoginForm() {
         type="submit"
         disabled={loading}
         className={cn(
-          'btn btn-primary w-full justify-center h-14 text-base mt-3 rounded-2xl shadow-lg shadow-primary-700/20',
+          'btn btn-primary w-full justify-center py-3 text-base mt-1',
           loading && 'opacity-60 cursor-not-allowed'
         )}
       >
