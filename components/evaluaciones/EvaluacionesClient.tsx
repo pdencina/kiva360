@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useActionState, useTransition } from 'react'
-import { crearEvaluacion, calificarEvaluacion } from '@/lib/actions/evaluaciones'
+import { useState, useTransition } from 'react'
+import { crearEvaluacion } from '@/lib/actions/evaluaciones'
 
 type Evaluacion = {
   id: string
