@@ -1,68 +1,179 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ═══════════════════════════════════════════════════════
+   Kiva360 — Sistema de diseño global
+   Paleta Notion-inspired: descansada, sin colores agresivos
+   ═══════════════════════════════════════════════════════ */
 
-@layer base {
-  :root {
-    --sidebar-width: 240px;
-    --topbar-height: 54px;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-  /* Scrollbar personalizado */
-  ::-webkit-scrollbar        { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track  { background: transparent; }
-  ::-webkit-scrollbar-thumb  { background: #CFD8DC; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #90A4AE; }
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #F5F6FA;
+  color: #37352F;
+  margin: 0;
 }
 
-@layer components {
-  /* Card base reutilizable */
-  .card {
-    @apply bg-white rounded-2xl border border-gray-200 p-5 transition-shadow duration-200;
-  }
-  .card:hover {
-    @apply shadow-md;
-  }
+/* ── Variables globales ── */
+:root {
+  --c-bg:       #F5F6FA;
+  --c-surface:  #FFFFFF;
+  --c-border:   #E8E8E5;
+  --c-border-2: #EFEFED;
+  --c-text:     #37352F;
+  --c-text-2:   #6B6B6B;
+  --c-text-3:   #9B9A97;
+  --c-accent:   #37352F;
+  --c-hover:    #EFEEEB;
+  --radius:     8px;
+  --radius-lg:  10px;
+}
 
-  /* Pill / Badge */
-  .pill {
-    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold whitespace-nowrap;
-  }
+/* ── Reset de colores agresivos ── */
 
-  /* Tabla estilo Kiva360 */
-  .kiva360-table th {
-    @apply bg-gray-50 px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wide whitespace-nowrap;
-  }
-  .kiva360-table td {
-    @apply px-3 py-2.5 border-b border-gray-100 text-sm text-gray-800;
-  }
-  .kiva360-table tr:last-child td {
-    @apply border-b-0;
-  }
-  .kiva360-table tr:hover td {
-    @apply bg-blue-50/30;
-  }
+/* Botones azules → oscuro neutro */
+button[style*="background: #1976D2"],
+button[style*="background:#1976D2"],
+button[style*="background: rgb(25, 118, 210)"],
+a[style*="background: #1976D2"],
+a[style*="background:#1976D2"] {
+  background: #37352F !important;
+  box-shadow: none !important;
+}
 
-  /* Botones */
-  .btn {
-    @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-150 border-none cursor-pointer;
-  }
-  .btn-primary {
-    @apply bg-primary-700 text-white shadow-sm hover:bg-primary-800 hover:-translate-y-px;
-  }
-  .btn-outline {
-    @apply bg-white text-gray-800 border border-gray-200 hover:border-primary-500 hover:text-primary-700;
-  }
-  .btn-success {
-    @apply bg-green-700 text-white hover:bg-green-800;
-  }
-  .btn-danger {
-    @apply bg-red-50 text-red-700 border border-red-200 hover:bg-red-100;
-  }
+/* Botones con clase btn-primary */
+.btn-primary,
+[class*="btn"][style*="blue"],
+[class*="btn"][style*="#1976"] {
+  background: #37352F !important;
+  box-shadow: none !important;
+}
 
-  /* Input base */
-  .input {
-    @apply w-full border border-gray-200 rounded-xl px-3 py-2 text-sm font-sans outline-none transition-all duration-150
-           focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15;
-  }
+/* Tabs activos azul → línea oscura */
+button[style*="border-bottom: 2.5px solid #1976D2"],
+button[style*="border-bottom: 2.5px solid rgb(25"] {
+  border-bottom-color: #37352F !important;
+  color: #37352F !important;
+}
+
+/* Chips de curso activos */
+button[style*="background: #1976D2"][style*="border-radius"] {
+  background: #37352F !important;
+  color: white !important;
+  box-shadow: none !important;
+}
+
+/* Cards con borde superior de colores → sin borde */
+div[style*="border-top: 4px solid"],
+div[style*="borderTop: 4px solid"] {
+  border-top: 1px solid var(--c-border) !important;
+}
+
+/* Badges coloridos → neutro */
+div[style*="background: #E3F2FD"],
+div[style*="background: #EDE7F6"],
+div[style*="background: #E0F2F1"],
+div[style*="background: #FFF3E0"],
+div[style*="background: #FFEBEE"] {
+  background: var(--c-hover) !important;
+  color: var(--c-text-2) !important;
+  border-color: var(--c-border) !important;
+}
+
+/* Fondos de cards blancos → mantener blancos */
+div[style*="background: white"],
+div[style*="background: #fff"],
+div[style*="background: #FFFFFF"] {
+  border-color: var(--c-border) !important;
+}
+
+/* Stats tags coloridos */
+span[style*="background: #ECFDF5"],
+span[style*="background: #FFFBEB"],
+span[style*="background: #EFF6FF"],
+span[style*="background: #FEF2F2"] {
+  background: var(--c-hover) !important;
+  color: var(--c-text-2) !important;
+}
+
+/* Botón "SIGE Conectado", "SAE Conectado" etc */
+div[style*="background: #E8F5E9"],
+div[style*="background: #E8F5E9"] {
+  background: var(--c-hover) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text-2) !important;
+}
+
+/* Alertas naranja/amarillo → crema suave */
+div[style*="background: #FFF3E0"],
+div[style*="background: #FFFBEB"],
+div[style*="background: #FFF8E1"] {
+  background: #FAF9F6 !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text-2) !important;
+}
+
+/* Alertas rojas → crema con borde gris */
+div[style*="background: #FFEBEE"],
+div[style*="background: #FEF2F2"] {
+  background: #FAF9F6 !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text-2) !important;
+}
+
+/* Alertas verdes */
+div[style*="background: #E8F5E9"],
+div[style*="background: #ECFDF5"] {
+  background: #FAF9F6 !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text-2) !important;
+}
+
+/* Tabs con borde azul → gris */
+[style*="border-color: #1976D2"],
+[style*="border-color: rgb(25, 118"] {
+  border-color: var(--c-text) !important;
+}
+
+/* Inputs focus azul → oscuro */
+input:focus, textarea:focus, select:focus {
+  border-color: #37352F !important;
+  box-shadow: 0 0 0 2px rgba(55,53,47,0.08) !important;
+  outline: none !important;
+}
+
+/* Tipografía global más suave */
+h1, h2, h3 { color: #37352F; letter-spacing: -0.03em; }
+p, span, div { color: inherit; }
+
+/* Scrollbar minimalista */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #E0DDD8; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #C8C5BF; }
+
+/* Tablas más limpias */
+table { border-collapse: collapse; }
+th {
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+  color: var(--c-text-3) !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  background: #FAFAF8 !important;
+}
+td { font-size: 0.82rem !important; color: var(--c-text) !important; }
+tr { border-bottom: 1px solid #F5F5F3 !important; }
+
+/* Selección de texto */
+::selection { background: rgba(55,53,47,0.08); color: #37352F; }
+
+/* Animación de entrada de páginas */
+.page > *, .page-content > * {
+  animation: fadeUp 0.2s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
