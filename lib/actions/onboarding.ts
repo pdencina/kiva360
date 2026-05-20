@@ -1,4 +1,5 @@
 'use server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
@@ -38,7 +39,7 @@ export async function guardarColegio(
   formData: FormData
 ): Promise<OnboardingState> {
   const supabase = await createClient()
-  const db = supabase as any
+  const db = createAdminClient()
 
   const {
     data: { user },
@@ -127,7 +128,7 @@ export async function guardarRol(
   formData: FormData
 ): Promise<OnboardingState> {
   const supabase = await createClient()
-  const db = supabase as any
+  const db = createAdminClient()
 
   const {
     data: { user },
@@ -194,7 +195,7 @@ export async function guardarIntegraciones(
   formData: FormData
 ): Promise<OnboardingState> {
   const supabase = await createClient()
-  const db = supabase as any
+  const db = createAdminClient()
 
   const {
     data: { user },
