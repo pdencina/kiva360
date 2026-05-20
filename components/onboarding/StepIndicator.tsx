@@ -1,53 +1,42 @@
-import { cn } from '@/lib/utils'
+// components/onboarding/StepIndicator.tsx — sin Tailwind
+// Ya no se usa directamente (el stepper está en OnboardingClient)
+// Exportamos para no romper imports existentes
+
 import type { StepId } from './OnboardingClient'
 
-interface Step {
-  id:    number
-  label: string
-}
-
-interface Props {
-  steps:   readonly Step[]
-  current: StepId
-}
+interface Step { id: number; label: string }
+interface Props { steps: readonly Step[]; current: StepId }
 
 export function StepIndicator({ steps, current }: Props) {
   return (
-    <div className="flex items-center gap-0">
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
       {steps.map((step, i) => {
         const done   = step.id < current
         const active = step.id === current
-
         return (
-          <div key={step.id} className="flex items-center gap-0">
-            <div className="flex items-center gap-1.5">
-              {/* Dot */}
-              <div
-                className={cn(
-                  'w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-all',
-                  done   && 'bg-teal-600 text-white',
-                  active && 'bg-blue-600 text-white ring-2 ring-blue-400/30',
-                  !done && !active && 'bg-blue-950 text-blue-800'
-                )}
-              >
+          <div key={step.id} style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <div style={{
+                width: '22px', height: '22px', borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '0.65rem', fontWeight: 700,
+                background: done ? '#37352F' : active ? '#37352F' : '#F0F0EE',
+                color: done || active ? 'white' : '#9B9A97',
+                transition: 'all 0.2s',
+              }}>
                 {done ? '✓' : step.id}
               </div>
-              {/* Label */}
-              <span
-                className={cn(
-                  'text-xs font-medium transition-colors',
-                  done   && 'text-teal-400',
-                  active && 'text-white',
-                  !done && !active && 'text-blue-900'
-                )}
-              >
+              <span style={{
+                fontSize: '0.72rem',
+                fontWeight: active ? 600 : 400,
+                color: done ? '#37352F' : active ? '#37352F' : '#9B9A97',
+                transition: 'all 0.2s',
+              }}>
                 {step.label}
               </span>
             </div>
-
-            {/* Separador */}
             {i < steps.length - 1 && (
-              <div className="w-5 h-px bg-blue-900 mx-1.5" />
+              <div style={{ width: '20px', height: '1px', background: '#E8E8E5', margin: '0 0.5rem' }} />
             )}
           </div>
         )
