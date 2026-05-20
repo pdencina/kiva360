@@ -141,7 +141,7 @@ export function EvaluacionesClient({ evaluaciones: inicial }: Props) {
               <button className="modal-close" onClick={() => setModalN(false)}>✕</button>
             </div>
             <form action={async (fd: FormData) => {
-              const result = await crearEvaluacion(fd)
+              const result = await crearEvaluacion({ error: null, success: false }, fd)
               if (result?.success) {
                 startT(() => { setModalN(false) })
                 window.location.reload()
