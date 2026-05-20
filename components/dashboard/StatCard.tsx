@@ -1,51 +1,26 @@
+// components/dashboard/StatCard.tsx — sin Tailwind
+
+const pctColor = (p: number | null) =>
+  !p ? '#9B9A97' : p >= 90 ? '#16A34A' : p >= 75 ? '#D97706' : '#DC2626'
+
 // ── StatCard ──────────────────────────────────────────────────
-import { cn } from '@/lib/utils'
-
-type AccentColor = 'blue' | 'green' | 'purple' | 'red' | 'yellow' | 'teal'
-type TagColor    = 'green' | 'red' | 'yellow' | 'blue'
-
-const accentBorder: Record<AccentColor, string> = {
-  blue:   'border-t-blue-700',
-  green:  'border-t-teal-600',
-  purple: 'border-t-purple-700',
-  red:    'border-t-red-500',
-  yellow: 'border-t-yellow-500',
-  teal:   'border-t-teal-500',
-}
-
-const tagStyle: Record<TagColor, string> = {
-  green:  'bg-green-100 text-green-800',
-  red:    'bg-red-100 text-red-700',
-  yellow: 'bg-yellow-100 text-yellow-800',
-  blue:   'bg-blue-100 text-blue-800',
-}
-
 interface StatCardProps {
-  icon:      string
-  value:     string
-  label:     string
-  accent:    AccentColor
-  tag?:      string
-  tagColor?: TagColor
+  value:  string
+  label:  string
+  tag?:   string
 }
 
-export function StatCard({ icon, value, label, accent, tag, tagColor = 'green' }: StatCardProps) {
+export function StatCard({ value, label, tag }: StatCardProps) {
   return (
-    <div className={cn('card border-t-4', accentBorder[accent])}>
-      <div className="text-xl mb-2">{icon}</div>
-      <div className="text-3xl font-extrabold text-gray-900 leading-none mb-1">{value}</div>
-      <div className="text-xs text-gray-500 font-medium">{label}</div>
-      {tag && (
-        <span className={cn('inline-block mt-2 text-[11px] font-bold px-1.5 py-0.5 rounded', tagStyle[tagColor])}>
-          {tag}
-        </span>
-      )}
+    <div style={{ background: 'white', border: '1px solid #E8E8E5', padding: '1.1rem' }}>
+      <div style={{ fontSize: '0.65rem', fontWeight: 600, color: '#9B9A97', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{label}</div>
+      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#37352F', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: '0.3rem' }}>{value}</div>
+      {tag && <div style={{ fontSize: '0.7rem', color: '#9B9A97' }}>{tag}</div>}
     </div>
   )
 }
 
 // ── AsistenciaBar ─────────────────────────────────────────────
-
 interface AsistenciaBarProps {
   nombre:     string
   porcentaje: number | null
@@ -53,32 +28,16 @@ interface AsistenciaBarProps {
   total:      number
 }
 
-const getBarColor = (pct: number | null) => {
-  if (!pct) return 'bg-gray-200'
-  if (pct >= 90) return 'bg-teal-600'
-  if (pct >= 75) return 'bg-yellow-500'
-  return 'bg-red-500'
-}
-
-const getPctColor = (pct: number | null) => {
-  if (!pct) return 'text-gray-400'
-  if (pct >= 90) return 'text-teal-700'
-  if (pct >= 75) return 'text-yellow-700'
-  return 'text-red-600'
-}
-
-export function AsistenciaBar({ nombre, porcentaje, presentes, total }: AsistenciaBarProps) {
+export function AsistenciaBar({ nombre, porcentaje }: AsistenciaBarProps) {
   const pct = porcentaje ?? 0
+  const col = pctColor(porcentaje)
   return (
-    <div className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
-      <div className="font-bold text-sm text-gray-800 w-12 flex-shrink-0">{nombre}</div>
-      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className={cn('h-full rounded-full transition-all duration-700', getBarColor(porcentaje))}
-          style={{ width: `${pct}%` }}
-        />
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid #F5F5F3' }}>
+      <div style={{ fontWeight: 600, fontSize: '0.75rem', color: '#37352F', width: '48px', flexShrink: 0 }}>{nombre}</div>
+      <div style={{ flex: 1, height: '5px', background: '#F0F0EE', borderRadius: '10px', overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${pct}%`, background: col, borderRadius: '10px', transition: 'width 0.7s' }} />
       </div>
-      <div className={cn('text-xs font-bold w-12 text-right tabular-nums', getPctColor(porcentaje))}>
+      <div style={{ fontSize: '0.72rem', fontWeight: 700, color: col, width: '36px', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
         {porcentaje !== null ? `${pct}%` : '—'}
       </div>
     </div>
@@ -86,7 +45,6 @@ export function AsistenciaBar({ nombre, porcentaje, presentes, total }: Asistenc
 }
 
 // ── EvalItem ──────────────────────────────────────────────────
-
 interface EvalItemProps {
   titulo:     string
   asignatura: string
@@ -94,31 +52,20 @@ interface EvalItemProps {
   fecha:      string
 }
 
-const ASIG_COLORS: Record<string, string> = {
-  'Matemáticas':    'bg-blue-500',
-  'Lenguaje':       'bg-purple-500',
-  'Cs. Naturales':  'bg-teal-600',
-  'Historia':       'bg-orange-500',
-  'Inglés':         'bg-sky-500',
-  'Música':         'bg-pink-500',
-}
-
 export function EvalItem({ titulo, asignatura, curso, fecha }: EvalItemProps) {
-  const dotColor = ASIG_COLORS[asignatura] ?? 'bg-gray-400'
   return (
-    <div className="flex items-center gap-2.5 py-2 border-b border-gray-50 last:border-0 text-sm">
-      <div className={cn('w-2 h-2 rounded-full flex-shrink-0', dotColor)} />
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold text-gray-800 truncate text-xs">{titulo}</div>
-        <div className="text-[11px] text-gray-400">{curso} · {asignatura}</div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid #F5F5F3' }}>
+      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C2C0BB', flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 500, fontSize: '0.75rem', color: '#37352F', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{titulo}</div>
+        <div style={{ fontSize: '0.68rem', color: '#9B9A97' }}>{curso} · {asignatura}</div>
       </div>
-      <div className="text-[11px] text-gray-500 flex-shrink-0">{fecha}</div>
+      <div style={{ fontSize: '0.68rem', color: '#9B9A97', flexShrink: 0 }}>{fecha}</div>
     </div>
   )
 }
 
 // ── IntegStatus ───────────────────────────────────────────────
-
 interface IntegStatusProps {
   integ: {
     sige?:   { conectado: boolean; alerta: string | null } | null
@@ -135,59 +82,28 @@ const INTEGS = [
 
 export function IntegStatus({ integ }: IntegStatusProps) {
   return (
-    <div className="card">
-      <h2 className="font-semibold text-gray-900 text-sm mb-3">Estado integraciones</h2>
-      <div className="space-y-2">
+    <div style={{ background: 'white', border: '1px solid #E8E8E5', borderRadius: '10px', padding: '1.1rem' }}>
+      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#37352F', marginBottom: '0.85rem' }}>Integraciones</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
         {INTEGS.map(({ key, icon, nombre }) => {
-          const data  = integ?.[key as keyof typeof integ]
+          const data   = integ?.[key as keyof typeof integ]
           const alerta = data?.alerta
           return (
-            <div key={key} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2">
-              <span className="text-base">{icon}</span>
-              <span className="text-xs font-semibold text-gray-800 flex-1">{nombre}</span>
-              {alerta ? (
-                <span className="text-[10px] font-bold bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded-full">
-                  {alerta}
-                </span>
-              ) : (
-                <span className="text-[10px] font-bold bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded-full">
-                  Conectado
-                </span>
-              )}
+            <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.6rem 0', borderBottom: '1px solid #F5F5F3' }}>
+              <span style={{ fontSize: '0.95rem', flexShrink: 0 }}>{icon}</span>
+              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#37352F', flex: 1 }}>{nombre}</span>
+              <div>
+                <div style={{ fontSize: '0.68rem', fontWeight: 600, color: alerta ? '#9B9A97' : '#6B6B6B' }}>
+                  {alerta ?? ''}
+                </div>
+              </div>
+              <span style={{ fontSize: '0.62rem', fontWeight: 600, color: alerta ? '#D97706' : '#9B9A97' }}>
+                {alerta ? '⚠ Alerta' : '● Activo'}
+              </span>
             </div>
           )
         })}
       </div>
-    </div>
-  )
-}
-
-// ── QuickActions ──────────────────────────────────────────────
-
-import Link from 'next/link'
-
-const ACTIONS = [
-  { icon: '✅', label: 'Pasar asistencia', href: '/libro'        },
-  { icon: '📝', label: 'Nueva evaluación', href: '/evaluaciones' },
-  { icon: '✉️', label: 'Enviar aviso',     href: '/comunicacion' },
-  { icon: '📅', label: 'Planificar clase', href: '/planificacion'},
-]
-
-export function QuickActions() {
-  return (
-    <div className="grid grid-cols-4 gap-3">
-      {ACTIONS.map(a => (
-        <Link
-          key={a.label}
-          href={a.href}
-          className="card text-center hover:border-blue-300 hover:bg-blue-50 transition-all group cursor-pointer"
-        >
-          <div className="text-2xl mb-1.5">{a.icon}</div>
-          <div className="text-xs font-semibold text-gray-700 group-hover:text-blue-700">
-            {a.label}
-          </div>
-        </Link>
-      ))}
     </div>
   )
 }

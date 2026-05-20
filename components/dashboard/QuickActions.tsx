@@ -1,51 +1,28 @@
-import Link from 'next/link'
+// components/dashboard/QuickActions.tsx — sin Tailwind
 
-const actions = [
-  {
-    href: '/cursos',
-    icon: '🏫',
-    title: 'Cursos',
-    description: 'Gestionar cursos',
-  },
-  {
-    href: '/alumnos',
-    icon: '👥',
-    title: 'Alumnos',
-    description: 'Matrícula activa',
-  },
-  {
-    href: '/asistencia',
-    icon: '✅',
-    title: 'Asistencia',
-    description: 'Registrar hoy',
-  },
-  {
-    href: '/evaluaciones',
-    icon: '📝',
-    title: 'Evaluaciones',
-    description: 'Crear pruebas',
-  },
+const ACTIONS = [
+  { icon: '✅', label: 'Pasar asistencia', href: '/libro'              },
+  { icon: '📝', label: 'Nueva evaluación', href: '/evaluaciones'       },
+  { icon: '✉️', label: 'Enviar aviso',     href: '/comunicacion'       },
+  { icon: '🔗', label: 'SIGE',             href: '/integraciones/sige' },
 ]
 
 export function QuickActions() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-      {actions.map((action) => (
-        <Link
-          key={action.href}
-          href={action.href}
-          className="group rounded-2xl bg-white border border-gray-200 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1px', background: '#E8E8E5', border: '1px solid #E8E8E5', borderRadius: '10px', overflow: 'hidden' }}>
+      {ACTIONS.map(a => (
+        <a key={a.label} href={a.href} style={{
+          background: 'white', padding: '1rem', textAlign: 'center',
+          textDecoration: 'none', color: '#6B6B6B', fontSize: '0.75rem',
+          fontWeight: 500, transition: 'background 0.12s, color 0.12s',
+          display: 'block', fontFamily: 'inherit',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#FAFAF8'; (e.currentTarget as HTMLElement).style.color = '#37352F'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'white'; (e.currentTarget as HTMLElement).style.color = '#6B6B6B'; }}
         >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-xl group-hover:bg-blue-100">
-              {action.icon}
-            </div>
-            <div>
-              <div className="font-bold text-gray-900 text-sm">{action.title}</div>
-              <div className="text-xs text-gray-400">{action.description}</div>
-            </div>
-          </div>
-        </Link>
+          <span style={{ fontSize: '1.1rem', display: 'block', marginBottom: '0.4rem' }}>{a.icon}</span>
+          {a.label}
+        </a>
       ))}
     </div>
   )

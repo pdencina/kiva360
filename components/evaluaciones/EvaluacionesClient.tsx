@@ -1,242 +1,189 @@
 'use client'
 
 import { useState, useActionState, useTransition } from 'react'
-import { crearEvaluacion } from '@/lib/actions/evaluaciones'
-import { CalificarModal } from './CalificarModal'
+import { crearEvaluacion, calificarEvaluacion } from '@/lib/actions/evaluaciones'
 
-const TIPO_COLOR: Record<string, string> = {
-  control:     '#1976D2',
-  prueba:      '#7B1FA2',
-  tarea:       '#00897B',
-  disertacion: '#E65100',
-  proyecto:    '#C62828',
-}
-
-const TIPO_BG: Record<string, string> = {
-  control:     '#E3F2FD',
-  prueba:      '#EDE7F6',
-  tarea:       '#E0F2F1',
-  disertacion: '#FFF3E0',
-  proyecto:    '#FFEBEE',
-}
-
-const ASIGNATURAS = ['Matemáticas', 'Lenguaje', 'Ciencias Naturales', 'Historia', 'Inglés', 'Educación Física', 'Artes', 'Música', 'Tecnología', 'Religión']
-const TIPOS       = ['control', 'prueba', 'tarea', 'disertacion', 'proyecto']
-
-interface Evaluacion {
+type Evaluacion = {
   id: string
   titulo: string
   asignatura: string
   tipo: string
-  fecha: string | null
-  ponderacion: number | null
-  curso_id: string
-  cursos?: { nombre: string; nivel: string } | null
+  fecha: string
+  ponderacion: number
+  estado: string
+  curso_nombre?: string
+  oa_asociados?: string[]
 }
 
 interface Props { evaluaciones: Evaluacion[] }
 
+const ASIGNATURAS = ['Matemáticas', 'Lenguaje', 'Ciencias', 'Historia', 'Inglés', 'Ed. Física', 'Artes', 'Música', 'Tecnología', 'Religión']
+const TIPOS       = ['prueba', 'control', 'tarea', 'proyecto', 'presentacion', 'disertacion']
+
+const tipoLabel = (t: string) => ({ prueba: 'Prueba', control: 'Control', tarea: 'Tarea', proyecto: 'Proyecto', presentacion: 'Presentación', disertacion: 'Disertación' }[t] ?? t)
+
+const estadoStyle = (e: string): React.CSSProperties =>
+  e === 'proxima' ? { background: '#FFFBEB', color: '#D97706', border: '1px solid #FDE68A' } :
+  e === 'pasada'  ? { background: '#F0F0EE', color: '#9B9A97', border: '1px solid #E8E8E5' } :
+                    { background: '#F0FDF4', color: '#16A34A', border: '1px solid #BBF7D0' }
+
 export function EvaluacionesClient({ evaluaciones: inicial }: Props) {
-  const [mostrarCrear,    setMostrarCrear]    = useState(false)
-  const [evalCalificar,   setEvalCalificar]   = useState<string | null>(null)
-  const [filtroAsig,      setFiltroAsig]      = useState('todas')
-  const [, startTransition]                  = useTransition()
+  const [evaluaciones, setEvals]  = useState(inicial)
+  const [filtro,       setFiltro] = useState('todas')
+  const [modalNueva,   setModalN] = useState(false)
+  const [modalCal,     setModalC] = useState<Evaluacion | null>(null)
+  const [, startT] = useTransition()
 
-  const [state, action, isPending] = useActionState(
-    async (prev: { error: string | null; success: boolean }, formData: FormData) => {
-      const result = await crearEvaluacion(prev, formData)
-      if (result.success) {
-        startTransition(() => setMostrarCrear(false))
-        window.location.reload()
-      }
-      return result
-    },
-    { error: null, success: false }
-  )
+  const ASIG_UNICAS = [...new Set(evaluaciones.map(e => e.asignatura))]
 
-  const hoy = new Date().toISOString().split('T')[0]
-
-  const asignaturas = ['todas', ...Array.from(new Set(inicial.map(e => e.asignatura)))]
-  const filtradas = filtroAsig === 'todas' ? inicial : inicial.filter(e => e.asignatura === filtroAsig)
-
-  const getEstado = (e: Evaluacion) => {
-    if (!e.fecha) return { label: 'Sin fecha', color: '#94A3B8', bg: '#F8FAFC' }
-    if (e.fecha > hoy) return { label: 'Próxima',    color: '#1976D2', bg: '#E3F2FD' }
-    if (e.fecha === hoy) return { label: 'Hoy',      color: '#E65100', bg: '#FFF3E0' }
-    return { label: 'Pasada', color: '#64748B', bg: '#F1F5F9' }
-  }
+  const filtradas = filtro === 'todas' ? evaluaciones
+    : evaluaciones.filter(e => e.asignatura === filtro)
 
   return (
-    <div>
-      {/* Filtros + botón crear */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.8rem' }}>
-        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-          {asignaturas.map(a => (
-            <button key={a} onClick={() => setFiltroAsig(a)} style={{
-              padding: '0.3rem 0.75rem', borderRadius: '20px', fontSize: '0.75rem',
-              fontWeight: 600, cursor: 'pointer', border: 'none', transition: 'all 0.15s',
-              background: filtroAsig === a ? '#0F172A' : '#F1F5F9',
-              color:      filtroAsig === a ? 'white'   : '#475569',
-            }}>
-              {a === 'todas' ? 'Todas' : a}
+    <>
+      <style>{`
+        .ev-wrap { width: 100%; font-family: 'Inter', system-ui, sans-serif; }
+
+        .ev-toolbar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .ev-filter-btn { font-size: 0.75rem; font-weight: 500; padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.12s; border: 1px solid #E8E8E5; background: white; color: #6B6B6B; }
+        .ev-filter-btn.active { background: #37352F; color: white; border-color: #37352F; }
+        .ev-filter-btn:hover:not(.active) { border-color: #37352F; color: #37352F; }
+        .ev-new-btn { margin-left: auto; font-size: 0.78rem; font-weight: 600; padding: 0.4rem 0.9rem; border-radius: 7px; cursor: pointer; font-family: inherit; background: #37352F; color: white; border: none; transition: background 0.12s; }
+        .ev-new-btn:hover { background: #1A1A1A; }
+
+        .ev-list { display: flex; flex-direction: column; gap: 0; background: white; border: 1px solid #E8E8E5; border-radius: 10px; overflow: hidden; }
+        .ev-item { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.25rem; border-bottom: 1px solid #F5F5F3; transition: background 0.1s; }
+        .ev-item:last-child { border-bottom: none; }
+        .ev-item:hover { background: #FAFAF8; }
+        .ev-dot { width: 7px; height: 7px; border-radius: 50%; background: #C2C0BB; flex-shrink: 0; }
+        .ev-info { flex: 1; min-width: 0; }
+        .ev-titulo { font-size: 0.82rem; font-weight: 600; color: #37352F; margin-bottom: 0.15rem; }
+        .ev-meta { font-size: 0.7rem; color: #9B9A97; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .ev-tipo-chip { font-size: 0.6rem; font-weight: 600; padding: 0.1rem 0.4rem; border-radius: 3px; background: #F0F0EE; color: #6B6B6B; }
+        .ev-fecha { font-size: 0.72rem; color: #9B9A97; flex-shrink: 0; }
+        .ev-estado { font-size: 0.62rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 20px; flex-shrink: 0; }
+        .ev-cal-btn { font-size: 0.72rem; font-weight: 500; color: #37352F; background: #F0F0EE; border: none; border-radius: 6px; padding: 0.3rem 0.7rem; cursor: pointer; font-family: inherit; flex-shrink: 0; transition: background 0.12s; }
+        .ev-cal-btn:hover { background: #E8E8E5; }
+
+        .ev-empty { background: white; border: 1px solid #E8E8E5; border-radius: 10px; padding: 3rem; text-align: center; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+        .modal-box { background: white; border-radius: 12px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,0.15); }
+        .modal-head { padding: 1.1rem 1.25rem; border-bottom: 1px solid #E8E8E5; display: flex; align-items: center; justify-content: space-between; }
+        .modal-title { font-size: 0.88rem; font-weight: 700; color: #37352F; letter-spacing: -0.02em; }
+        .modal-close { background: none; border: none; font-size: 1rem; cursor: pointer; color: #9B9A97; padding: 0; transition: color 0.12s; }
+        .modal-close:hover { color: #37352F; }
+        .modal-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; }
+        .modal-label { display: block; font-size: 0.72rem; font-weight: 500; color: #6B6B6B; margin-bottom: 0.35rem; }
+        .modal-input { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid #E8E8E5; border-radius: 7px; font-size: 0.82rem; color: #37352F; outline: none; font-family: inherit; transition: border-color 0.15s; }
+        .modal-input:focus { border-color: #37352F; box-shadow: 0 0 0 2px rgba(55,53,47,0.06); }
+        .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        .modal-foot { padding: 1rem 1.25rem; border-top: 1px solid #E8E8E5; display: flex; justify-content: flex-end; gap: 0.5rem; }
+        .modal-btn-cancel { font-size: 0.78rem; font-weight: 500; color: #6B6B6B; background: white; border: 1px solid #E8E8E5; border-radius: 7px; padding: 0.5rem 1rem; cursor: pointer; font-family: inherit; }
+        .modal-btn-ok { font-size: 0.78rem; font-weight: 600; color: white; background: #37352F; border: none; border-radius: 7px; padding: 0.5rem 1.1rem; cursor: pointer; font-family: inherit; transition: background 0.12s; }
+        .modal-btn-ok:hover { background: #1A1A1A; }
+        .modal-btn-ok:disabled { opacity: 0.5; cursor: not-allowed; }
+      `}</style>
+
+      <div className="ev-wrap">
+        {/* Toolbar */}
+        <div className="ev-toolbar">
+          <button className={`ev-filter-btn${filtro === 'todas' ? ' active' : ''}`} onClick={() => setFiltro('todas')}>
+            Todas
+          </button>
+          {ASIG_UNICAS.map(a => (
+            <button key={a} className={`ev-filter-btn${filtro === a ? ' active' : ''}`} onClick={() => setFiltro(a)}>
+              {a}
             </button>
           ))}
+          <button className="ev-new-btn" onClick={() => setModalN(true)}>+ Nueva evaluación</button>
         </div>
-        <button onClick={() => setMostrarCrear(true)} style={{
-          padding: '0.55rem 1.2rem', background: '#1976D2', color: 'white',
-          border: 'none', borderRadius: '10px', fontSize: '0.82rem', fontWeight: 700,
-          cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
-          boxShadow: '0 2px 8px rgba(25,118,210,0.3)',
-        }}>
-          + Nueva evaluación
-        </button>
+
+        {/* Lista */}
+        {filtradas.length === 0 ? (
+          <div className="ev-empty">
+            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📝</div>
+            <p style={{ fontSize: '0.82rem', color: '#9B9A97' }}>No hay evaluaciones. Crea la primera.</p>
+          </div>
+        ) : (
+          <div className="ev-list">
+            {filtradas.map(ev => (
+              <div key={ev.id} className="ev-item">
+                <div className="ev-dot" />
+                <div className="ev-info">
+                  <div className="ev-titulo">{ev.titulo}</div>
+                  <div className="ev-meta">
+                    <span>{ev.curso_nombre ?? '—'}</span>
+                    <span>·</span>
+                    <span>{ev.asignatura}</span>
+                    <span className="ev-tipo-chip">{tipoLabel(ev.tipo)}</span>
+                    <span>{ev.ponderacion}%</span>
+                  </div>
+                </div>
+                <div className="ev-fecha">{ev.fecha ? new Date(ev.fecha + 'T12:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short' }) : '—'}</div>
+                <span className="ev-estado" style={estadoStyle(ev.estado)}>
+                  {ev.estado === 'proxima' ? 'Próxima' : ev.estado === 'pasada' ? 'Pasada' : 'Activa'}
+                </span>
+                <button className="ev-cal-btn" onClick={() => setModalC(ev)}>Calificar →</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Lista */}
-      {filtradas.length === 0 ? (
-        <div style={{ background: 'white', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '3rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📝</div>
-          <div style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.3rem' }}>Sin evaluaciones</div>
-          <div style={{ fontSize: '0.82rem', color: '#64748B' }}>Crea la primera evaluación con el botón de arriba.</div>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-          {filtradas.map(ev => {
-            const estado = getEstado(ev)
-            return (
-              <div key={ev.id} style={{
-                background: 'white', borderRadius: '12px',
-                border: '1.5px solid #E2E8F0', padding: '1rem 1.2rem',
-                display: 'flex', alignItems: 'center', gap: '1rem',
-                transition: 'box-shadow 0.15s',
-              }}>
-                {/* Tipo chip */}
-                <div style={{
-                  width: '10px', height: '10px', borderRadius: '50%', flexShrink: 0,
-                  background: TIPO_COLOR[ev.tipo] ?? '#94A3B8',
-                }} />
-
-                {/* Info */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.88rem', marginBottom: '0.2rem' }}>
-                    {ev.titulo}
-                  </div>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>
-                      {ev.cursos?.nombre ?? '—'} · {ev.asignatura}
-                    </span>
-                    <span style={{ fontSize: '0.68rem', fontWeight: 700, padding: '0.1rem 0.45rem', borderRadius: '5px', background: TIPO_BG[ev.tipo] ?? '#F1F5F9', color: TIPO_COLOR[ev.tipo] ?? '#64748B' }}>
-                      {ev.tipo}
-                    </span>
-                    {ev.ponderacion && (
-                      <span style={{ fontSize: '0.68rem', color: '#94A3B8' }}>{ev.ponderacion}%</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Fecha */}
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 600, color: '#475569', marginBottom: '0.2rem' }}>
-                    {ev.fecha ? new Date(ev.fecha + 'T12:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short' }) : '—'}
-                  </div>
-                  <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '0.15rem 0.5rem', borderRadius: '20px', background: estado.bg, color: estado.color }}>
-                    {estado.label}
-                  </span>
-                </div>
-
-                {/* Acciones */}
-                <button
-                  onClick={() => setEvalCalificar(ev.id)}
-                  style={{
-                    padding: '0.4rem 0.9rem', background: '#1976D2', color: 'white',
-                    border: 'none', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700,
-                    cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
-                  }}
-                >
-                  Calificar →
-                </button>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Modal crear evaluación */}
-      {mostrarCrear && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-          zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
-        }} onClick={e => e.target === e.currentTarget && setMostrarCrear(false)}>
-          <div style={{
-            background: 'white', borderRadius: '16px', width: '100%', maxWidth: '520px',
-            maxHeight: '90vh', overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
-          }}>
-            <div style={{ padding: '1.3rem 1.5rem 1rem', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ fontWeight: 800, fontSize: '1rem', color: '#0F172A' }}>📝 Nueva evaluación</div>
-              <button onClick={() => setMostrarCrear(false)} style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#F1F5F9', border: 'none', cursor: 'pointer', fontSize: '0.9rem', color: '#64748B' }}>✕</button>
+      {/* Modal nueva evaluación */}
+      {modalNueva && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setModalN(false)}>
+          <div className="modal-box">
+            <div className="modal-head">
+              <span className="modal-title">Nueva evaluación</span>
+              <button className="modal-close" onClick={() => setModalN(false)}>✕</button>
             </div>
-
-            <form action={action} style={{ padding: '1.3rem 1.5rem' }}>
-              {state.error && (
-                <div style={{ background: '#FFEBEE', border: '1px solid #FFCDD2', borderRadius: '10px', padding: '0.7rem 1rem', fontSize: '0.82rem', color: '#C62828', marginBottom: '1rem' }}>
-                  {state.error}
-                </div>
-              )}
-
-              <div style={{ marginBottom: '0.9rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>Título</label>
-                <input name="titulo" required placeholder="Ej: Control de Fracciones Unidad 2" style={{ width: '100%', border: '1.5px solid #E2E8F0', borderRadius: '9px', padding: '0.55rem 0.8rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'system-ui' }} />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '0.9rem' }}>
+            <form action={async (fd: FormData) => {
+              const result = await crearEvaluacion(fd)
+              if (result?.success) {
+                startT(() => { setModalN(false) })
+                window.location.reload()
+              }
+            }}>
+              <div className="modal-body">
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>Asignatura</label>
-                  <select name="asignatura" required style={{ width: '100%', border: '1.5px solid #E2E8F0', borderRadius: '9px', padding: '0.55rem 0.8rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'system-ui' }}>
-                    {ASIGNATURAS.map(a => <option key={a}>{a}</option>)}
-                  </select>
+                  <label className="modal-label">Título *</label>
+                  <input name="titulo" className="modal-input" placeholder="Ej: Prueba Fracciones" required />
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>Tipo</label>
-                  <select name="tipo" required style={{ width: '100%', border: '1.5px solid #E2E8F0', borderRadius: '9px', padding: '0.55rem 0.8rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'system-ui' }}>
-                    {TIPOS.map(t => <option key={t}>{t}</option>)}
-                  </select>
+                <div className="modal-row">
+                  <div>
+                    <label className="modal-label">Asignatura *</label>
+                    <select name="asignatura" className="modal-input" required>
+                      {ASIGNATURAS.map(a => <option key={a} value={a}>{a}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="modal-label">Tipo *</label>
+                    <select name="tipo" className="modal-input" required>
+                      {TIPOS.map(t => <option key={t} value={t}>{tipoLabel(t)}</option>)}
+                    </select>
+                  </div>
                 </div>
-              </div>
-
-              <div style={{ marginBottom: '0.9rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>Curso</label>
-                <input name="curso_id" required placeholder="ID del curso (ej: 00000000-...)" style={{ width: '100%', border: '1.5px solid #E2E8F0', borderRadius: '9px', padding: '0.55rem 0.8rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'system-ui' }} />
-                <div style={{ fontSize: '0.65rem', color: '#94A3B8', marginTop: '0.3rem' }}>Próximamente será un selector. Por ahora ingresa el ID del curso desde Supabase.</div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '0.9rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>Fecha</label>
-                  <input name="fecha" type="date" required style={{ width: '100%', border: '1.5px solid #E2E8F0', borderRadius: '9px', padding: '0.55rem 0.8rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'system-ui' }} />
+                <div className="modal-row">
+                  <div>
+                    <label className="modal-label">Fecha *</label>
+                    <input name="fecha" type="date" className="modal-input" required defaultValue={new Date().toISOString().split('T')[0]} />
+                  </div>
+                  <div>
+                    <label className="modal-label">Ponderación (%) *</label>
+                    <input name="ponderacion" type="number" className="modal-input" min="1" max="100" defaultValue="20" required />
+                  </div>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>Ponderación (%)</label>
-                  <input name="ponderacion" type="number" min="0" max="100" placeholder="Ej: 30" style={{ width: '100%', border: '1.5px solid #E2E8F0', borderRadius: '9px', padding: '0.55rem 0.8rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'system-ui' }} />
+                  <label className="modal-label">OA asociados (opcional)</label>
+                  <input name="oa_asociados" className="modal-input" placeholder="Ej: OA3, OA5" />
                 </div>
               </div>
-
-              <div style={{ marginBottom: '1.2rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>Modalidad</label>
-                <select name="modalidad" style={{ width: '100%', border: '1.5px solid #E2E8F0', borderRadius: '9px', padding: '0.55rem 0.8rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'system-ui' }}>
-                  <option value="digital">Digital</option>
-                  <option value="papel">Papel</option>
-                  <option value="mixta">Mixta</option>
-                </select>
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', paddingTop: '1rem', borderTop: '1px solid #E2E8F0' }}>
-                <button type="button" onClick={() => setMostrarCrear(false)} style={{ padding: '0.55rem 1.1rem', background: 'white', color: '#475569', border: '1.5px solid #E2E8F0', borderRadius: '9px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}>
-                  Cancelar
-                </button>
-                <button type="submit" disabled={isPending} style={{ padding: '0.55rem 1.4rem', background: '#1976D2', color: 'white', border: 'none', borderRadius: '9px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', opacity: isPending ? 0.6 : 1 }}>
-                  {isPending ? 'Creando...' : '✓ Crear evaluación'}
-                </button>
+              <div className="modal-foot">
+                <button type="button" className="modal-btn-cancel" onClick={() => setModalN(false)}>Cancelar</button>
+                <button type="submit" className="modal-btn-ok">Crear evaluación →</button>
               </div>
             </form>
           </div>
@@ -244,12 +191,31 @@ export function EvaluacionesClient({ evaluaciones: inicial }: Props) {
       )}
 
       {/* Modal calificar */}
-      {evalCalificar && (
-        <CalificarModal
-          evalId={evalCalificar}
-          onCerrar={() => setEvalCalificar(null)}
-        />
+      {modalCal && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setModalC(null)}>
+          <div className="modal-box">
+            <div className="modal-head">
+              <span className="modal-title">Calificar — {modalCal.titulo}</span>
+              <button className="modal-close" onClick={() => setModalC(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ fontSize: '0.8rem', color: '#9B9A97' }}>
+                Para calificar esta evaluación, ve al Libro de Clases → Notas → {modalCal.curso_nombre}.
+              </p>
+              <div style={{ background: '#FAFAF8', borderRadius: '8px', padding: '0.85rem', fontSize: '0.78rem', color: '#37352F' }}>
+                <strong>{modalCal.titulo}</strong><br />
+                {modalCal.asignatura} · {tipoLabel(modalCal.tipo)} · {modalCal.ponderacion}%
+              </div>
+            </div>
+            <div className="modal-foot">
+              <button className="modal-btn-cancel" onClick={() => setModalC(null)}>Cerrar</button>
+              <a href="/libro" className="modal-btn-ok" style={{ textDecoration: 'none', display: 'inline-block' }}>
+                Ir al Libro →
+              </a>
+            </div>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   )
 }
