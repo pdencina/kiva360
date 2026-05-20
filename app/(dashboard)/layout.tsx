@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 
 export default async function DashboardLayout({
   children,
@@ -18,26 +17,26 @@ export default async function DashboardLayout({
     {
       section: 'Principal',
       items: [
-        { href: '/dashboard',         icon: '⊞', label: 'Inicio'          },
-        { href: '/libro',             icon: '▦',  label: 'Libro de Clases' },
-        { href: '/evaluaciones',      icon: '✎',  label: 'Evaluaciones',   badge: 3  },
-        { href: '/planificacion',     icon: '◫',  label: 'Planificación'   },
+        { href: '/dashboard',             label: 'Inicio',          icon: '○' },
+        { href: '/libro',                 label: 'Libro de Clases', icon: '▦' },
+        { href: '/evaluaciones',          label: 'Evaluaciones',    icon: '◈', badge: 3 },
+        { href: '/planificacion',         label: 'Planificación',   icon: '◫' },
       ]
     },
     {
       section: 'Integración',
       items: [
-        { href: '/integraciones/sige',   icon: '⬡', label: 'SIGE'    },
-        { href: '/integraciones/sae',    icon: '⬢', label: 'SAE'     },
-        { href: '/integraciones/junaeb', icon: '⬟', label: 'JUNAEB', badge: 2 },
+        { href: '/integraciones/sige',    label: 'SIGE',            icon: '⬡' },
+        { href: '/integraciones/sae',     label: 'SAE',             icon: '⬢' },
+        { href: '/integraciones/junaeb',  label: 'JUNAEB',          icon: '⬟', badge: 2 },
       ]
     },
     {
       section: 'Comunidad',
       items: [
-        { href: '/comunicacion', icon: '◉', label: 'Comunicación', badge: 5 },
-        { href: '/familias',     icon: '◈', label: 'Familias'      },
-        { href: '/reportes',     icon: '◧', label: 'Reportes'      },
+        { href: '/comunicacion',          label: 'Comunicación',    icon: '◉', badge: 5 },
+        { href: '/familias',              label: 'Familias',        icon: '◈' },
+        { href: '/reportes',              label: 'Reportes',        icon: '◧' },
       ]
     },
   ]
@@ -45,114 +44,331 @@ export default async function DashboardLayout({
   return (
     <>
       <style>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
-        .sidebar { width: 220px; background: #0B1120; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; display: flex; flex-direction: column; border-right: 1px solid rgba(99,102,241,0.15); }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; font-family: 'DM Sans', sans-serif; }
 
-        .sidebar-logo { padding: 1.2rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.6rem; }
-        .logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, #6366F1, #8B5CF6); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: white; }
-        .logo-text { font-size: 1rem; font-weight: 700; color: white; letter-spacing: -0.02em; }
-        .logo-sub  { font-size: 0.55rem; color: #6366F1; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+        :root {
+          --sidebar-w: 230px;
+          --amber: #F59E0B;
+          --amber-dim: rgba(245,158,11,0.12);
+          --surface: #0D1117;
+          --surface-2: #161B22;
+          --border: rgba(255,255,255,0.06);
+          --text: rgba(255,255,255,0.85);
+          --text-dim: rgba(255,255,255,0.35);
+          --content-bg: #F4F6F9;
+        }
 
-        .sidebar-user { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.6rem; }
-        .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #6366F1, #8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: white; flex-shrink: 0; }
-        .user-name { font-size: 0.75rem; color: #E2E8F0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .user-role { font-size: 0.6rem; color: #6366F1; }
+        /* ── SIDEBAR ── */
+        .sb {
+          position: fixed;
+          top: 0; left: 0; bottom: 0;
+          width: var(--sidebar-w);
+          background: var(--surface);
+          border-right: 1px solid var(--border);
+          display: flex;
+          flex-direction: column;
+          z-index: 100;
+        }
 
-        .nav-section { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(99,102,241,0.4); padding: 0.9rem 1rem 0.25rem; }
+        /* Glow sutil en el sidebar */
+        .sb::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 200px;
+          background: radial-gradient(ellipse at top left, rgba(245,158,11,0.06) 0%, transparent 70%);
+          pointer-events: none;
+        }
 
-        .nav-link { display: flex; align-items: center; gap: 0.6rem; padding: 0.48rem 1rem; font-size: 0.78rem; color: #94A3B8; text-decoration: none; transition: all 0.15s; }
-        .nav-link:hover { color: #E2E8F0; background: rgba(99,102,241,0.08); }
-        .nav-icon { font-size: 0.9rem; width: 16px; text-align: center; flex-shrink: 0; }
-        .nav-badge { margin-left: auto; background: #6366F1; color: white; font-size: 0.55rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 10px; min-width: 16px; text-align: center; }
+        .sb-logo {
+          padding: 1.2rem 1rem;
+          border-bottom: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          position: relative;
+        }
+        .sb-logo-mark {
+          width: 32px; height: 32px;
+          background: linear-gradient(135deg, #F59E0B, #EF4444);
+          border-radius: 8px;
+          display: flex; align-items: center; justify-content: center;
+          font-family: 'Syne', sans-serif;
+          font-weight: 800;
+          font-size: 0.9rem;
+          color: white;
+          box-shadow: 0 0 16px rgba(245,158,11,0.25);
+          flex-shrink: 0;
+        }
+        .sb-logo-text {
+          font-family: 'Syne', sans-serif;
+          font-weight: 700;
+          font-size: 1rem;
+          color: white;
+          letter-spacing: -0.02em;
+        }
+        .sb-logo-sub {
+          font-size: 0.52rem;
+          color: var(--amber);
+          font-weight: 500;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          opacity: 0.7;
+        }
 
-        .sidebar-footer { padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
-        .integ-label { font-size: 0.55rem; color: rgba(99,102,241,0.4); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
-        .integ-chips { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
-        .integ-chip { font-size: 0.58rem; font-weight: 600; padding: 0.12rem 0.45rem; border-radius: 4px; background: rgba(16,185,129,0.1); color: #10B981; border: 1px solid rgba(16,185,129,0.2); }
-        .signout-btn { display: block; text-align: center; font-size: 0.7rem; color: #475569; text-decoration: none; padding: 0.35rem; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); transition: all 0.15s; }
-        .signout-btn:hover { color: #94A3B8; }
+        .sb-user {
+          padding: 0.8rem 1rem;
+          border-bottom: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+        }
+        .sb-avatar {
+          width: 30px; height: 30px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #F59E0B40, #EF444430);
+          border: 1px solid rgba(245,158,11,0.3);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.62rem;
+          font-weight: 700;
+          color: var(--amber);
+          flex-shrink: 0;
+          font-family: 'Syne', sans-serif;
+        }
+        .sb-user-name {
+          font-size: 0.75rem;
+          color: var(--text);
+          font-weight: 500;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .sb-user-role {
+          font-size: 0.6rem;
+          color: var(--amber);
+          opacity: 0.7;
+          font-weight: 400;
+        }
 
-        .main { margin-left: 220px; min-height: 100vh; display: flex; flex-direction: column; background: #F8FAFC; }
+        .sb-nav { flex: 1; overflow-y: auto; padding: 0.5rem 0; }
+        .sb-nav::-webkit-scrollbar { width: 0; }
 
-        .topbar { height: 50px; background: white; border-bottom: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; position: sticky; top: 0; z-index: 90; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-        .topbar-left { font-size: 0.78rem; color: #94A3B8; }
+        .sb-section {
+          font-size: 0.52rem;
+          font-weight: 600;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: rgba(245,158,11,0.3);
+          padding: 1rem 1rem 0.3rem;
+        }
+
+        .sb-link {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          padding: 0.5rem 1rem;
+          font-size: 0.78rem;
+          color: var(--text-dim);
+          text-decoration: none;
+          transition: all 0.15s;
+          position: relative;
+          border-radius: 0;
+        }
+        .sb-link:hover {
+          color: var(--text);
+          background: rgba(255,255,255,0.03);
+        }
+        .sb-link:hover .sb-icon { color: var(--amber); }
+        .sb-icon {
+          font-size: 0.8rem;
+          width: 14px;
+          text-align: center;
+          flex-shrink: 0;
+          transition: color 0.15s;
+        }
+        .sb-badge {
+          margin-left: auto;
+          background: var(--amber);
+          color: #0D1117;
+          font-size: 0.52rem;
+          font-weight: 700;
+          padding: 0.1rem 0.4rem;
+          border-radius: 10px;
+          font-family: 'Syne', sans-serif;
+        }
+
+        .sb-footer {
+          padding: 0.8rem 1rem;
+          border-top: 1px solid var(--border);
+        }
+        .sb-integ {
+          display: flex;
+          gap: 0.3rem;
+          margin-bottom: 0.6rem;
+          flex-wrap: wrap;
+        }
+        .sb-integ-chip {
+          font-size: 0.56rem;
+          font-weight: 600;
+          padding: 0.15rem 0.5rem;
+          border-radius: 20px;
+          background: rgba(245,158,11,0.08);
+          color: rgba(245,158,11,0.6);
+          border: 1px solid rgba(245,158,11,0.15);
+          letter-spacing: 0.05em;
+        }
+        .sb-signout {
+          display: block;
+          text-align: center;
+          font-size: 0.68rem;
+          color: var(--text-dim);
+          text-decoration: none;
+          padding: 0.4rem;
+          border-radius: 7px;
+          background: rgba(255,255,255,0.02);
+          border: 1px solid var(--border);
+          transition: all 0.15s;
+        }
+        .sb-signout:hover {
+          color: #FCA5A5;
+          background: rgba(239,68,68,0.05);
+          border-color: rgba(239,68,68,0.15);
+        }
+
+        /* ── MAIN ── */
+        .main-wrap {
+          margin-left: var(--sidebar-w);
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          background: var(--content-bg);
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+          height: 48px;
+          background: white;
+          border-bottom: 1px solid #E8ECF0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 1.5rem;
+          position: sticky;
+          top: 0;
+          z-index: 90;
+        }
+        .topbar-left {
+          font-size: 0.75rem;
+          color: #94A3B8;
+        }
+        .topbar-left strong {
+          color: #1E293B;
+          font-weight: 600;
+        }
         .topbar-right { display: flex; align-items: center; gap: 0.6rem; }
-        .year-badge { background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white; font-size: 0.65rem; font-weight: 700; padding: 0.22rem 0.65rem; border-radius: 6px; }
-        .notif-btn { width: 32px; height: 32px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 0.85rem; }
-        .notif-dot { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; background: #EF4444; border-radius: 50%; border: 1.5px solid white; }
+        .topbar-year {
+          font-family: 'Syne', sans-serif;
+          font-size: 0.65rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #F59E0B, #EF4444);
+          color: white;
+          padding: 0.22rem 0.65rem;
+          border-radius: 6px;
+          letter-spacing: 0.05em;
+        }
+        .topbar-bell {
+          width: 32px; height: 32px;
+          background: #F8FAFC;
+          border: 1px solid #E2E8F0;
+          border-radius: 8px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.85rem;
+          cursor: pointer;
+          position: relative;
+          transition: all 0.15s;
+        }
+        .topbar-bell:hover { background: #F1F5F9; }
+        .topbar-bell-dot {
+          position: absolute;
+          top: 5px; right: 5px;
+          width: 6px; height: 6px;
+          background: #F59E0B;
+          border-radius: 50%;
+          border: 1.5px solid white;
+          box-shadow: 0 0 6px rgba(245,158,11,0.8);
+        }
 
         .page-content { flex: 1; padding: 1.5rem; }
       `}</style>
 
       <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <aside className="sidebar">
-          {/* Logo */}
-          <div className="sidebar-logo">
-            <div className="logo-mark">K</div>
+        {/* SIDEBAR */}
+        <aside className="sb">
+          <div className="sb-logo">
+            <div className="sb-logo-mark">K</div>
             <div>
-              <div className="logo-text">Kiva360</div>
-              <div className="logo-sub">Educación Chile</div>
+              <div className="sb-logo-text">Kiva360</div>
+              <div className="sb-logo-sub">Educación Chile</div>
             </div>
           </div>
 
-          {/* Usuario */}
-          <div className="sidebar-user">
-            <div className="user-avatar">{iniciales}</div>
+          <div className="sb-user">
+            <div className="sb-avatar">{iniciales}</div>
             <div style={{ minWidth: 0 }}>
-              <div className="user-name">{user.email}</div>
-              <div className="user-role">Administrador</div>
+              <div className="sb-user-name">{user.email}</div>
+              <div className="sb-user-role">Administrador</div>
             </div>
           </div>
 
-          {/* Nav — usa <a> para evitar interceptación del middleware */}
-          <nav style={{ flex: 1, overflowY: 'auto', padding: '0.25rem 0' }}>
+          <nav className="sb-nav">
             {NAV.map(group => (
               <div key={group.section}>
-                <div className="nav-section">{group.section}</div>
+                <div className="sb-section">{group.section}</div>
                 {group.items.map(item => (
-                  <a key={item.href} href={item.href} className="nav-link">
-                    <span className="nav-icon">{item.icon}</span>
+                  <a key={item.href} href={item.href} className="sb-link">
+                    <span className="sb-icon">{item.icon}</span>
                     <span style={{ flex: 1 }}>{item.label}</span>
-                    {item.badge && <span className="nav-badge">{item.badge}</span>}
+                    {item.badge && (
+                      <span className="sb-badge">{item.badge}</span>
+                    )}
                   </a>
                 ))}
               </div>
             ))}
           </nav>
 
-          {/* Footer */}
-          <div className="sidebar-footer">
-            <div className="integ-label">Integraciones</div>
-            <div className="integ-chips">
-              <span className="integ-chip">SIGE ●</span>
-              <span className="integ-chip">SAE ●</span>
-              <span className="integ-chip">JUNAEB ●</span>
+          <div className="sb-footer">
+            <div className="sb-integ">
+              <span className="sb-integ-chip">SIGE ●</span>
+              <span className="sb-integ-chip">SAE ●</span>
+              <span className="sb-integ-chip">JUNAEB ●</span>
             </div>
-            <a href="/api/auth/signout" className="signout-btn">
+            <a href="/api/auth/signout" className="sb-signout">
               Cerrar sesión
             </a>
           </div>
         </aside>
 
-        <div className="main">
-          {/* Topbar */}
+        {/* MAIN */}
+        <div className="main-wrap">
           <header className="topbar">
             <div className="topbar-left">
-              <span style={{ fontWeight: 600, color: '#1E293B' }}>Kiva360</span>
+              <strong>Kiva360</strong>
               <span style={{ margin: '0 0.4rem', color: '#CBD5E1' }}>·</span>
-              <span>Panel de gestión escolar</span>
+              Panel de gestión escolar
             </div>
             <div className="topbar-right">
-              <div className="year-badge">2026</div>
-              <div className="notif-btn">
-                🔔<div className="notif-dot" />
+              <div className="topbar-year">2026</div>
+              <div className="topbar-bell">
+                🔔
+                <div className="topbar-bell-dot" />
               </div>
             </div>
           </header>
 
-          {/* Contenido */}
           <div className="page-content">
             {children}
           </div>
