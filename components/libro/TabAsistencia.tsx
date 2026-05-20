@@ -7,27 +7,23 @@ type Estado = 'P' | 'A' | 'J'
 const CICLO: Estado[] = ['P', 'A', 'J']
 const LABEL: Record<Estado, string> = { P: 'Presente', A: 'Ausente', J: 'Justificado' }
 
-const CHIP_STYLE: Record<Estado, React.CSSProperties> = {
-  P: { background: '#E8F5E9', color: '#2E7D32', border: '1px solid #A5D6A7' },
-  A: { background: '#FFEBEE', color: '#C62828', border: '1px solid #FFCDD2' },
-  J: { background: '#FFF8E1', color: '#E65100', border: '1px solid #FFE082' },
+const CHIP: Record<Estado, React.CSSProperties> = {
+  P: { background: '#F0FDF4', color: '#16A34A', border: '1px solid #BBF7D0' },
+  A: { background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' },
+  J: { background: '#FFFBEB', color: '#D97706', border: '1px solid #FDE68A' },
 }
 
-const PCT_COLOR = (p: number | null) =>
-  !p ? '#94A3B8' : p >= 90 ? '#2E7D32' : p >= 75 ? '#E65100' : '#C62828'
+const pctColor = (p: number | null) =>
+  !p ? '#9B9A97' : p >= 90 ? '#16A34A' : p >= 75 ? '#D97706' : '#DC2626'
 
-interface Props {
-  cursoId:     string
-  cursoNombre: string
-  onVerHoja:   (id: string) => void
-}
+interface Props { cursoId: string; cursoNombre: string; onVerHoja: (id: string) => void }
 
 export function TabAsistencia({ cursoId, cursoNombre, onVerHoja }: Props) {
-  const [datos,    setDatos]    = useState<Awaited<ReturnType<typeof getAsistenciaSemana>> | null>(null)
-  const [cambios,  setCambios]  = useState<Record<string, Record<string, Estado>>>({})
-  const [loading,  setLoading]  = useState(true)
-  const [guardando,setGuardando]= useState(false)
-  const [guardado, setGuardado] = useState(false)
+  const [datos,     setDatos]     = useState<any>(null)
+  const [cambios,   setCambios]   = useState<Record<string, Record<string, Estado>>>({})
+  const [loading,   setLoading]   = useState(true)
+  const [guardando, setGuardando] = useState(false)
+  const [guardado,  setGuardado]  = useState(false)
 
   const hoy = new Date().toISOString().split('T')[0]
 
@@ -36,34 +32,33 @@ export function TabAsistencia({ cursoId, cursoNombre, onVerHoja }: Props) {
     getAsistenciaSemana(cursoId).then(d => { setDatos(d); setLoading(false) })
   }, [cursoId])
 
-  const getEstado = useCallback((alumnoId: string, fecha: string): Estado | null => {
-    const cambio = cambios[alumnoId]?.[fecha]
-    if (cambio) return cambio
-    const orig = datos?.alumnos.find(a => a.id === alumnoId)?.semana[fecha]
+  const getEstado = useCallback((aId: string, fecha: string): Estado | null => {
+    const c = cambios[aId]?.[fecha]
+    if (c) return c
+    const orig = datos?.alumnos.find((a: any) => a.id === aId)?.semana[fecha]
     return (orig as Estado) ?? null
   }, [cambios, datos])
 
-  const toggle = (alumnoId: string, fecha: string) => {
+  const toggle = (aId: string, fecha: string) => {
     if (fecha !== hoy) return
-    const actual = getEstado(alumnoId, fecha)
+    const actual = getEstado(aId, fecha)
     const idx = actual ? CICLO.indexOf(actual) : -1
     const next = CICLO[(idx + 1) % CICLO.length]
-    setCambios(prev => ({ ...prev, [alumnoId]: { ...prev[alumnoId], [fecha]: next } }))
+    setCambios(prev => ({ ...prev, [aId]: { ...prev[aId], [fecha]: next } }))
     setGuardado(false)
   }
 
   const marcarTodos = () => {
     if (!datos) return
     const n = { ...cambios }
-    datos.alumnos.forEach(a => { if (!n[a.id]) n[a.id] = {}; n[a.id][hoy] = 'P' })
+    datos.alumnos.forEach((a: any) => { if (!n[a.id]) n[a.id] = {}; n[a.id][hoy] = 'P' })
     setCambios(n); setGuardado(false)
   }
 
   const guardar = async () => {
     if (!datos) return
     setGuardando(true)
-    const registros = datos.alumnos
-      .map(a => ({ alumno_id: a.id, estado: getEstado(a.id, hoy) ?? 'P' }))
+    const registros = datos.alumnos.map((a: any) => ({ alumno_id: a.id, estado: getEstado(a.id, hoy) ?? 'P' }))
     const result = await guardarAsistencia({ cursoId, fecha: hoy, registros })
     if (result.success) {
       setGuardado(true); setCambios({})
@@ -73,144 +68,165 @@ export function TabAsistencia({ cursoId, cursoNombre, onVerHoja }: Props) {
     setGuardando(false)
   }
 
-  const stats = datos?.alumnos.reduce((acc, a) => {
+  const stats = datos?.alumnos.reduce((acc: any, a: any) => {
     const e = getEstado(a.id, hoy)
     if (e === 'P') acc.p++; else if (e === 'A') acc.a++; else if (e === 'J') acc.j++; else acc.sin++
     return acc
   }, { p: 0, a: 0, j: 0, sin: 0 })
 
-  const total   = datos?.alumnos.length ?? 0
-  const pctHoy  = stats && total > 0 ? Math.round((stats.p / total) * 100) : null
+  const total  = datos?.alumnos.length ?? 0
+  const pctHoy = stats && total > 0 ? Math.round((stats.p / total) * 100) : null
   const hayPend = Object.keys(cambios).length > 0
 
-  const formatFecha = (f: string) => {
-    const d = new Date(f + 'T12:00:00')
-    return d.toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' })
-  }
-
   if (loading) return (
-    <div style={{ background: 'white', borderRadius: '14px', padding: '1.5rem', border: '1px solid #E2E8F0' }}>
-      <div style={{ background: '#F1F5F9', height: '20px', borderRadius: '8px', width: '40%', marginBottom: '1rem' }} />
-      {[...Array(6)].map((_, i) => <div key={i} style={{ background: '#F8FAFC', height: '44px', borderRadius: '8px', marginBottom: '0.5rem' }} />)}
+    <div style={{ background: 'white', borderRadius: '10px', padding: '1.25rem', border: '1px solid #E8E8E5' }}>
+      {[...Array(6)].map((_, i) => <div key={i} style={{ height: '36px', background: '#F5F5F3', borderRadius: '5px', marginBottom: '0.5rem' }} />)}
     </div>
   )
 
   if (!datos) return null
 
   return (
-    <div style={{ background: 'white', borderRadius: '14px', border: '1px solid #E2E8F0', overflow: 'hidden' }}>
-      {/* Header */}
-      <div style={{ padding: '1rem 1.2rem', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.8rem' }}>
-        <div>
-          <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '0.9rem' }}>
-            {cursoNombre} · {new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })}
-          </div>
-          <div style={{ display: 'flex', gap: '0.8rem', marginTop: '0.3rem', fontSize: '0.75rem', flexWrap: 'wrap' }}>
-            {stats && <>
-              <span style={{ color: '#2E7D32', fontWeight: 600 }}>{stats.p} presentes</span>
-              {stats.a > 0 && <span style={{ color: '#C62828', fontWeight: 600 }}>{stats.a} ausentes</span>}
-              {stats.j > 0 && <span style={{ color: '#E65100', fontWeight: 600 }}>{stats.j} justificados</span>}
-              {stats.sin > 0 && <span style={{ color: '#94A3B8' }}>{stats.sin} sin marcar</span>}
-              {pctHoy !== null && (
-                <span style={{
-                  fontWeight: 700, padding: '0.1rem 0.5rem', borderRadius: '20px',
-                  background: pctHoy >= 90 ? '#E8F5E9' : pctHoy >= 75 ? '#FFF8E1' : '#FFEBEE',
-                  color: PCT_COLOR(pctHoy)
-                }}>{pctHoy}%</span>
-              )}
-            </>}
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button onClick={marcarTodos} style={{
-            padding: '0.45rem 0.9rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 600,
-            background: 'white', border: '1px solid #E2E8F0', color: '#475569', cursor: 'pointer'
-          }}>✓ Todos presentes</button>
-          <button onClick={guardar} disabled={guardando || !hayPend} style={{
-            padding: '0.45rem 0.9rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 600,
-            background: guardado ? '#E8F5E9' : '#1976D2', color: guardado ? '#2E7D32' : 'white',
-            border: 'none', cursor: hayPend ? 'pointer' : 'not-allowed', opacity: (!hayPend && !guardando) ? 0.5 : 1
-          }}>
-            {guardando ? 'Guardando...' : guardado ? '✓ Guardado' : '💾 Guardar'}
-          </button>
-        </div>
-      </div>
+    <>
+      <style>{`
+        .ta-wrap { background: white; border: 1px solid #E8E8E5; border-radius: 10px; overflow: hidden; width: 100%; font-family: 'Inter', system-ui, sans-serif; }
+        .ta-head { padding: 0.9rem 1.25rem; border-bottom: 1px solid #E8E8E5; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+        .ta-head-info { font-size: 0.82rem; font-weight: 600; color: #37352F; letter-spacing: -0.01em; margin-bottom: 0.25rem; }
+        .ta-stats { display: flex; gap: 0.75rem; font-size: 0.72rem; flex-wrap: wrap; }
+        .ta-stat { font-weight: 600; }
+        .ta-pct-badge { font-size: 0.68rem; font-weight: 700; padding: 0.1rem 0.5rem; border-radius: 20px; background: #F0F0EE; }
+        .ta-btns { display: flex; gap: 0.5rem; }
+        .ta-btn { padding: 0.4rem 0.85rem; border-radius: 7px; font-size: 0.75rem; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.12s; border: 1px solid #E8E8E5; background: white; color: #6B6B6B; }
+        .ta-btn:hover { border-color: #37352F; color: #37352F; }
+        .ta-btn-save { background: #37352F; color: white; border-color: #37352F; }
+        .ta-btn-save:hover { background: #1A1A1A; }
+        .ta-btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+        .ta-btn-ok { background: #F0FDF4; color: #16A34A; border-color: #BBF7D0; }
+        .ta-scroll { overflow-x: auto; }
+        .ta-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        .ta-th { padding: 0.5rem 0.5rem; background: #FAFAF8; border-bottom: 1px solid #E8E8E5; text-align: center; white-space: nowrap; }
+        .ta-th-left { text-align: left; padding-left: 1.25rem; }
+        .ta-th-text { font-size: 0.6rem; font-weight: 600; color: #9B9A97; letter-spacing: 0.06em; text-transform: uppercase; }
+        .ta-th-date { font-size: 0.72rem; font-weight: 700; }
+        .ta-tr { border-bottom: 1px solid #F5F5F3; }
+        .ta-tr:last-child { border-bottom: none; }
+        .ta-tr:hover { background: #FAFAF8; }
+        .ta-td { padding: 0.5rem 0.5rem; text-align: center; }
+        .ta-td-left { padding: 0.5rem 0.5rem 0.5rem 1.25rem; text-align: left; }
+        .ta-nombre { font-size: 0.8rem; font-weight: 500; color: #37352F; white-space: nowrap; }
+        .ta-badge { font-size: 0.58rem; font-weight: 600; padding: 0.08rem 0.35rem; border-radius: 3px; background: #F0F0EE; color: #6B6B6B; margin-left: 0.3rem; }
+        .ta-num { font-size: 0.7rem; color: #C2C0BB; }
+        .ta-ver { font-size: 0.72rem; color: #9B9A97; background: none; border: none; cursor: pointer; font-family: inherit; padding: 0.2rem 0.5rem; border-radius: 4px; transition: all 0.12s; }
+        .ta-ver:hover { color: #37352F; background: #F0F0EE; }
+        .ta-legend { padding: 0.6rem 1.25rem; border-top: 1px solid #F0F0EE; background: #FAFAF8; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+        .ta-legend-lbl { font-size: 0.65rem; color: #9B9A97; font-weight: 600; }
+        .ta-legend-chip { font-size: 0.65rem; font-weight: 700; padding: 0.12rem 0.45rem; border-radius: 4px; }
+      `}</style>
 
-      {/* Tabla */}
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
-          <thead>
-            <tr style={{ background: '#F8FAFC' }}>
-              <th style={{ padding: '0.5rem 0.8rem', textAlign: 'left', fontWeight: 700, color: '#64748B', fontSize: '0.7rem', whiteSpace: 'nowrap' }}>N°</th>
-              <th style={{ padding: '0.5rem 0.8rem', textAlign: 'left', fontWeight: 700, color: '#64748B', fontSize: '0.7rem' }}>Estudiante</th>
-              <th style={{ padding: '0.5rem 0.4rem', textAlign: 'center', fontWeight: 700, color: '#64748B', fontSize: '0.7rem' }}>Info</th>
-              {datos.fechas.map(f => (
-                <th key={f} style={{ padding: '0.5rem 0.4rem', textAlign: 'center', minWidth: '70px' }}>
-                  <div style={{ fontSize: '0.62rem', color: '#94A3B8', textTransform: 'capitalize' }}>
-                    {new Date(f + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'short' })}
-                  </div>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: f === hoy ? '#1976D2' : '#475569' }}>
-                    {new Date(f + 'T12:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short' })}
-                  </div>
+      <div className="ta-wrap">
+        <div className="ta-head">
+          <div>
+            <div className="ta-head-info">
+              {cursoNombre} · {new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })}
+            </div>
+            <div className="ta-stats">
+              {stats && <>
+                {stats.p > 0 && <span className="ta-stat" style={{ color: '#16A34A' }}>{stats.p} presentes</span>}
+                {stats.a > 0 && <span className="ta-stat" style={{ color: '#DC2626' }}>{stats.a} ausentes</span>}
+                {stats.j > 0 && <span className="ta-stat" style={{ color: '#D97706' }}>{stats.j} justificados</span>}
+                {stats.sin > 0 && <span className="ta-stat" style={{ color: '#9B9A97' }}>{stats.sin} sin marcar</span>}
+                {pctHoy !== null && (
+                  <span className="ta-pct-badge" style={{ color: pctColor(pctHoy) }}>{pctHoy}%</span>
+                )}
+              </>}
+            </div>
+          </div>
+          <div className="ta-btns">
+            <button className="ta-btn" onClick={marcarTodos}>✓ Todos presentes</button>
+            <button
+              className={`ta-btn ${guardado ? 'ta-btn-ok' : 'ta-btn-save'}`}
+              onClick={guardar}
+              disabled={guardando || !hayPend}
+            >
+              {guardando ? 'Guardando...' : guardado ? '✓ Guardado' : '💾 Guardar'}
+            </button>
+          </div>
+        </div>
+
+        <div className="ta-scroll">
+          <table className="ta-table">
+            <thead>
+              <tr>
+                <th className="ta-th ta-th-left" style={{ minWidth: '160px' }}>
+                  <span className="ta-th-text">Estudiante</span>
                 </th>
-              ))}
-              <th style={{ padding: '0.5rem 0.8rem', textAlign: 'center', fontWeight: 700, color: '#64748B', fontSize: '0.7rem' }}>% Mes</th>
-              <th style={{ padding: '0.5rem 0.8rem' }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {datos.alumnos.map((a, i) => (
-              <tr key={a.id} style={{ borderTop: '1px solid #F1F5F9' }}>
-                <td style={{ padding: '0.55rem 0.8rem', color: '#94A3B8', fontSize: '0.72rem' }}>{a.numero}</td>
-                <td style={{ padding: '0.55rem 0.8rem', fontWeight: 600, color: '#0F172A' }}>{a.nombre_completo}</td>
-                <td style={{ padding: '0.55rem 0.4rem', textAlign: 'center' }}>
-                  {a.alumno_sep && <span style={{ fontSize: '0.6rem', fontWeight: 700, background: '#EDE7F6', color: '#4527A0', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>SEP</span>}
-                  {a.beneficio_pae && <span style={{ fontSize: '0.6rem', fontWeight: 700, background: '#FFF3E0', color: '#BF360C', padding: '0.1rem 0.35rem', borderRadius: '4px', marginLeft: '2px' }}>PAE</span>}
-                </td>
-                {datos.fechas.map(f => {
-                  const estado = getEstado(a.id, f)
-                  const esHoy  = f === hoy
-                  return (
-                    <td key={f} style={{ padding: '0.55rem 0.4rem', textAlign: 'center' }}>
-                      <button
-                        onClick={() => toggle(a.id, f)}
-                        disabled={!esHoy}
-                        title={estado ? LABEL[estado] : 'Sin marcar'}
-                        style={{
-                          width: '36px', height: '26px', borderRadius: '6px',
-                          fontSize: '0.72rem', fontWeight: 700, cursor: esHoy ? 'pointer' : 'default',
-                          ...(estado ? CHIP_STYLE[estado] : { background: '#F8FAFC', color: '#CBD5E1', border: '1px solid #F1F5F9' }),
-                          transition: 'all 0.15s',
-                        }}
-                      >
-                        {estado ?? '·'}
-                      </button>
-                    </td>
-                  )
-                })}
-                <td style={{ padding: '0.55rem 0.8rem', textAlign: 'center', fontWeight: 700, color: PCT_COLOR(a.pct_mes), fontSize: '0.78rem', fontFamily: 'monospace' }}>
-                  {a.pct_mes !== null ? `${a.pct_mes}%${a.pct_mes < 75 ? ' ⚠️' : ''}` : '—'}
-                </td>
-                <td style={{ padding: '0.55rem 0.8rem' }}>
-                  <button onClick={() => onVerHoja(a.id)} style={{ fontSize: '0.72rem', color: '#1976D2', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
-                    Ver →
-                  </button>
-                </td>
+                <th className="ta-th"><span className="ta-th-text">Info</span></th>
+                {datos.fechas.map((f: string) => (
+                  <th key={f} className="ta-th" style={{ minWidth: '64px' }}>
+                    <div className="ta-th-text" style={{ textTransform: 'capitalize' }}>
+                      {new Date(f + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'short' })}
+                    </div>
+                    <div className="ta-th-date" style={{ color: f === hoy ? '#37352F' : '#9B9A97' }}>
+                      {new Date(f + 'T12:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short' }).toUpperCase()}
+                    </div>
+                  </th>
+                ))}
+                <th className="ta-th"><span className="ta-th-text">% Mes</span></th>
+                <th className="ta-th"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {datos.alumnos.map((a: any) => (
+                <tr key={a.id} className="ta-tr">
+                  <td className="ta-td-left">
+                    <span className="ta-nombre">{a.nombre_completo}</span>
+                  </td>
+                  <td className="ta-td">
+                    {a.alumno_sep    && <span className="ta-badge">SEP</span>}
+                    {a.beneficio_pae && <span className="ta-badge">PAE</span>}
+                  </td>
+                  {datos.fechas.map((f: string) => {
+                    const estado = getEstado(a.id, f)
+                    const esHoy  = f === hoy
+                    return (
+                      <td key={f} className="ta-td">
+                        <button
+                          onClick={() => toggle(a.id, f)}
+                          disabled={!esHoy}
+                          title={estado ? LABEL[estado] : 'Sin marcar'}
+                          style={{
+                            width: '34px', height: '25px', borderRadius: '5px',
+                            fontSize: '0.7rem', fontWeight: 700,
+                            cursor: esHoy ? 'pointer' : 'default',
+                            fontFamily: 'inherit',
+                            transition: 'all 0.12s',
+                            ...(estado ? CHIP[estado] : { background: '#F5F5F3', color: '#C2C0BB', border: '1px solid #EBEBEB' }),
+                          }}
+                        >
+                          {estado ?? '·'}
+                        </button>
+                      </td>
+                    )
+                  })}
+                  <td className="ta-td" style={{ fontWeight: 700, color: pctColor(a.pct_mes), fontVariantNumeric: 'tabular-nums', fontSize: '0.78rem' }}>
+                    {a.pct_mes !== null ? `${a.pct_mes}%${a.pct_mes < 75 ? ' ⚠️' : ''}` : '—'}
+                  </td>
+                  <td className="ta-td">
+                    <button className="ta-ver" onClick={() => onVerHoja(a.id)}>Ver →</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Leyenda */}
-      <div style={{ padding: '0.7rem 1.2rem', borderTop: '1px solid #F1F5F9', display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 600 }}>Clic para cambiar:</span>
-        {(['P','A','J'] as Estado[]).map(e => (
-          <span key={e} style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.5rem', borderRadius: '5px', ...CHIP_STYLE[e] }}>
-            {e} = {LABEL[e]}
-          </span>
-        ))}
+        <div className="ta-legend">
+          <span className="ta-legend-lbl">Clic para cambiar:</span>
+          {(['P','A','J'] as Estado[]).map(e => (
+            <span key={e} className="ta-legend-chip" style={CHIP[e]}>{e} = {LABEL[e]}</span>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

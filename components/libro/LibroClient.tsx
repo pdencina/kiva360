@@ -1,16 +1,11 @@
-// ═══════════════════════════════════════════════════════════════
-// components/libro/LibroClient.tsx
-// ═══════════════════════════════════════════════════════════════
 'use client'
 
 import { useState } from 'react'
-import { SelectorCurso    } from './SelectorCurso'
-import { TabAsistencia    } from './TabAsistencia'
-import { TabNotas         } from './TabNotas'
-import { TabHojaVida      } from './TabHojaVida'
+import { TabAsistencia } from './TabAsistencia'
+import { TabNotas      } from './TabNotas'
+import { TabHojaVida   } from './TabHojaVida'
 
 type Tab = 'asistencia' | 'notas' | 'hojavida'
-
 interface Curso { id: string; nombre: string; nivel: string }
 interface Props  { cursos: Curso[] }
 
@@ -21,30 +16,43 @@ export function LibroClient({ cursos }: Props) {
 
   const abrirHoja = (id: string) => { setAlumno(id); setTab('hojavida') }
 
-  const TABS: { id: Tab; label: string; icon: string }[] = [
-    { id: 'asistencia', label: 'Asistencia', icon: '✅' },
-    { id: 'notas',      label: 'Notas',      icon: '📊' },
-    { id: 'hojavida',   label: 'Hoja de Vida', icon: '📋' },
+  const TABS = [
+    { id: 'asistencia' as Tab, label: 'Asistencia'   },
+    { id: 'notas'      as Tab, label: 'Notas'         },
+    { id: 'hojavida'   as Tab, label: 'Hoja de Vida'  },
   ]
 
   return (
-    <div style={{ fontFamily: 'system-ui', width: '100%' }}>
-      <SelectorCurso cursos={cursos} activo={curso.id} onChange={id => {
-        const c = cursos.find(c => c.id === id)
-        if (c) setCurso(c)
-      }} />
+    <div style={{ fontFamily: 'Inter, system-ui, sans-serif', width: '100%' }}>
+      {/* Selector de cursos */}
+      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.1rem' }}>
+        {cursos.map(c => (
+          <button key={c.id} onClick={() => { setCurso(c); setTab('asistencia') }} style={{
+            padding: '0.32rem 0.85rem', borderRadius: '6px',
+            fontSize: '0.78rem', fontWeight: c.id === curso.id ? 600 : 400,
+            cursor: 'pointer', border: '1px solid',
+            borderColor: c.id === curso.id ? '#37352F' : '#E8E8E5',
+            background:  c.id === curso.id ? '#37352F' : 'white',
+            color:        c.id === curso.id ? 'white'   : '#6B6B6B',
+            transition: 'all 0.12s', fontFamily: 'inherit',
+          }}>
+            {c.nombre}
+          </button>
+        ))}
+      </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '2px solid #E2E8F0', marginBottom: '1.2rem' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid #E8E8E5', marginBottom: '1rem' }}>
         {TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
-            padding: '0.55rem 1.1rem', fontSize: '0.82rem', fontWeight: 600,
+            padding: '0.5rem 1rem', fontSize: '0.8rem',
+            fontWeight: tab === t.id ? 600 : 400,
             border: 'none', background: 'transparent', cursor: 'pointer',
-            borderBottom: tab === t.id ? '2.5px solid #1976D2' : '2.5px solid transparent',
-            color: tab === t.id ? '#1976D2' : '#64748B',
-            marginBottom: '-2px', display: 'flex', alignItems: 'center', gap: '0.4rem'
+            borderBottom: `2px solid ${tab === t.id ? '#37352F' : 'transparent'}`,
+            color: tab === t.id ? '#37352F' : '#9B9A97',
+            marginBottom: '-1px', fontFamily: 'inherit', transition: 'color 0.12s',
           }}>
-            {t.icon} {t.label}
+            {t.label}
           </button>
         ))}
       </div>

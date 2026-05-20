@@ -2,192 +2,160 @@
 
 import { useState, useEffect } from 'react'
 import { getHojaVidaAlumno } from '@/lib/actions/libro'
-import { formatFecha, formatNota, colorNota, cn } from '@/lib/utils'
 
-interface Props {
-  alumnoId: string | null
-  onVolver: () => void
-}
+interface Props { alumnoId: string | null; onVolver: () => void }
+
+const pctColor = (p: number | null) =>
+  !p ? '#9B9A97' : p >= 90 ? '#16A34A' : p >= 75 ? '#D97706' : '#DC2626'
+
+const notaColor = (n: number | null) =>
+  !n ? '#9B9A97' : n >= 6 ? '#16A34A' : n >= 4 ? '#D97706' : '#DC2626'
+
+const formatN = (n: number | null) =>
+  n === null ? '—' : n.toFixed(1).replace('.', ',')
 
 export function TabHojaVida({ alumnoId, onVolver }: Props) {
-  const [datos,   setDatos]   = useState<Awaited<ReturnType<typeof getHojaVidaAlumno>> | null>(null)
+  const [datos,   setDatos]   = useState<any>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!alumnoId) return
     setLoading(true)
-    getHojaVidaAlumno(alumnoId).then(d => {
-      setDatos(d)
-      setLoading(false)
-    })
+    getHojaVidaAlumno(alumnoId).then(d => { setDatos(d); setLoading(false) })
   }, [alumnoId])
 
-  if (!alumnoId) {
-    return (
-      <div className="card text-center py-10">
-        <div className="text-3xl mb-2">📋</div>
-        <p className="text-sm text-gray-500">
-          Haz clic en «Ver →» junto a un alumno para ver su hoja de vida.
-        </p>
-      </div>
-    )
-  }
+  if (!alumnoId) return (
+    <div style={{ background: 'white', border: '1px solid #E8E8E5', borderRadius: '10px', padding: '2.5rem', textAlign: 'center' }}>
+      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📋</div>
+      <p style={{ fontSize: '0.82rem', color: '#9B9A97' }}>
+        Haz clic en <strong style={{ color: '#37352F' }}>Ver →</strong> junto a un alumno para ver su hoja de vida.
+      </p>
+    </div>
+  )
 
-  if (loading) {
-    return (
-      <div className="card animate-pulse">
-        <div className="h-8 bg-gray-100 rounded w-1/3 mb-4" />
-        <div className="h-24 bg-gray-50 rounded mb-4" />
-        <div className="h-32 bg-gray-50 rounded" />
-      </div>
-    )
-  }
+  if (loading) return (
+    <div style={{ background: 'white', border: '1px solid #E8E8E5', borderRadius: '10px', padding: '1.5rem' }}>
+      {[...Array(4)].map((_, i) => (
+        <div key={i} style={{ height: i === 0 ? '28px' : '60px', background: '#F5F5F3', borderRadius: '6px', marginBottom: '0.75rem', width: i === 0 ? '30%' : '100%' }} />
+      ))}
+    </div>
+  )
 
   if (!datos) return null
 
   const { alumno, pct_mes, presentes, total_dias, notas } = datos
-  const nombreCompleto = [alumno.apellido_paterno, alumno.apellido_materno, alumno.nombre]
-    .filter(Boolean).join(' ')
+  const nombreCompleto = [alumno.apellido_paterno, alumno.apellido_materno, alumno.nombre].filter(Boolean).join(' ')
+  const iniciales = `${alumno.nombre?.[0] ?? ''}${alumno.apellido_paterno?.[0] ?? ''}`.toUpperCase()
 
   return (
-    <div className="space-y-4">
-      {/* Botón volver */}
-      <button
-        onClick={onVolver}
-        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
-      >
-        ← Volver al libro
-      </button>
+    <>
+      <style>{`
+        .hv-wrap { display: flex; flex-direction: column; gap: 1rem; width: 100%; font-family: 'Inter', system-ui, sans-serif; }
+        .hv-back { background: none; border: none; cursor: pointer; font-size: 0.78rem; color: #9B9A97; font-family: inherit; padding: 0; display: flex; align-items: center; gap: 0.4rem; transition: color 0.12s; }
+        .hv-back:hover { color: #37352F; }
+        .hv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .hv-card { background: white; border: 1px solid #E8E8E5; border-radius: 10px; padding: 1.25rem; }
+        .hv-card-title { font-size: 0.75rem; font-weight: 600; color: #37352F; margin-bottom: 0.9rem; letter-spacing: -0.01em; }
+        .hv-avatar { width: 42px; height: 42px; border-radius: 8px; background: #F0F0EE; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: #6B6B6B; flex-shrink: 0; }
+        .hv-nombre { font-size: 1rem; font-weight: 700; color: #37352F; letter-spacing: -0.02em; margin-bottom: 0.2rem; }
+        .hv-curso  { font-size: 0.75rem; color: #9B9A97; margin-bottom: 0.5rem; }
+        .hv-badges { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+        .hv-badge  { font-size: 0.6rem; font-weight: 600; padding: 0.12rem 0.45rem; border-radius: 3px; background: #F0F0EE; color: #6B6B6B; }
+        .hv-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #F0F0EE; }
+        .hv-data-label { font-size: 0.62rem; font-weight: 600; color: #9B9A97; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.2rem; }
+        .hv-data-val { font-size: 0.82rem; font-weight: 600; color: #37352F; }
+        .hv-pct { font-size: 2rem; font-weight: 800; letter-spacing: -0.05em; line-height: 1; margin-bottom: 0.25rem; }
+        .hv-pct-sub { font-size: 0.75rem; color: #9B9A97; margin-bottom: 0.75rem; }
+        .hv-bar-track { height: 5px; background: #F0F0EE; border-radius: 10px; overflow: hidden; margin-bottom: 0.75rem; }
+        .hv-bar-fill { height: 100%; border-radius: 10px; transition: width 0.8s ease; }
+        .hv-alert { background: #FAFAF8; border: 1px solid #E8E8E5; border-radius: 7px; padding: 0.6rem 0.8rem; font-size: 0.73rem; color: #6B6B6B; }
+        .hv-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        .hv-th { padding: 0.5rem 0.75rem; text-align: left; font-size: 0.62rem; font-weight: 600; color: #9B9A97; letter-spacing: 0.06em; text-transform: uppercase; background: #FAFAF8; border-bottom: 1px solid #E8E8E5; }
+        .hv-td { padding: 0.55rem 0.75rem; border-bottom: 1px solid #F5F5F3; color: #37352F; }
+        .hv-tr:last-child td { border-bottom: none; }
+      `}</style>
 
-      <div className="grid grid-cols-[1fr_1fr] gap-4">
+      <div className="hv-wrap">
+        <button className="hv-back" onClick={onVolver}>← Volver al libro</button>
 
-        {/* Panel izquierdo — datos personales */}
-        <div className="card">
-          <div className="flex items-start gap-4 mb-4">
-            {/* Avatar */}
-            <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-lg font-bold text-blue-700 flex-shrink-0">
-              {alumno.nombre[0]}{alumno.apellido_paterno?.[0] ?? ''}
-            </div>
-            <div>
-              <h2 className="font-semibold text-gray-900 text-lg">{nombreCompleto}</h2>
-              <div className="text-sm text-gray-500">
-                {(alumno as any).cursos?.nombre} · {(alumno as any).cursos?.nivel}
+        <div className="hv-grid">
+          {/* Datos personales */}
+          <div className="hv-card">
+            <div style={{ display: 'flex', gap: '0.85rem', marginBottom: '0.25rem' }}>
+              <div className="hv-avatar">{iniciales}</div>
+              <div>
+                <div className="hv-nombre">{nombreCompleto}</div>
+                <div className="hv-curso">{alumno.cursos?.nombre} · {alumno.cursos?.nivel}</div>
+                <div className="hv-badges">
+                  {alumno.alumno_sep        && <span className="hv-badge">SEP</span>}
+                  {alumno.beneficio_pae     && <span className="hv-badge">PAE</span>}
+                  {alumno.beneficio_tne     && <span className="hv-badge">TNE</span>}
+                  {alumno.prioridad_sinae   && <span className="hv-badge">SINAE P{alumno.prioridad_sinae}</span>}
+                </div>
               </div>
-              <div className="flex gap-1.5 mt-1.5 flex-wrap">
-                {alumno.alumno_sep && (
-                  <span className="text-[11px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
-                    ⭐ SEP
-                  </span>
-                )}
-                {alumno.beneficio_pae && (
-                  <span className="text-[11px] font-bold bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
-                    🍽️ PAE
-                  </span>
-                )}
-                {alumno.beneficio_tne && (
-                  <span className="text-[11px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
-                    💳 TNE
-                  </span>
-                )}
-                {alumno.prioridad_sinae && (
-                  <span className="text-[11px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                    SINAE P{alumno.prioridad_sinae}
-                  </span>
-                )}
+            </div>
+            <div className="hv-data-grid">
+              <div>
+                <div className="hv-data-label">RUT</div>
+                <div className="hv-data-val">{alumno.rut ?? '—'}</div>
               </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t border-gray-100 pt-4">
-            <div>
-              <div className="text-xs text-gray-400 font-medium mb-0.5">RUT</div>
-              <div className="font-semibold text-gray-800">{alumno.rut ?? '—'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 font-medium mb-0.5">Fecha de nacimiento</div>
-              <div className="font-semibold text-gray-800">
-                {alumno.fecha_nacimiento ? formatFecha(alumno.fecha_nacimiento) : '—'}
+              <div>
+                <div className="hv-data-label">Nacimiento</div>
+                <div className="hv-data-val">{alumno.fecha_nacimiento ? new Date(alumno.fecha_nacimiento).toLocaleDateString('es-CL') : '—'}</div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Panel derecho — asistencia del mes */}
-        <div className="card">
-          <h3 className="font-semibold text-gray-900 mb-3">Asistencia este mes</h3>
-          <div className="flex items-end gap-3 mb-3">
-            <div className={cn(
-              'text-4xl font-extrabold tabular-nums',
-              pct_mes !== null
-                ? pct_mes >= 90 ? 'text-teal-700'
-                : pct_mes >= 75 ? 'text-yellow-700'
-                :                 'text-red-600'
-                : 'text-gray-300'
-            )}>
+          {/* Asistencia */}
+          <div className="hv-card">
+            <div className="hv-card-title">Asistencia este mes</div>
+            <div className="hv-pct" style={{ color: pctColor(pct_mes) }}>
               {pct_mes !== null ? `${pct_mes}%` : '—'}
             </div>
-            <div className="text-sm text-gray-500 pb-1">
-              {presentes} de {total_dias} días
+            <div className="hv-pct-sub">{presentes} de {total_dias} días</div>
+            <div className="hv-bar-track">
+              <div className="hv-bar-fill" style={{ width: `${pct_mes ?? 0}%`, background: pctColor(pct_mes) }} />
             </div>
+            {pct_mes !== null && pct_mes < 75 && (
+              <div className="hv-alert">
+                ⚠️ Asistencia bajo el mínimo reglamentario (75%). Notificar al apoderado.
+              </div>
+            )}
+            {pct_mes !== null && pct_mes >= 90 && (
+              <div className="hv-alert">✓ Asistencia en buen estado.</div>
+            )}
           </div>
-
-          {/* Barra */}
-          <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden mb-2">
-            <div
-              className={cn(
-                'h-full rounded-full transition-all duration-700',
-                pct_mes === null  ? 'w-0' :
-                pct_mes >= 90     ? 'bg-teal-500' :
-                pct_mes >= 75     ? 'bg-yellow-400' :
-                                    'bg-red-500'
-              )}
-              style={{ width: `${pct_mes ?? 0}%` }}
-            />
-          </div>
-
-          {pct_mes !== null && pct_mes < 75 && (
-            <div className="mt-3 bg-red-50 border border-red-200 rounded-xl px-3 py-2 text-xs text-red-700 font-medium">
-              ⚠️ Asistencia bajo el mínimo reglamentario (75%). Notificar al apoderado.
-            </div>
-          )}
         </div>
 
-      </div>
-
-      {/* Notas recientes */}
-      {notas.length > 0 && (
-        <div className="card">
-          <h3 className="font-semibold text-gray-900 mb-3">Notas recientes</h3>
-          <table className="kimen-table w-full">
-            <thead>
-              <tr>
-                <th>Evaluación</th>
-                <th>Asignatura</th>
-                <th>Fecha</th>
-                <th>Ponderación</th>
-                <th className="text-center">Nota</th>
-              </tr>
-            </thead>
-            <tbody>
-              {notas.map((n: any, i: number) => (
-                <tr key={i}>
-                  <td className="font-medium">{n.evaluaciones?.titulo ?? '—'}</td>
-                  <td className="text-gray-500">{n.evaluaciones?.asignatura ?? '—'}</td>
-                  <td className="text-gray-500">
-                    {n.evaluaciones?.fecha ? formatFecha(n.evaluaciones.fecha, 'dd MMM') : '—'}
-                  </td>
-                  <td className="text-gray-500">
-                    {n.evaluaciones?.ponderacion ? `${n.evaluaciones.ponderacion}%` : '—'}
-                  </td>
-                  <td className={cn('text-center font-extrabold tabular-nums', colorNota(n.nota))}>
-                    {formatNota(n.nota)}
-                  </td>
+        {/* Notas */}
+        {notas?.length > 0 && (
+          <div className="hv-card">
+            <div className="hv-card-title">Notas recientes</div>
+            <table className="hv-table">
+              <thead>
+                <tr>
+                  <th className="hv-th">Evaluación</th>
+                  <th className="hv-th">Asignatura</th>
+                  <th className="hv-th">Ponderación</th>
+                  <th className="hv-th" style={{ textAlign: 'center' }}>Nota</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+              </thead>
+              <tbody>
+                {notas.map((n: any, i: number) => (
+                  <tr key={i} className="hv-tr">
+                    <td className="hv-td" style={{ fontWeight: 500 }}>{n.evaluaciones?.titulo ?? '—'}</td>
+                    <td className="hv-td" style={{ color: '#9B9A97' }}>{n.evaluaciones?.asignatura ?? '—'}</td>
+                    <td className="hv-td" style={{ color: '#9B9A97' }}>{n.evaluaciones?.ponderacion ? `${n.evaluaciones.ponderacion}%` : '—'}</td>
+                    <td className="hv-td" style={{ textAlign: 'center', fontWeight: 700, color: notaColor(n.nota), fontVariantNumeric: 'tabular-nums' }}>
+                      {formatN(n.nota)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </>
   )
 }
