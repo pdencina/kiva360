@@ -28,7 +28,7 @@ export function LibroClient({ cursos }: Props) {
   ]
 
   return (
-    <div style={{ padding: '1.5rem', fontFamily: 'system-ui' }}>
+    <div style={{ fontFamily: 'system-ui', width: '100%' }}>
       <SelectorCurso cursos={cursos} activo={curso.id} onChange={id => {
         const c = cursos.find(c => c.id === id)
         if (c) setCurso(c)

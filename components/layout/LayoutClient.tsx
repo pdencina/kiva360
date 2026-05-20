@@ -8,7 +8,7 @@ const NAV = [
   {
     section: 'Principal',
     items: [
-      { href: '/dashboard',            label: 'Dashboard',          icon: '○', badge: 0 },
+      { href: '/dashboard',            label: 'Inicio',          icon: '○', badge: 0 },
       { href: '/libro',                label: 'Libro de Clases', icon: '▦', badge: 0 },
       { href: '/evaluaciones',         label: 'Evaluaciones',    icon: '✎', badge: 3 },
       { href: '/planificacion',        label: 'Planificación',   icon: '◫', badge: 0 },
@@ -203,7 +203,7 @@ export function LayoutClient({ email, iniciales, children }: { email: string; in
           border-radius: 50%; border: 1.5px solid white;
         }
 
-        .page { flex: 1; padding: 1.75rem 2rem; }
+        .page { flex: 1; padding: 1.5rem; width: 100%; min-width: 0; }
 
         /* Overlay cuando sidebar abierto en mobile */
         .sb-overlay {
