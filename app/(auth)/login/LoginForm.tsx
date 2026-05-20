@@ -36,171 +36,84 @@ export function LoginForm() {
   return (
     <>
       <style>{`
-        .f-group { margin-bottom: 1.1rem; }
-
+        .f-group { margin-bottom: 1rem; }
         .f-label {
-          display: block;
-          font-size: 0.72rem;
-          font-weight: 500;
-          color: rgba(255,255,255,0.45);
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          margin-bottom: 0.5rem;
+          display: block; font-size: 0.75rem; font-weight: 500;
+          color: #444; margin-bottom: 0.4rem; letter-spacing: -0.01em;
         }
-
         .f-input {
-          width: 100%;
-          padding: 0.8rem 1rem;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 10px;
-          font-size: 0.9rem;
-          color: white;
-          outline: none;
-          font-family: 'DM Sans', sans-serif;
-          transition: all 0.2s;
-          -webkit-text-fill-color: white;
+          width: 100%; padding: 0.65rem 0.85rem;
+          border: 1px solid #E5E5E5; border-radius: 8px;
+          font-size: 0.88rem; color: #0A0A0A; background: white;
+          outline: none; font-family: inherit;
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .f-input::placeholder { color: rgba(255,255,255,0.2); }
+        .f-input::placeholder { color: #CCC; }
         .f-input:focus {
-          background: rgba(245,158,11,0.05);
-          border-color: rgba(245,158,11,0.35);
-          box-shadow: 0 0 0 3px rgba(245,158,11,0.08);
+          border-color: #0A0A0A;
+          box-shadow: 0 0 0 3px rgba(10,10,10,0.06);
         }
-        .f-input:-webkit-autofill,
-        .f-input:-webkit-autofill:focus {
-          -webkit-box-shadow: 0 0 0 100px #0d1117 inset;
-          -webkit-text-fill-color: white;
-        }
-
         .f-pass-wrap { position: relative; }
-        .f-pass-wrap .f-input { padding-right: 3rem; }
+        .f-pass-wrap .f-input { padding-right: 2.75rem; }
         .f-eye {
-          position: absolute;
-          right: 0.9rem;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: rgba(255,255,255,0.25);
-          font-size: 0.9rem;
-          transition: color 0.15s;
-          padding: 0;
-          line-height: 1;
+          position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%);
+          background: none; border: none; cursor: pointer;
+          color: #CCC; font-size: 0.82rem; transition: color 0.15s; padding: 0;
         }
-        .f-eye:hover { color: rgba(255,255,255,0.6); }
-
+        .f-eye:hover { color: #666; }
         .f-label-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 0.5rem;
+          display: flex; align-items: center; justify-content: space-between;
+          margin-bottom: 0.4rem;
         }
         .f-forgot {
-          font-size: 0.72rem;
-          color: rgba(245,158,11,0.7);
-          text-decoration: none;
-          font-weight: 500;
-          transition: color 0.15s;
+          font-size: 0.72rem; color: #999; text-decoration: none;
+          font-weight: 400; transition: color 0.15s;
         }
-        .f-forgot:hover { color: #F59E0B; }
-
+        .f-forgot:hover { color: #0A0A0A; }
         .f-error {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.75rem 1rem;
-          background: rgba(239,68,68,0.08);
-          border: 1px solid rgba(239,68,68,0.2);
-          border-radius: 10px;
-          font-size: 0.8rem;
-          color: #FCA5A5;
-          margin-bottom: 1rem;
+          padding: 0.65rem 0.85rem;
+          background: #FFF5F5; border: 1px solid #FFE0E0; border-radius: 8px;
+          font-size: 0.78rem; color: #CC0000; margin-bottom: 1rem;
         }
-
         .f-btn {
-          width: 100%;
-          padding: 0.85rem;
-          background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
-          color: white;
-          border: none;
-          border-radius: 10px;
-          font-size: 0.9rem;
-          font-weight: 600;
-          font-family: 'DM Sans', sans-serif;
-          cursor: pointer;
-          transition: all 0.2s;
-          position: relative;
-          overflow: hidden;
-          letter-spacing: 0.01em;
-          margin-top: 0.5rem;
+          width: 100%; padding: 0.7rem; margin-top: 0.5rem;
+          background: #0A0A0A; color: white;
+          border: none; border-radius: 8px;
+          font-size: 0.88rem; font-weight: 500;
+          cursor: pointer; font-family: inherit;
+          transition: background 0.15s, transform 0.1s;
+          letter-spacing: -0.01em;
         }
-        .f-btn::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%);
-          opacity: 0;
-          transition: opacity 0.2s;
-        }
-        .f-btn:hover::before { opacity: 1; }
-        .f-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(245,158,11,0.35); }
-        .f-btn:active { transform: translateY(0); }
-        .f-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-
+        .f-btn:hover:not(:disabled) { background: #222; }
+        .f-btn:active:not(:disabled) { transform: scale(0.99); }
+        .f-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .f-divider {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin: 1.5rem 0;
+          display: flex; align-items: center; gap: 0.75rem;
+          margin: 1.25rem 0; font-size: 0.72rem; color: #CCC;
         }
-        .f-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
-        .f-divider-text { font-size: 0.7rem; color: rgba(255,255,255,0.2); }
-
+        .f-divider-line { flex: 1; height: 1px; background: #F0F0F0; }
         .f-help {
-          text-align: center;
-          font-size: 0.75rem;
-          color: rgba(255,255,255,0.2);
-          margin-top: 1.5rem;
+          text-align: center; font-size: 0.72rem; color: #999; margin-top: 1.25rem;
         }
-        .f-help a {
-          color: rgba(245,158,11,0.7);
-          text-decoration: none;
-          font-weight: 500;
-        }
-        .f-help a:hover { color: #F59E0B; }
-
+        .f-help a { color: #666; text-decoration: none; }
+        .f-help a:hover { color: #0A0A0A; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .f-spinner {
-          display: inline-block;
-          width: 14px;
-          height: 14px;
-          border: 2px solid rgba(255,255,255,0.3);
-          border-top-color: white;
-          border-radius: 50%;
-          animation: spin 0.7s linear infinite;
-          vertical-align: middle;
-          margin-right: 0.5rem;
+        .f-spin {
+          display: inline-block; width: 13px; height: 13px;
+          border: 1.5px solid rgba(255,255,255,0.3); border-top-color: white;
+          border-radius: 50%; animation: spin 0.6s linear infinite;
+          vertical-align: middle; margin-right: 0.4rem;
         }
       `}</style>
 
       <form onSubmit={handleLogin}>
-        {error && (
-          <div className="f-error">
-            <span>⚠</span> {error}
-          </div>
-        )}
+        {error && <div className="f-error">{error}</div>}
 
         <div className="f-group">
           <label className="f-label">Correo electrónico</label>
           <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="director@colegio.cl"
-            required
-            autoComplete="email"
+            type="email" value={email} onChange={e => setEmail(e.target.value)}
+            placeholder="director@colegio.cl" required autoComplete="email"
             className="f-input"
           />
         </div>
@@ -212,12 +125,9 @@ export function LoginForm() {
           </div>
           <div className="f-pass-wrap">
             <input
-              type={showPass ? 'text' : 'password'}
-              value={password}
+              type={showPass ? 'text' : 'password'} value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              autoComplete="current-password"
+              placeholder="••••••••" required autoComplete="current-password"
               className="f-input"
             />
             <button type="button" className="f-eye" onClick={() => setShowPass(s => !s)}>
@@ -227,16 +137,12 @@ export function LoginForm() {
         </div>
 
         <button type="submit" disabled={loading} className="f-btn">
-          {loading
-            ? <><span className="f-spinner" />Verificando...</>
-            : 'Ingresar →'
-          }
+          {loading ? <><span className="f-spin" />Verificando...</> : 'Ingresar →'}
         </button>
 
-        <p className="f-help">
-          ¿Problemas para ingresar?{' '}
-          <a href="mailto:soporte@kiva360.cl">Contactar soporte</a>
-        </p>
+        <div className="f-help">
+          ¿Problemas? <a href="mailto:soporte@kiva360.cl">Contactar soporte</a>
+        </div>
       </form>
     </>
   )
