@@ -51,92 +51,90 @@ export default async function DashboardLayout({
 
         :root { --sb-w: 220px; }
 
-        /* ── SIDEBAR ── */
         .sb {
           position: fixed; top: 0; left: 0; bottom: 0;
           width: var(--sb-w);
-          background: #0A0A0A;
-          border-right: 1px solid #1A1A1A;
+          background: #FBFBFA;
+          border-right: 1px solid #E8E8E5;
           display: flex; flex-direction: column;
           z-index: 100;
         }
 
         .sb-logo {
           height: 52px; padding: 0 1rem;
-          display: flex; align-items: center; gap: 0.6rem;
-          border-bottom: 1px solid #1A1A1A;
+          display: flex; align-items: center; gap: 0.55rem;
+          border-bottom: 1px solid #E8E8E5;
         }
         .sb-logo-k {
-          width: 26px; height: 26px; background: white; border-radius: 6px;
+          width: 24px; height: 24px; background: #1E1E1E; border-radius: 5px;
           display: flex; align-items: center; justify-content: center;
-          font-size: 0.75rem; font-weight: 700; color: #0A0A0A; flex-shrink: 0;
-          letter-spacing: -0.04em;
+          font-size: 0.7rem; font-weight: 700; color: white; flex-shrink: 0;
         }
-        .sb-logo-n { font-size: 0.88rem; font-weight: 600; color: white; letter-spacing: -0.02em; }
+        .sb-logo-n { font-size: 0.88rem; font-weight: 600; color: #1E1E1E; letter-spacing: -0.02em; }
 
         .sb-user {
-          padding: 0.75rem 1rem;
-          border-bottom: 1px solid #1A1A1A;
-          display: flex; align-items: center; gap: 0.6rem;
+          padding: 0.6rem 0.75rem;
+          border-bottom: 1px solid #E8E8E5;
+          display: flex; align-items: center; gap: 0.55rem;
+          cursor: pointer; transition: background 0.12s; border-radius: 0;
         }
+        .sb-user:hover { background: #F0F0EE; }
         .sb-avatar {
-          width: 26px; height: 26px; border-radius: 50%;
-          background: #1A1A1A; border: 1px solid #2A2A2A;
+          width: 24px; height: 24px; border-radius: 4px;
+          background: #E8E8E5;
           display: flex; align-items: center; justify-content: center;
-          font-size: 0.6rem; font-weight: 600; color: #666; flex-shrink: 0;
+          font-size: 0.58rem; font-weight: 600; color: #666; flex-shrink: 0;
         }
-        .sb-uname { font-size: 0.72rem; color: #666; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .sb-urole { font-size: 0.6rem; color: #333; }
+        .sb-uname { font-size: 0.78rem; color: #37352F; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sb-urole { font-size: 0.62rem; color: #9B9A97; }
 
-        .sb-nav { flex: 1; overflow-y: auto; padding: 0.5rem 0; }
+        .sb-nav { flex: 1; overflow-y: auto; padding: 0.4rem 0.5rem; }
         .sb-nav::-webkit-scrollbar { width: 0; }
 
         .sb-section {
-          font-size: 0.6rem; font-weight: 600; color: #333;
-          letter-spacing: 0.1em; text-transform: uppercase;
-          padding: 0.9rem 1rem 0.3rem;
+          font-size: 0.62rem; font-weight: 600; color: #9B9A97;
+          letter-spacing: 0.06em; text-transform: uppercase;
+          padding: 0.9rem 0.5rem 0.25rem;
         }
 
         .sb-link {
-          display: flex; align-items: center; gap: 0.6rem;
-          padding: 0.42rem 1rem;
-          font-size: 0.78rem; color: #555; font-weight: 400;
-          text-decoration: none; transition: color 0.12s, background 0.12s;
+          display: flex; align-items: center; gap: 0.5rem;
+          padding: 0.35rem 0.5rem;
+          font-size: 0.82rem; color: #6B6B6B; font-weight: 400;
+          text-decoration: none; transition: all 0.1s;
+          border-radius: 4px;
         }
-        .sb-link:hover { color: #CCC; background: #111; }
+        .sb-link:hover { color: #37352F; background: #EFEEEB; }
         .sb-badge {
           margin-left: auto;
-          background: #1A1A1A; color: #666;
+          background: #E8E8E5; color: #9B9A97;
           font-size: 0.58rem; font-weight: 600;
-          padding: 0.1rem 0.4rem; border-radius: 20px;
-          min-width: 18px; text-align: center;
+          padding: 0.08rem 0.38rem; border-radius: 20px;
         }
 
         .sb-footer {
-          padding: 0.75rem 1rem;
-          border-top: 1px solid #1A1A1A;
+          padding: 0.75rem;
+          border-top: 1px solid #E8E8E5;
         }
-        .sb-chips { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+        .sb-chips { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
         .sb-chip {
-          font-size: 0.56rem; font-weight: 500; color: #444;
-          padding: 0.12rem 0.45rem; border-radius: 20px;
-          border: 1px solid #1E1E1E; letter-spacing: 0.04em;
+          font-size: 0.56rem; font-weight: 500; color: #9B9A97;
+          padding: 0.1rem 0.4rem; border-radius: 3px;
+          background: #F0F0EE; letter-spacing: 0.03em;
         }
         .sb-out {
           display: block; text-align: center;
-          font-size: 0.68rem; color: #444; text-decoration: none;
-          padding: 0.4rem; border-radius: 6px;
-          border: 1px solid #1A1A1A;
-          transition: color 0.12s, border-color 0.12s;
+          font-size: 0.68rem; color: #9B9A97; text-decoration: none;
+          padding: 0.35rem; border-radius: 4px;
+          transition: background 0.1s, color 0.1s;
         }
-        .sb-out:hover { color: #666; border-color: #2A2A2A; }
+        .sb-out:hover { background: #EFEEEB; color: #37352F; }
 
-        /* ── MAIN ── */
         .main {
           margin-left: var(--sb-w);
           min-height: 100vh;
           display: flex; flex-direction: column;
-          background: #F7F7F7;
+          background: #F5F6FA;
         }
 
         .topbar {
@@ -146,29 +144,28 @@ export default async function DashboardLayout({
           padding: 0 1.5rem;
           position: sticky; top: 0; z-index: 90;
         }
-        .topbar-l { font-size: 0.78rem; color: #999; }
-        .topbar-l strong { color: #0A0A0A; font-weight: 600; }
-        .topbar-r { display: flex; align-items: center; gap: 0.6rem; }
+        .topbar-l { font-size: 0.78rem; color: #9B9A97; }
+        .topbar-l strong { color: #37352F; font-weight: 500; }
+        .topbar-r { display: flex; align-items: center; gap: 0.5rem; }
         .topbar-year {
-          font-size: 0.68rem; font-weight: 600; color: #0A0A0A;
-          background: #F0F0F0; padding: 0.22rem 0.65rem; border-radius: 6px;
-          letter-spacing: 0.02em;
+          font-size: 0.68rem; font-weight: 500; color: #6B6B6B;
+          background: #F0F0EE; padding: 0.2rem 0.6rem; border-radius: 4px;
         }
         .topbar-bell {
-          width: 30px; height: 30px;
-          background: white; border: 1px solid #EBEBEB; border-radius: 7px;
+          width: 28px; height: 28px;
+          background: transparent; border: none;
           display: flex; align-items: center; justify-content: center;
-          font-size: 0.82rem; cursor: pointer; position: relative;
-          transition: background 0.12s;
+          font-size: 0.82rem; cursor: pointer; border-radius: 4px;
+          transition: background 0.1s; position: relative;
         }
-        .topbar-bell:hover { background: #F5F5F5; }
+        .topbar-bell:hover { background: #F0F0EE; }
         .topbar-bell-dot {
-          position: absolute; top: 5px; right: 5px;
-          width: 5px; height: 5px; background: #0A0A0A;
+          position: absolute; top: 4px; right: 4px;
+          width: 5px; height: 5px; background: #37352F;
           border-radius: 50%; border: 1.5px solid white;
         }
 
-        .page { flex: 1; padding: 1.5rem; }
+        .page { flex: 1; padding: 1.75rem 2rem; max-width: 1100px; }
       `}</style>
 
       <div style={{ display: 'flex', minHeight: '100vh' }}>
