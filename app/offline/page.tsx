@@ -1,4 +1,5 @@
-// app/offline/page.tsx
+'use client'
+
 export default function OfflinePage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, system-ui, sans-serif', background: '#F5F6FA', padding: '2rem', textAlign: 'center' }}>
