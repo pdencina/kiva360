@@ -28,6 +28,7 @@ const NAV = [
       { href: '/comunicacion',         label: 'Comunicación',    icon: '◉', badge: 5 },
       { href: '/familias',             label: 'Familias',        icon: '◈', badge: 0 },
       { href: '/reportes',             label: 'Reportes',        icon: '◧', badge: 0 },
+      { href: '/cobranzas',            label: 'Cobranzas',       icon: '◎', badge: 0 },
     ]
   },
 ]
