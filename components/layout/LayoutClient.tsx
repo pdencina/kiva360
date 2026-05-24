@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 
+
 const NAV = [
   {
     section: 'Principal',
@@ -13,6 +14,7 @@ const NAV = [
       { href: '/libro',                label: 'Libro de Clases', icon: '▦', badge: 0 },
       { href: '/evaluaciones',         label: 'Evaluaciones',    icon: '✎', badge: 3 },
       { href: '/planificacion',        label: 'Planificación',   icon: '◫', badge: 0 },
+	  { href: '/colaborativo', label: 'Colaborativo', icon: '🤝', badge: 0 },
     ]
   },
   {
