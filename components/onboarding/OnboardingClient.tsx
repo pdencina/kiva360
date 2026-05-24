@@ -364,4 +364,3 @@ function StepRolForm({ rol, onSuccess, onBack }: { rol: string; onSuccess: () =>
   )
 }
 
-const INIT: OnboardingState = { error: null, success: false }
