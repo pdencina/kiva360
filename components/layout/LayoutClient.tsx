@@ -9,6 +9,7 @@ const NAV = [
       { href: '/dashboard',            label: 'Dashboard',       icon: '○', badge: 0 },
       { href: '/director',             label: 'Panel Director',  icon: '🏫', badge: 0 },
       { href: '/utp',                  label: 'Panel UTP',       icon: '📋', badge: 0 },
+      { href: '/alumnos',             label: 'Alumnos',         icon: '◈', badge: 0 },
       { href: '/libro',                label: 'Libro de Clases', icon: '▦', badge: 0 },
       { href: '/evaluaciones',         label: 'Evaluaciones',    icon: '✎', badge: 3 },
       { href: '/planificacion',        label: 'Planificación',   icon: '◫', badge: 0 },
