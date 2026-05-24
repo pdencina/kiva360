@@ -2,48 +2,163 @@
 
 import { useState, useEffect } from 'react'
 
+type Rol = 'director' | 'utp' | 'profesor' | 'apoderado' | 'admin_kiva360'
 
-const NAV = [
-  {
-    section: 'Principal',
-    items: [
-      { href: '/dashboard',            label: 'Dashboard',       icon: '○', badge: 0 },
-      { href: '/director',             label: 'Panel Director',  icon: '🏫', badge: 0 },
-      { href: '/utp',                  label: 'Panel UTP',       icon: '📋', badge: 0 },
-      { href: '/alumnos',             label: 'Alumnos',         icon: '◈', badge: 0 },
-      { href: '/libro',                label: 'Libro de Clases', icon: '▦', badge: 0 },
-      { href: '/evaluaciones',         label: 'Evaluaciones',    icon: '✎', badge: 3 },
-      { href: '/planificacion',        label: 'Planificación',   icon: '◫', badge: 0 },
-	  { href: '/colaborativo', label: 'Colaborativo', icon: '🤝', badge: 0 },
-    ]
-  },
-  {
-    section: 'Integración',
-    items: [
-      { href: '/integraciones/sige',   label: 'SIGE',            icon: '⬡', badge: 0 },
-      { href: '/integraciones/sae',    label: 'SAE',             icon: '⬢', badge: 0 },
-      { href: '/integraciones/junaeb', label: 'JUNAEB',          icon: '⬟', badge: 2 },
-    ]
-  },
-  {
-    section: 'Comunidad',
-    items: [
-      { href: '/comunicacion',         label: 'Comunicación',    icon: '◉', badge: 5 },
-      { href: '/familias',             label: 'Familias',        icon: '◈', badge: 0 },
-      { href: '/apoderado',            label: 'Portal Apoderado',icon: '👨‍👩‍👧', badge: 0 },
-      { href: '/reportes',             label: 'Reportes',        icon: '◧', badge: 0 },
-      { href: '/cobranzas',            label: 'Cobranzas',       icon: '◎', badge: 0 },
-    ]
-  },
-]
+type NavItem = { href: string; label: string; icon: string; badge?: number }
+type NavGroup = { section: string; items: NavItem[] }
 
-export function LayoutClient({ email, iniciales, children }: { email: string; iniciales: string; children: React.ReactNode }) {
-  const [open, setOpen] = useState(true)
+const NAV_POR_ROL: Record<Rol, NavGroup[]> = {
+  admin_kiva360: [
+    {
+      section: 'Principal',
+      items: [
+        { href: '/dashboard',   label: 'Dashboard',       icon: '○' },
+        { href: '/director',    label: 'Panel Director',  icon: '🏫' },
+        { href: '/utp',         label: 'Panel UTP',       icon: '📋' },
+        { href: '/alumnos',     label: 'Alumnos',         icon: '◈' },
+        { href: '/libro',       label: 'Libro de Clases', icon: '▦' },
+        { href: '/evaluaciones',label: 'Evaluaciones',    icon: '✎', badge: 3 },
+        { href: '/planificacion',label: 'Planificación',  icon: '◫' },
+        { href: '/personal',    label: 'Personal',        icon: '◑' },
+        { href: '/colaborativo',label: 'Colaborativo',    icon: '🤝' },
+      ]
+    },
+    {
+      section: 'Integración',
+      items: [
+        { href: '/integraciones/sige',   label: 'SIGE',   icon: '⬡' },
+        { href: '/integraciones/sae',    label: 'SAE',    icon: '⬢' },
+        { href: '/integraciones/junaeb', label: 'JUNAEB', icon: '⬟', badge: 2 },
+      ]
+    },
+    {
+      section: 'Comunidad',
+      items: [
+        { href: '/comunicacion', label: 'Comunicación',    icon: '◉', badge: 5 },
+        { href: '/familias',     label: 'Familias',        icon: '◈' },
+        { href: '/apoderado',    label: 'Portal Apoderado',icon: '👨‍👩‍👧' },
+        { href: '/reportes',     label: 'Reportes',        icon: '◧' },
+        { href: '/cobranzas',    label: 'Cobranzas',       icon: '◎' },
+        { href: '/configuracion',label: 'Configuración',   icon: '⚙' },
+      ]
+    },
+  ],
+
+  director: [
+    {
+      section: 'Principal',
+      items: [
+        { href: '/dashboard',    label: 'Dashboard',       icon: '○' },
+        { href: '/director',     label: 'Panel Director',  icon: '🏫' },
+        { href: '/alumnos',      label: 'Alumnos',         icon: '◈' },
+        { href: '/personal',     label: 'Personal',        icon: '◑' },
+      ]
+    },
+    {
+      section: 'Académico',
+      items: [
+        { href: '/utp',          label: 'Panel UTP',       icon: '📋' },
+        { href: '/libro',        label: 'Libro de Clases', icon: '▦' },
+        { href: '/evaluaciones', label: 'Evaluaciones',    icon: '✎' },
+        { href: '/planificacion',label: 'Planificación',   icon: '◫' },
+        { href: '/colaborativo', label: 'Colaborativo',    icon: '🤝' },
+      ]
+    },
+    {
+      section: 'Gestión',
+      items: [
+        { href: '/comunicacion', label: 'Comunicación',    icon: '◉' },
+        { href: '/familias',     label: 'Familias',        icon: '◈' },
+        { href: '/reportes',     label: 'Reportes',        icon: '◧' },
+        { href: '/cobranzas',    label: 'Cobranzas',       icon: '◎' },
+        { href: '/configuracion',label: 'Configuración',   icon: '⚙' },
+      ]
+    },
+  ],
+
+  utp: [
+    {
+      section: 'Principal',
+      items: [
+        { href: '/dashboard',    label: 'Dashboard',       icon: '○' },
+        { href: '/utp',          label: 'Panel UTP',       icon: '📋' },
+        { href: '/alumnos',      label: 'Alumnos',         icon: '◈' },
+      ]
+    },
+    {
+      section: 'Académico',
+      items: [
+        { href: '/libro',        label: 'Libro de Clases', icon: '▦' },
+        { href: '/evaluaciones', label: 'Evaluaciones',    icon: '✎' },
+        { href: '/planificacion',label: 'Planificación',   icon: '◫' },
+        { href: '/colaborativo', label: 'Colaborativo',    icon: '🤝' },
+        { href: '/reportes',     label: 'Reportes',        icon: '◧' },
+      ]
+    },
+    {
+      section: 'Comunidad',
+      items: [
+        { href: '/comunicacion', label: 'Comunicación',    icon: '◉' },
+      ]
+    },
+  ],
+
+  profesor: [
+    {
+      section: 'Mi trabajo',
+      items: [
+        { href: '/dashboard',    label: 'Dashboard',       icon: '○' },
+        { href: '/alumnos',      label: 'Mis alumnos',     icon: '◈' },
+        { href: '/libro',        label: 'Libro de Clases', icon: '▦' },
+        { href: '/evaluaciones', label: 'Evaluaciones',    icon: '✎' },
+        { href: '/planificacion',label: 'Planificación',   icon: '◫' },
+      ]
+    },
+    {
+      section: 'Colaboración',
+      items: [
+        { href: '/colaborativo', label: 'Colaborativo',    icon: '🤝' },
+        { href: '/comunicacion', label: 'Comunicación',    icon: '◉' },
+      ]
+    },
+  ],
+
+  apoderado: [
+    {
+      section: 'Mi hijo/a',
+      items: [
+        { href: '/apoderado',    label: 'Seguimiento',     icon: '👨‍👩‍👧' },
+        { href: '/comunicacion', label: 'Mensajes',        icon: '◉' },
+      ]
+    },
+  ],
+}
+
+const ROL_LABEL: Record<Rol, string> = {
+  director:     'Director/a',
+  utp:          'UTP',
+  profesor:     'Profesor/a',
+  apoderado:    'Apoderado/a',
+  admin_kiva360:'Admin Kiva360',
+}
+
+const SB_W = 220
+
+interface Props {
+  email: string
+  iniciales: string
+  rol: Rol
+  nombreColegio: string
+  children: React.ReactNode
+}
+
+export function LayoutClient({ email, iniciales, rol, nombreColegio, children }: Props) {
+  const [open,   setOpen]   = useState(true)
   const [active, setActive] = useState('')
 
   useEffect(() => { setActive(window.location.pathname) }, [])
 
-  const SB_W = 220
+  const nav = NAV_POR_ROL[rol] ?? NAV_POR_ROL['profesor']
 
   return (
     <>
@@ -55,45 +170,36 @@ export function LayoutClient({ email, iniciales, children }: { email: string; in
 
         .sb {
           position: fixed; top: 0; left: 0; bottom: 0;
-          width: ${SB_W}px;
-          background: #FBFBFA;
+          width: ${SB_W}px; background: #FBFBFA;
           border-right: 1px solid #E8E8E5;
           display: flex; flex-direction: column;
-          z-index: 100;
+          z-index: 100; overflow: hidden;
           transform: translateX(0);
           transition: transform 0.22s cubic-bezier(0.4,0,0.2,1);
-          overflow: hidden;
         }
         .sb.closed { transform: translateX(-100%); }
 
-        .sb-logo {
-          height: 52px; padding: 0 1rem;
-          display: flex; align-items: center; justify-content: space-between;
-          border-bottom: 1px solid #E8E8E5; flex-shrink: 0;
-        }
+        .sb-logo { height: 52px; padding: 0 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8E8E5; flex-shrink: 0; }
         .sb-logo-inner { display: flex; align-items: center; gap: 0.55rem; }
-        .sb-logo-k { width: 24px; height: 24px; background: #37352F; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; flex-shrink: 0; }
+        .sb-logo-k { width: 24px; height: 24px; background: #37352F; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; }
         .sb-logo-n { font-size: 0.88rem; font-weight: 600; color: #37352F; letter-spacing: -0.02em; }
-        .sb-close-btn { width: 24px; height: 24px; border: none; background: none; cursor: pointer; border-radius: 4px; color: #9B9A97; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.12s; flex-shrink: 0; }
+        .sb-close-btn { width: 24px; height: 24px; border: none; background: none; cursor: pointer; border-radius: 4px; color: #9B9A97; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.12s; }
         .sb-close-btn:hover { background: #EFEEEB; color: #37352F; }
+
+        .sb-colegio { padding: 0.6rem 0.75rem; border-bottom: 1px solid #E8E8E5; flex-shrink: 0; }
+        .sb-colegio-nombre { font-size: 0.72rem; font-weight: 600; color: #37352F; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sb-colegio-rol { font-size: 0.62rem; color: #9B9A97; margin-top: 0.1rem; }
 
         .sb-user { padding: 0.6rem 0.75rem; border-bottom: 1px solid #E8E8E5; display: flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
         .sb-avatar { width: 24px; height: 24px; border-radius: 4px; background: #E8E8E5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.58rem; font-weight: 600; color: #6B6B6B; }
-        .sb-uname { font-size: 0.75rem; color: #37352F; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .sb-urole { font-size: 0.6rem; color: #9B9A97; }
+        .sb-uname { font-size: 0.72rem; color: #37352F; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .sb-nav { flex: 1; overflow-y: auto; padding: 0.4rem 0.5rem; }
         .sb-nav::-webkit-scrollbar { width: 0; }
 
         .sb-section { font-size: 0.6rem; font-weight: 600; color: #C2C0BB; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.85rem 0.5rem 0.25rem; }
 
-        .sb-link {
-          display: flex; align-items: center; gap: 0.55rem;
-          padding: 0.38rem 0.6rem;
-          font-size: 0.8rem; color: #6B6B6B; font-weight: 400;
-          text-decoration: none; border-radius: 5px;
-          transition: background 0.1s, color 0.1s, transform 0.15s;
-        }
+        .sb-link { display: flex; align-items: center; gap: 0.55rem; padding: 0.38rem 0.6rem; font-size: 0.8rem; color: #6B6B6B; font-weight: 400; text-decoration: none; border-radius: 5px; transition: background 0.1s, color 0.1s, transform 0.15s; }
         .sb-link:hover { background: #EFEEEB; color: #37352F; transform: translateX(3px); }
         .sb-link.active { background: #EFEEEB; color: #37352F; font-weight: 500; }
         .sb-link.active .sb-dot { opacity: 1; }
@@ -102,38 +208,32 @@ export function LayoutClient({ email, iniciales, children }: { email: string; in
         .sb-badge { margin-left: auto; background: #E8E8E5; color: #9B9A97; font-size: 0.58rem; font-weight: 600; padding: 0.08rem 0.4rem; border-radius: 20px; min-width: 18px; text-align: center; }
 
         .sb-footer { padding: 0.75rem; border-top: 1px solid #E8E8E5; flex-shrink: 0; }
-        .sb-chips { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-        .sb-chip { font-size: 0.55rem; font-weight: 500; color: #9B9A97; padding: 0.1rem 0.4rem; border-radius: 3px; background: #F0F0EE; }
         .sb-out { display: block; text-align: center; font-size: 0.68rem; color: #9B9A97; text-decoration: none; padding: 0.35rem; border-radius: 4px; transition: background 0.1s, color 0.1s; }
         .sb-out:hover { background: #EFEEEB; color: #37352F; }
 
-        .main-wrap {
-          min-height: 100vh; display: flex; flex-direction: column;
-          background: #F5F6FA;
-          margin-left: ${SB_W}px;
-          transition: margin-left 0.22s cubic-bezier(0.4,0,0.2,1);
-        }
+        .main-wrap { min-height: 100vh; display: flex; flex-direction: column; background: #F5F6FA; margin-left: ${SB_W}px; transition: margin-left 0.22s cubic-bezier(0.4,0,0.2,1); }
         .main-wrap.sb-closed { margin-left: 0; }
 
-        .topbar {
-          height: 52px; background: white;
-          border-bottom: 1px solid #EBEBEB;
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 0 1.25rem;
-          position: sticky; top: 0; z-index: 90;
-        }
+        .topbar { height: 52px; background: white; border-bottom: 1px solid #EBEBEB; display: flex; align-items: center; justify-content: space-between; padding: 0 1.25rem; position: sticky; top: 0; z-index: 90; }
         .topbar-l { display: flex; align-items: center; gap: 0.6rem; }
         .hamburger { width: 30px; height: 30px; border: none; background: none; cursor: pointer; border-radius: 5px; color: #9B9A97; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: background 0.1s, color 0.1s; }
         .hamburger:hover { background: #F0F0EE; color: #37352F; }
         .topbar-breadcrumb { font-size: 0.78rem; color: #9B9A97; }
         .topbar-breadcrumb strong { color: #37352F; font-weight: 500; }
         .topbar-r { display: flex; align-items: center; gap: 0.5rem; }
+        .topbar-rol { font-size: 0.65rem; font-weight: 600; color: #6B6B6B; background: #F0F0EE; padding: 0.2rem 0.6rem; border-radius: 4px; }
         .topbar-year { font-size: 0.68rem; font-weight: 500; color: #6B6B6B; background: #F0F0EE; padding: 0.2rem 0.6rem; border-radius: 4px; }
         .topbar-bell { width: 28px; height: 28px; background: none; border: none; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; cursor: pointer; border-radius: 4px; transition: background 0.1s; position: relative; }
         .topbar-bell:hover { background: #F0F0EE; }
         .bell-dot { position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; background: #37352F; border-radius: 50%; border: 1.5px solid white; }
 
         .page { flex: 1; padding: 1.75rem 2rem; }
+
+        @media (max-width: 768px) {
+          .main-wrap { margin-left: 0 !important; }
+          .sb { transform: translateX(-100%); }
+          .sb.open { transform: translateX(0); }
+        }
       `}</style>
 
       <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -146,24 +246,29 @@ export function LayoutClient({ email, iniciales, children }: { email: string; in
             <button className="sb-close-btn" onClick={() => setOpen(false)}>←</button>
           </div>
 
+          <div className="sb-colegio">
+            <div className="sb-colegio-nombre">{nombreColegio}</div>
+            <div className="sb-colegio-rol">{ROL_LABEL[rol]}</div>
+          </div>
+
           <div className="sb-user">
             <div className="sb-avatar">{iniciales}</div>
             <div style={{ minWidth: 0 }}>
               <div className="sb-uname">{email}</div>
-              <div className="sb-urole">Administrador</div>
             </div>
           </div>
 
           <nav className="sb-nav">
-            {NAV.map(group => (
+            {nav.map(group => (
               <div key={group.section}>
                 <div className="sb-section">{group.section}</div>
                 {group.items.map(item => (
-                  <a key={item.href} href={item.href} className={`sb-link${active === item.href ? ' active' : ''}`}>
+                  <a key={item.href} href={item.href}
+                    className={`sb-link${active === item.href ? ' active' : ''}`}>
                     <span className="sb-dot" />
                     <span className="sb-icon">{item.icon}</span>
                     <span style={{ flex: 1 }}>{item.label}</span>
-                    {item.badge > 0 && <span className="sb-badge">{item.badge}</span>}
+                    {item.badge && item.badge > 0 && <span className="sb-badge">{item.badge}</span>}
                   </a>
                 ))}
               </div>
@@ -171,11 +276,6 @@ export function LayoutClient({ email, iniciales, children }: { email: string; in
           </nav>
 
           <div className="sb-footer">
-            <div className="sb-chips">
-              {['SIGE', 'SAE', 'JUNAEB'].map(c => (
-                <span key={c} className="sb-chip">{c} ●</span>
-              ))}
-            </div>
             <a href="/api/auth/signout" className="sb-out">Cerrar sesión</a>
           </div>
         </aside>
@@ -187,11 +287,12 @@ export function LayoutClient({ email, iniciales, children }: { email: string; in
               <div className="topbar-breadcrumb">
                 <strong>Kiva360</strong>
                 <span style={{ margin: '0 0.35rem', color: '#DDD' }}>·</span>
-                Panel de gestión escolar
+                {nombreColegio}
               </div>
             </div>
             <div className="topbar-r">
-              <div className="topbar-year">2026</div>
+              <div className="topbar-rol">{ROL_LABEL[rol]}</div>
+              <div className="topbar-year">{new Date().getFullYear()}</div>
               <button className="topbar-bell">🔔<div className="bell-dot" /></button>
             </div>
           </header>
