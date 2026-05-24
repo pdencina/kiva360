@@ -309,9 +309,9 @@ export default function LandingPage() {
       {/* LOGOS */}
       <div className="logos">
         <div className="c">
-          <div className="logos-title">DISEÑADO PARA EL SISTEMA EDUCATIVO CHILENO</div>
+          <div className="logos-title">ALINEADO CON LA NORMATIVA EDUCATIVA CHILENA</div>
           <div className="logos-row">
-            {['MINEDUC', 'SIGE', 'SAE', 'JUNAEB', 'PIE', 'SEP', 'OA CURRÍCULUM'].map(l => (
+            {['MINEDUC', 'LEY 20.370', 'PIE', 'SEP', 'PAE', 'OA CURRÍCULUM', 'LEY 19.628'].map(l => (
               <div key={l} className="logos-item">{l}</div>
             ))}
           </div>
@@ -504,17 +504,17 @@ export default function LandingPage() {
         <div className="c">
           <div className="c-sm" style={{ margin: '0 auto 0' }}>
             <div className="section-badge" style={{ background: '#1A1A1A', color: '#555' }}>Integraciones</div>
-            <h2 className="section-h2 integ-h2">Conectado con el ecosistema educativo chileno</h2>
-            <p className="section-sub integ-sub">Kiva360 habla el mismo idioma que el MINEDUC.</p>
+            <h2 className="section-h2 integ-h2">Pensado para la realidad educativa chilena</h2>
+            <p className="section-sub integ-sub">Kiva360 genera los documentos y archivos que el MINEDUC requiere, en el formato correcto.</p>
           </div>
           <div className="integ-grid">
             {[
-              { icon: '🔗', name: 'SIGE', desc: 'Sistema de Información General de Estudiantes. Matrícula, asistencia y declaraciones.', badge: 'Disponible' },
-              { icon: '🎓', name: 'SAE', desc: 'Sistema de Admisión Escolar. Gestión de postulantes y matrícula preferente.', badge: 'Disponible' },
-              { icon: '🍽️', name: 'JUNAEB', desc: 'Registro de beneficiarios PAE, SEP y TNE integrado en la ficha del alumno.', badge: 'Disponible' },
-              { icon: '📚', name: 'Currículum MINEDUC', desc: 'OA actualizados por asignatura y nivel. Planificación alineada al currículum nacional.', badge: 'Integrado' },
-              { icon: '📧', name: 'Resend / SMTP', desc: 'Notificaciones automáticas por email a apoderados. Configurable con tu dominio.', badge: 'Integrado' },
-              { icon: '🔌', name: 'API Gateway EdTech', desc: 'Próximamente: API para que otras plataformas se conecten a través de Kiva360.', badge: 'Próximamente' },
+              { icon: '🔗', name: 'Compatible con SIGE', desc: 'Genera los reportes de asistencia y matrícula en el formato que SIGE requiere para importación.', badge: 'Exportación' },
+              { icon: '🎓', name: 'Compatible con SAE', desc: 'Gestiona tu nómina de postulantes y matrícula preferente dentro de Kiva360.', badge: 'Gestión interna' },
+              { icon: '🍽️', name: 'Compatible con JUNAEB', desc: 'Registra beneficiarios PAE, SEP y TNE en la ficha del alumno para tener todo centralizado.', badge: 'Registro interno' },
+              { icon: '📚', name: 'Currículum MINEDUC', desc: 'OA actualizados por asignatura y nivel. Planificación 100% alineada al currículum nacional.', badge: 'Integrado' },
+              { icon: '📧', name: 'Email con Resend', desc: 'Notificaciones automáticas por email a apoderados. Configurable con el dominio de tu colegio.', badge: 'Integrado' },
+              { icon: '🔌', name: 'API Gateway EdTech', desc: 'Próximamente: conecta Kiva360 con otras plataformas EdTech a través de nuestra API.', badge: 'Próximamente' },
             ].map(i => (
               <div key={i.name} className="integ-card">
                 <div className="integ-icon">{i.icon}</div>
