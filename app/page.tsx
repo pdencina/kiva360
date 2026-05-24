@@ -94,7 +94,7 @@ export default function LandingPage() {
         .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
         .feat-card { background: white; border: 1px solid #E8E8E8; border-radius: 12px; padding: 1.5rem; transition: all 0.2s; }
         .feat-card:hover { border-color: #0A0A0A; box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); }
-        .feat-icon { font-size: 1.5rem; margin-bottom: 0.85rem; }
+        .feat-icon { font-size: 1.1rem; margin-bottom: 0.85rem; width: 36px; height: 36px; background: #F0F0EE; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #37352F; font-weight: 700; }
         .feat-title { font-size: 1rem; font-weight: 700; color: #0A0A0A; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
         .feat-desc { font-size: 0.85rem; color: #666; line-height: 1.65; }
         .feat-tag { display: inline-block; margin-top: 0.75rem; font-size: 0.68rem; font-weight: 600; color: #666; background: #F5F5F5; padding: 0.15rem 0.5rem; border-radius: 4px; }
@@ -107,7 +107,7 @@ export default function LandingPage() {
         .role-card.utp       { background: #F0F0EE; }
         .role-card.profesor  { background: #EFF6FF; }
         .role-card.apoderado { background: #F0FDF4; }
-        .role-icon { font-size: 1.5rem; margin-bottom: 0.85rem; }
+        .role-icon { font-size: 1.1rem; margin-bottom: 0.85rem; width: 36px; height: 36px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
         .role-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
         .role-desc { font-size: 0.85rem; line-height: 1.65; opacity: 0.75; margin-bottom: 1rem; }
         .role-items { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
@@ -153,7 +153,7 @@ export default function LandingPage() {
         .integ-sub { color: #555; }
         .integ-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 3rem; }
         .integ-card { border: 1px solid #1A1A1A; border-radius: 10px; padding: 1.25rem; }
-        .integ-icon { font-size: 1.5rem; margin-bottom: 0.6rem; }
+        .integ-icon { font-size: 1rem; margin-bottom: 0.6rem; width: 32px; height: 32px; background: #1A1A1A; border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #666; font-weight: 700; }
         .integ-name { font-size: 0.9rem; font-weight: 700; color: white; margin-bottom: 0.3rem; }
         .integ-desc { font-size: 0.8rem; color: #555; line-height: 1.6; }
         .integ-badge { display: inline-block; margin-top: 0.5rem; font-size: 0.65rem; font-weight: 600; color: #16A34A; background: rgba(22,163,74,0.1); padding: 0.15rem 0.5rem; border-radius: 3px; }
@@ -328,15 +328,15 @@ export default function LandingPage() {
           </div>
           <div className="features-grid">
             {[
-              { icon: '📒', title: 'Libro de clases digital', desc: 'Asistencia, notas y hoja de vida del alumno en un solo lugar. Cumple con la normativa MINEDUC.', tag: 'Para profesores' },
-              { icon: '🗓️', title: 'Planificador de clases', desc: 'Diseña tus clases con OA, estrategias didácticas y recursos. Banco de estrategias integrado.', tag: 'Para profesores' },
-              { icon: '📚', title: 'Biblioteca histórica', desc: 'Explora planificaciones de años anteriores, ve qué funcionó y clona las mejores clases.', tag: 'Novedad' },
-              { icon: '👥', title: 'Ficha del estudiante', desc: 'Historial académico, anotaciones, derivaciones a profesionales y entrevistas con apoderados.', tag: 'Integral' },
-              { icon: '📋', title: 'Panel UTP', desc: 'Supervisa planificaciones, cobertura curricular, alumnos en riesgo y sesiones de co-docencia.', tag: 'Para UTP' },
-              { icon: '🏫', title: 'Panel Director', desc: 'Vista ejecutiva con alertas tempranas, KPIs en tiempo real y acceso a todos los módulos.', tag: 'Para dirección' },
-              { icon: '💰', title: 'Cobranzas y aranceles', desc: 'Gestiona planes de pago, cuotas y registra pagos. Control financiero integrado.', tag: 'Para administración' },
-              { icon: '👨‍👩‍👧', title: 'Portal apoderado', desc: 'Los apoderados ven notas, asistencia y pueden comunicarse directamente con el colegio.', tag: 'Para familias' },
-              { icon: '🤝', title: 'Espacio colaborativo', desc: 'Comparte recursos didácticos, programa co-docencia y trabaja en equipo con tus colegas.', tag: 'Para docentes' },
+              { icon: '▦', title: 'Libro de clases digital', desc: 'Asistencia, notas y hoja de vida del alumno en un solo lugar. Cumple con la normativa MINEDUC.', tag: 'Para profesores' },
+              { icon: '◫', title: 'Planificador de clases', desc: 'Diseña tus clases con OA, estrategias didácticas y recursos. Banco de estrategias integrado.', tag: 'Para profesores' },
+              { icon: '◈', title: 'Biblioteca histórica', desc: 'Explora planificaciones de años anteriores, ve qué funcionó y clona las mejores clases.', tag: 'Novedad' },
+              { icon: '◉', title: 'Ficha del estudiante', desc: 'Historial académico, anotaciones, derivaciones a profesionales y entrevistas con apoderados.', tag: 'Integral' },
+              { icon: '◧', title: 'Panel UTP', desc: 'Supervisa planificaciones, cobertura curricular, alumnos en riesgo y sesiones de co-docencia.', tag: 'Para UTP' },
+              { icon: '○', title: 'Panel Director', desc: 'Vista ejecutiva con alertas tempranas, KPIs en tiempo real y acceso a todos los módulos.', tag: 'Para dirección' },
+              { icon: '◎', title: 'Cobranzas y aranceles', desc: 'Gestiona planes de pago, cuotas y registra pagos. Control financiero integrado.', tag: 'Para administración' },
+              { icon: '◑', title: 'Portal apoderado', desc: 'Los apoderados ven notas, asistencia y pueden comunicarse directamente con el colegio.', tag: 'Para familias' },
+              { icon: '◐', title: 'Espacio colaborativo', desc: 'Comparte recursos didácticos, programa co-docencia y trabaja en equipo con tus colegas.', tag: 'Para docentes' },
             ].map(f => (
               <div key={f.title} className="feat-card">
                 <div className="feat-icon">{f.icon}</div>
@@ -360,7 +360,7 @@ export default function LandingPage() {
           <div className="roles-grid">
             {[
               {
-                cls: 'director', icon: '🏫', title: 'Director/a',
+                cls: 'director', icon: '◻', title: 'Director/a',
                 desc: 'Panorámica completa del establecimiento en tiempo real.',
                 items: ['Alertas tempranas automáticas', 'KPIs académicos y financieros', 'Supervisión de todo el equipo', 'Reportes para el sostenedor']
               },
@@ -375,7 +375,7 @@ export default function LandingPage() {
                 items: ['Libro de clases digital', 'Planificador con estrategias', 'Ficha completa de cada alumno', 'Comunicación directa con familias']
               },
               {
-                cls: 'apoderado', icon: '👨‍👩‍👧', title: 'Apoderado/a',
+                cls: 'apoderado', icon: '◈', title: 'Apoderado/a',
                 desc: 'Seguimiento del rendimiento de su hijo/a.',
                 items: ['Notas y asistencia en tiempo real', 'Alertas automáticas', 'Agenda de entrevistas', 'Mensajes directos con el colegio']
               },
@@ -446,7 +446,7 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1.25rem', marginTop: '1rem' }}>
             {[
               {
-                icon: '🎯',
+                icon: '◎',
                 title: 'Demo personalizada',
                 desc: 'Te mostramos el sistema en funcionamiento real, adaptado a tu realidad como colegio. Sin presentaciones genéricas.',
                 cta: 'Agendar demo',
@@ -454,7 +454,7 @@ export default function LandingPage() {
                 dark: false,
               },
               {
-                icon: '🚀',
+                icon: '→',
                 title: 'Prueba gratis 30 días',
                 desc: 'Accede al sistema completo sin costo por 30 días. Sin tarjeta de crédito. Tu equipo completo puede probarlo.',
                 cta: 'Comenzar ahora →',
@@ -462,7 +462,7 @@ export default function LandingPage() {
                 dark: true,
               },
               {
-                icon: '🏫',
+                icon: '◻',
                 title: 'Red de colegios',
                 desc: '¿Eres sostenedor con varios establecimientos? Tenemos una propuesta especial para centralizar la gestión de toda tu red.',
                 cta: 'Hablar con el equipo',
@@ -521,12 +521,12 @@ export default function LandingPage() {
           </div>
           <div className="integ-grid">
             {[
-              { icon: '🔗', name: 'Compatible con SIGE', desc: 'Genera los reportes de asistencia y matrícula en el formato que SIGE requiere para importación.', badge: 'Exportación' },
-              { icon: '🎓', name: 'Compatible con SAE', desc: 'Gestiona tu nómina de postulantes y matrícula preferente dentro de Kiva360.', badge: 'Gestión interna' },
-              { icon: '🍽️', name: 'Compatible con JUNAEB', desc: 'Registra beneficiarios PAE, SEP y TNE en la ficha del alumno para tener todo centralizado.', badge: 'Registro interno' },
-              { icon: '📚', name: 'Currículum MINEDUC', desc: 'OA actualizados por asignatura y nivel. Planificación 100% alineada al currículum nacional.', badge: 'Integrado' },
-              { icon: '📧', name: 'Email con Resend', desc: 'Notificaciones automáticas por email a apoderados. Configurable con el dominio de tu colegio.', badge: 'Integrado' },
-              { icon: '🔌', name: 'API Gateway EdTech', desc: 'Próximamente: conecta Kiva360 con otras plataformas EdTech a través de nuestra API.', badge: 'Próximamente' },
+              { icon: '⬡', name: 'Compatible con SIGE', desc: 'Genera los reportes de asistencia y matrícula en el formato que SIGE requiere para importación.', badge: 'Exportación' },
+              { icon: '⬢', name: 'Compatible con SAE', desc: 'Gestiona tu nómina de postulantes y matrícula preferente dentro de Kiva360.', badge: 'Gestión interna' },
+              { icon: '⬟', name: 'Compatible con JUNAEB', desc: 'Registra beneficiarios PAE, SEP y TNE en la ficha del alumno para tener todo centralizado.', badge: 'Registro interno' },
+              { icon: '◫', name: 'Currículum MINEDUC', desc: 'OA actualizados por asignatura y nivel. Planificación 100% alineada al currículum nacional.', badge: 'Integrado' },
+              { icon: '◉', name: 'Email con Resend', desc: 'Notificaciones automáticas por email a apoderados. Configurable con el dominio de tu colegio.', badge: 'Integrado' },
+              { icon: '◎', name: 'API Gateway EdTech', desc: 'Próximamente: conecta Kiva360 con otras plataformas EdTech a través de nuestra API.', badge: 'Próximamente' },
             ].map(i => (
               <div key={i.name} className="integ-card">
                 <div className="integ-icon">{i.icon}</div>
@@ -594,7 +594,7 @@ export default function LandingPage() {
               <a href="/register" className="footer-lk">Registro</a>
               <a href="mailto:contacto@kiva360.cl" className="footer-lk">Contacto</a>
             </div>
-            <div className="footer-copy">🇨🇱 Hecho en Chile · © 2026 Kiva360 SpA</div>
+            <div className="footer-copy">Hecho en Chile 🇨🇱 · © 2026 Kiva360 SpA</div>
           </div>
         </div>
       </footer>
