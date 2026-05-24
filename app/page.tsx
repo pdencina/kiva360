@@ -431,71 +431,83 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* PRECIOS */}
+      {/* DEMO / COTIZA */}
       <section className="precios" id="precios">
         <div className="c">
-          <div className="c-sm" style={{ margin: '0 auto 0' }}>
-            <div className="section-badge">Precios</div>
-            <h2 className="section-h2">Simple, transparente, sin sorpresas</h2>
-            <p className="section-sub">Precios en pesos chilenos, sin contratos largos. Cancela cuando quieras.</p>
+          <div className="c-sm" style={{ margin: '0 auto 0', textAlign: 'center' }}>
+            <div className="section-badge">Para tu colegio</div>
+            <h2 className="section-h2">Un sistema hecho a la medida<br />de tu establecimiento</h2>
+            <p className="section-sub" style={{ margin: '0 auto 2.5rem' }}>
+              Cada colegio es distinto. Conversemos sobre el tamaño de tu establecimiento,
+              tus necesidades y te mostramos cómo Kiva360 puede transformar tu gestión escolar.
+            </p>
           </div>
-          <div className="precios-grid">
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1.25rem', marginTop: '1rem' }}>
             {[
               {
-                nombre: 'Básico', valor: '$29.990', periodo: '/mes', desc: 'Para colegios pequeños hasta 200 alumnos',
-                popular: false, cta: 'Comenzar gratis', ctaCls: 'precio-cta-outline',
-                items: [
-                  { t: 'Hasta 200 alumnos', ok: true },
-                  { t: 'Libro de clases digital', ok: true },
-                  { t: 'Evaluaciones y notas', ok: true },
-                  { t: 'Portal apoderado', ok: true },
-                  { t: 'Planificador de clases', ok: false },
-                  { t: 'Ficha del estudiante', ok: false },
-                  { t: 'Cobranzas y aranceles', ok: false },
-                ]
+                icon: '🎯',
+                title: 'Demo personalizada',
+                desc: 'Te mostramos el sistema en funcionamiento real, adaptado a tu realidad como colegio. Sin presentaciones genéricas.',
+                cta: 'Agendar demo',
+                href: 'mailto:contacto@kiva360.cl?subject=Quiero%20una%20demo%20de%20Kiva360',
+                dark: false,
               },
               {
-                nombre: 'Completo', valor: '$59.990', periodo: '/mes', desc: 'Para colegios que quieren el sistema completo',
-                popular: true, cta: 'Comenzar gratis', ctaCls: 'precio-cta-dark',
-                items: [
-                  { t: 'Alumnos ilimitados', ok: true },
-                  { t: 'Todos los módulos básicos', ok: true },
-                  { t: 'Planificador + Biblioteca', ok: true },
-                  { t: 'Ficha completa del estudiante', ok: true },
-                  { t: 'Cobranzas y aranceles', ok: true },
-                  { t: 'Espacio colaborativo', ok: true },
-                  { t: 'Soporte prioritario', ok: true },
-                ]
+                icon: '🚀',
+                title: 'Prueba gratis 30 días',
+                desc: 'Accede al sistema completo sin costo por 30 días. Sin tarjeta de crédito. Tu equipo completo puede probarlo.',
+                cta: 'Comenzar ahora →',
+                href: '/register',
+                dark: true,
               },
               {
-                nombre: 'Red de Colegios', valor: 'A convenir', periodo: '', desc: 'Para sostenedores con múltiples establecimientos',
-                popular: false, cta: 'Contactar', ctaCls: 'precio-cta-outline',
-                items: [
-                  { t: 'Múltiples establecimientos', ok: true },
-                  { t: 'Dashboard del sostenedor', ok: true },
-                  { t: 'Todo el plan Completo', ok: true },
-                  { t: 'Implementación guiada', ok: true },
-                  { t: 'Capacitación para equipos', ok: true },
-                  { t: 'SLA garantizado', ok: true },
-                  { t: 'Integración API Gateway', ok: true },
-                ]
+                icon: '🏫',
+                title: 'Red de colegios',
+                desc: '¿Eres sostenedor con varios establecimientos? Tenemos una propuesta especial para centralizar la gestión de toda tu red.',
+                cta: 'Hablar con el equipo',
+                href: 'mailto:contacto@kiva360.cl?subject=Red%20de%20colegios%20Kiva360',
+                dark: false,
               },
-            ].map(p => (
-              <div key={p.nombre} className={`precio-card${p.popular ? ' popular' : ''}`}>
-                {p.popular && <div className="precio-popular-badge">Más elegido</div>}
-                <div className="precio-nombre">{p.nombre}</div>
-                <div className="precio-valor">{p.valor}<span>{p.periodo}</span></div>
-                <div className="precio-desc">{p.desc}</div>
-                <ul className="precio-items">
-                  {p.items.map(i => (
-                    <li key={i.t} className={`precio-item${i.ok ? '' : ' no'}`}>{i.t}</li>
-                  ))}
-                </ul>
-                <a href="/register" className={`precio-cta ${p.ctaCls}`}>{p.cta}</a>
+            ].map(c => (
+              <div key={c.title} style={{
+                border: c.dark ? 'none' : '1.5px solid #E8E8E8',
+                background: c.dark ? '#0A0A0A' : 'white',
+                borderRadius: '12px', padding: '2rem',
+                display: 'flex', flexDirection: 'column', gap: '0.75rem',
+              }}>
+                <div style={{ fontSize: '1.75rem' }}>{c.icon}</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: c.dark ? 'white' : '#0A0A0A', letterSpacing: '-0.02em' }}>{c.title}</div>
+                <div style={{ fontSize: '0.88rem', color: c.dark ? '#666' : '#666', lineHeight: 1.65, flex: 1 }}>{c.desc}</div>
+                <a href={c.href} style={{
+                  display: 'block', textAlign: 'center', padding: '0.7rem',
+                  borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600,
+                  textDecoration: 'none', transition: 'all 0.15s', marginTop: '0.5rem',
+                  background: c.dark ? 'white' : '#0A0A0A',
+                  color: c.dark ? '#0A0A0A' : 'white',
+                }}>
+                  {c.cta}
+                </a>
               </div>
             ))}
           </div>
-          <p className="precios-nota">14 días de prueba gratis · Sin tarjeta de crédito · Cancela cuando quieras</p>
+
+          <div style={{ textAlign: 'center', marginTop: '2.5rem', padding: '1.5rem', background: '#FAFAFA', borderRadius: '12px', border: '1px solid #F0F0F0' }}>
+            <p style={{ fontSize: '0.88rem', color: '#444', marginBottom: '1rem' }}>
+              ¿Tienes preguntas antes de agendar? Escríbenos directamente
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+              {[
+                { icon: '✉️', label: 'contacto@kiva360.cl', href: 'mailto:contacto@kiva360.cl' },
+                { icon: '💬', label: 'Chat en la plataforma', href: '/register' },
+                { icon: '📞', label: 'Respuesta en 24 horas', href: 'mailto:contacto@kiva360.cl' },
+              ].map(c => (
+                <a key={c.label} href={c.href} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: '#555', textDecoration: 'none', transition: 'color 0.15s' }}>
+                  <span>{c.icon}</span> {c.label}
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
