@@ -76,15 +76,16 @@ export async function crearCodocencia(params: {
 
 export async function darLike(recursoId: string) {
   const supabase = await createClient()
-  await supabase.rpc('increment_likes', { recurso_id: recursoId }).catch(() => {
-    // Fallback manual si no existe la función RPC
-    supabase.from('recursos_docentes')
-      .select('likes').eq('id', recursoId).single()
-      .then(({ data }) => {
-        if (data) supabase.from('recursos_docentes')
-          .update({ likes: (data.likes ?? 0) + 1 })
-          .eq('id', recursoId)
-      })
-  })
+  const { data } = await supabase
+    .from('recursos_docentes')
+    .select('likes')
+    .eq('id', recursoId)
+    .single()
+  if (data) {
+    await supabase
+      .from('recursos_docentes')
+      .update({ likes: (data.likes ?? 0) + 1 })
+      .eq('id', recursoId)
+  }
   return { success: true }
 }
