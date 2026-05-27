@@ -185,11 +185,59 @@ export default function LandingPage() {
         .footer-copy { font-size: 0.75rem; color: #444; }
 
         @media (max-width: 768px) {
+          /* Nav */
           .nav-links { display: none; }
-          .features-grid, .roles-grid, .test-grid, .precios-grid, .integ-grid, .faq-grid { grid-template-columns: 1fr; }
+          .nav-actions .btn-ghost { display: none; }
+
+          /* Hero */
+          .hero { padding: 5rem 0 3rem; }
+          .hero-h1 { font-size: 2.2rem; }
+          .hero-sub { font-size: 0.95rem; }
+          .hero-actions { flex-direction: column; align-items: stretch; }
+          .hero-actions a { text-align: center; }
+
+          /* Grids — todo a 1 columna en móvil */
+          .features-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+          .roles-grid { grid-template-columns: 1fr; }
+          .test-grid { grid-template-columns: 1fr; }
+          .integ-grid { grid-template-columns: 1fr; }
+          .faq-grid { grid-template-columns: 1fr; }
+          .precios-grid { grid-template-columns: 1fr; }
+
+          /* Features cards */
+          .feat-card { padding: 1.1rem; }
+          .feat-icon { width: 30px; height: 30px; font-size: 0.9rem; }
+
+          /* Preview — apilar verticalmente */
           .preview-screen { grid-template-columns: 1fr; }
           .preview-sidebar { display: none; }
           .preview-kpis { grid-template-columns: repeat(2,1fr); }
+
+          /* Sections */
+          .section { padding: 3rem 0; }
+          .section-h2 { font-size: 1.7rem; }
+          .logos-row { gap: 1.25rem; }
+          .logos-item { font-size: 0.72rem; }
+
+          /* CTA final */
+          .cta-final { padding: 4rem 0; }
+          .cta-final h2 { font-size: 1.8rem; }
+          .cta-actions { flex-direction: column; align-items: stretch; }
+          .cta-actions a { text-align: center; }
+
+          /* Footer */
+          .footer-i { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+        }
+
+        @media (max-width: 640px) {
+          /* Preview 3 columnas → 1 columna en móvil pequeño */
+          .preview-3col { grid-template-columns: 1fr !important; }
+          .preview-3col > div:nth-child(2) { margin-top: 0 !important; }
+          .preview-caption { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+
+          /* Sección contacto */
+          .contacto-3col { grid-template-columns: 1fr !important; }
+          .contacto-links { flex-direction: column; align-items: flex-start; }
         }
       `}</style>
 
@@ -254,7 +302,7 @@ export default function LandingPage() {
         </div>
 
         {/* 3 pantallas apiladas */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+        <div className="preview-3col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
 
           {/* Pantalla 1 — Panel Director */}
           <div style={{ background: '#0A0A0A', borderRadius: '12px', padding: '1px', boxShadow: '0 20px 40px rgba(0,0,0,0.12)' }}>
@@ -381,7 +429,7 @@ export default function LandingPage() {
         </div>
 
         {/* Caption */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+        <div className="preview-caption" style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
           {[
             '○ Panel Director con alertas tempranas',
             '◉ Ficha completa del estudiante',
