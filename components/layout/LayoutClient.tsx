@@ -20,6 +20,7 @@ const NAV_POR_ROL: Record<Rol, NavGroup[]> = {
         { href: '/evaluaciones',label: 'Evaluaciones',    icon: '✎', badge: 3 },
         { href: '/planificacion',label: 'Planificación',  icon: '◫' },
         { href: '/personal',    label: 'Personal',        icon: '◑' },
+        { href: '/admision',   label: 'Admisión',        icon: '◈' },
         { href: '/colaborativo',label: 'Colaborativo',    icon: '🤝' },
       ]
     },
