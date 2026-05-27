@@ -243,66 +243,152 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* PREVIEW */}
-      <div className="c" style={{ marginBottom: '5rem' }}>
-        <div className="preview">
-          <div className="preview-inner">
-            <div className="preview-bar">
-              <div className="preview-dot" style={{ background: '#FF5F57' }} />
-              <div className="preview-dot" style={{ background: '#FFBD2E' }} />
-              <div className="preview-dot" style={{ background: '#28CA41' }} />
-              <div className="preview-url">kiva360.cl/dashboard</div>
-            </div>
-            <div className="preview-screen">
-              <div className="preview-sidebar">
-                <div className="preview-sb-logo">
-                  <div className="preview-sb-k">K</div>
-                  <span className="preview-sb-n">Kiva360</span>
+      {/* PREVIEW — 3 módulos */}
+      <div className="c" style={{ marginBottom: '6rem' }}>
+
+        {/* Label */}
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#999', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            Así se ve Kiva360 en producción
+          </span>
+        </div>
+
+        {/* 3 pantallas apiladas */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+
+          {/* Pantalla 1 — Panel Director */}
+          <div style={{ background: '#0A0A0A', borderRadius: '12px', padding: '1px', boxShadow: '0 20px 40px rgba(0,0,0,0.12)' }}>
+            <div style={{ background: '#F5F6FA', borderRadius: '11px', overflow: 'hidden' }}>
+              <div style={{ background: 'white', height: '32px', display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0 0.75rem', borderBottom: '1px solid #E8E8E5' }}>
+                {['#FF5F57','#FFBD2E','#28CA41'].map(c => <div key={c} style={{ width: '7px', height: '7px', borderRadius: '50%', background: c }} />)}
+                <div style={{ flex: 1, background: '#F5F6FA', borderRadius: '3px', height: '16px', margin: '0 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '0.5rem', color: '#C2C0BB' }}>kiva360.cl/director</span>
                 </div>
-                <div className="preview-sb-section">Principal</div>
-                <div className="preview-sb-item active">○ Dashboard</div>
-                <div className="preview-sb-item">▦ Libro de Clases</div>
-                <div className="preview-sb-item">✎ Evaluaciones</div>
-                <div className="preview-sb-item">◫ Planificación</div>
-                <div className="preview-sb-item">◈ Alumnos</div>
-                <div className="preview-sb-section">Gestión</div>
-                <div className="preview-sb-item">◉ Comunicación</div>
-                <div className="preview-sb-item">◧ Reportes</div>
-                <div className="preview-sb-item">◎ Cobranzas</div>
               </div>
-              <div className="preview-content">
-                <div style={{ fontSize: '0.65rem', color: '#9B9A97', marginBottom: '0.3rem' }}>Lunes, 24 de mayo</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700, color: '#37352F', marginBottom: '1rem' }}>Hola, director 👋</div>
-                <div className="preview-kpis">
-                  {[
-                    { n: 'Estudiantes', v: '287' },
-                    { n: 'Asistencia hoy', v: '94%' },
-                    { n: 'Evaluaciones', v: '12' },
-                    { n: 'En riesgo', v: '3' },
-                  ].map(k => (
-                    <div key={k.n} className="preview-kpi">
-                      <div className="preview-kpi-n">{k.n}</div>
-                      <div className="preview-kpi-v">{k.v}</div>
+              <div style={{ padding: '0.85rem', background: 'white' }}>
+                <div style={{ fontSize: '0.55rem', color: '#9B9A97', marginBottom: '0.15rem' }}>Panel Director</div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#37352F', marginBottom: '0.65rem' }}>Buenos días, directora</div>
+                {/* Alertas */}
+                <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '5px', padding: '0.3rem 0.5rem', marginBottom: '0.3rem', fontSize: '0.5rem', color: '#DC2626', fontWeight: 500 }}>
+                  🔴 Diego F. — asistencia anual 68%
+                </div>
+                <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '5px', padding: '0.3rem 0.5rem', marginBottom: '0.3rem', fontSize: '0.5rem', color: '#DC2626', fontWeight: 500 }}>
+                  🔴 3°A — promedio bajo 5,0 en Matemáticas
+                </div>
+                <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: '5px', padding: '0.3rem 0.5rem', marginBottom: '0.55rem', fontSize: '0.5rem', color: '#D97706', fontWeight: 500 }}>
+                  ⚠ 2 planificaciones sin publicar esta semana
+                </div>
+                {/* KPIs mini */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '0.3rem' }}>
+                  {[['287','Alumnos'],['94%','Asistencia'],['12','Eval.'],['3','En riesgo']].map(([v,n]) => (
+                    <div key={n} style={{ background: '#FAFAF8', border: '1px solid #E8E8E5', borderRadius: '5px', padding: '0.4rem 0.25rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#37352F' }}>{v}</div>
+                      <div style={{ fontSize: '0.42rem', color: '#9B9A97', textTransform: 'uppercase', letterSpacing: '0.03em' }}>{n}</div>
                     </div>
                   ))}
-                </div>
-                <div className="preview-cards">
-                  <div className="preview-card">
-                    <div className="preview-card-t">Actividad reciente</div>
-                    <div className="preview-row w90" style={{ background: '#E8E8E5' }} />
-                    <div className="preview-row w70" style={{ background: '#E8E8E5' }} />
-                    <div className="preview-row w80" style={{ background: '#E8E8E5' }} />
-                    <div className="preview-row w60" style={{ background: '#E8E8E5' }} />
-                  </div>
-                  <div className="preview-card">
-                    <div className="preview-card-t">Alertas</div>
-                    <div className="preview-alert">⚠ Diego F. — asistencia 68%</div>
-                    <div className="preview-ok">✓ Declaración SIGE enviada</div>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Pantalla 2 — Ficha del alumno */}
+          <div style={{ background: '#0A0A0A', borderRadius: '12px', padding: '1px', boxShadow: '0 20px 40px rgba(0,0,0,0.12)', marginTop: '1.5rem' }}>
+            <div style={{ background: '#F5F6FA', borderRadius: '11px', overflow: 'hidden' }}>
+              <div style={{ background: 'white', height: '32px', display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0 0.75rem', borderBottom: '1px solid #E8E8E5' }}>
+                {['#FF5F57','#FFBD2E','#28CA41'].map(c => <div key={c} style={{ width: '7px', height: '7px', borderRadius: '50%', background: c }} />)}
+                <div style={{ flex: 1, background: '#F5F6FA', borderRadius: '3px', height: '16px', margin: '0 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '0.5rem', color: '#C2C0BB' }}>kiva360.cl/alumnos</span>
+                </div>
+              </div>
+              <div style={{ padding: '0.85rem', background: 'white' }}>
+                {/* Ficha header */}
+                <div style={{ background: '#37352F', borderRadius: '7px', padding: '0.6rem 0.7rem', marginBottom: '0.55rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <div style={{ width: '26px', height: '26px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 700, color: 'white', flexShrink: 0 }}>MC</div>
+                  <div>
+                    <div style={{ fontSize: '0.6rem', fontWeight: 700, color: 'white' }}>Cárdenas, Matías</div>
+                    <div style={{ fontSize: '0.48rem', color: 'rgba(255,255,255,0.5)' }}>3°A · RUT 20.123.456-7</div>
+                  </div>
+                  <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#FCD34D' }}>4,7</div>
+                    <div style={{ fontSize: '0.42rem', color: 'rgba(255,255,255,0.4)' }}>Promedio</div>
+                  </div>
+                </div>
+                {/* Tabs */}
+                <div style={{ display: 'flex', gap: '0.3rem', marginBottom: '0.5rem', borderBottom: '1px solid #F0F0EE', paddingBottom: '0.3rem' }}>
+                  {['Notas','Asistencia','Anotaciones','Derivaciones'].map((t,i) => (
+                    <div key={t} style={{ fontSize: '0.48rem', fontWeight: i===0?700:400, color: i===0?'#37352F':'#C2C0BB', paddingBottom: '0.2rem', borderBottom: i===0?'1.5px solid #37352F':'none' }}>{t}</div>
+                  ))}
+                </div>
+                {/* Notas */}
+                {[['Matemáticas','4,2','↓'],['Lenguaje','5,8','↑'],['Ciencias','4,8','→']].map(([a,n,t]) => (
+                  <div key={a} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.22rem 0', borderBottom: '1px solid #F5F5F3' }}>
+                    <span style={{ flex: 1, fontSize: '0.5rem', color: '#37352F' }}>{a}</span>
+                    <span style={{ fontSize: '0.58rem', fontWeight: 700, color: parseFloat(n) < 5 ? '#DC2626' : '#16A34A' }}>{n}</span>
+                    <span style={{ fontSize: '0.5rem', color: '#C2C0BB' }}>{t}</span>
+                  </div>
+                ))}
+                <div style={{ marginTop: '0.4rem', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: '4px', padding: '0.25rem 0.4rem', fontSize: '0.48rem', color: '#D97706' }}>
+                  ⚠ En riesgo — promedio bajo 5,0 en 2 asignaturas
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Pantalla 3 — Admisión */}
+          <div style={{ background: '#0A0A0A', borderRadius: '12px', padding: '1px', boxShadow: '0 20px 40px rgba(0,0,0,0.12)' }}>
+            <div style={{ background: '#F5F6FA', borderRadius: '11px', overflow: 'hidden' }}>
+              <div style={{ background: 'white', height: '32px', display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0 0.75rem', borderBottom: '1px solid #E8E8E5' }}>
+                {['#FF5F57','#FFBD2E','#28CA41'].map(c => <div key={c} style={{ width: '7px', height: '7px', borderRadius: '50%', background: c }} />)}
+                <div style={{ flex: 1, background: '#F5F6FA', borderRadius: '3px', height: '16px', margin: '0 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '0.5rem', color: '#C2C0BB' }}>kiva360.cl/admision</span>
+                </div>
+              </div>
+              <div style={{ padding: '0.85rem', background: 'white' }}>
+                <div style={{ fontSize: '0.55rem', color: '#9B9A97', marginBottom: '0.15rem' }}>Admisión Escolar 2027</div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#37352F', marginBottom: '0.5rem' }}>Proceso propio — 45 vacantes</div>
+                {/* Mini stats */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.3rem', marginBottom: '0.55rem' }}>
+                  {[['8','Postulantes'],['3','Con entrevista'],['1','Aceptado']].map(([v,n]) => (
+                    <div key={n} style={{ background: '#FAFAF8', border: '1px solid #E8E8E5', borderRadius: '5px', padding: '0.35rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#37352F' }}>{v}</div>
+                      <div style={{ fontSize: '0.42rem', color: '#9B9A97' }}>{n}</div>
+                    </div>
+                  ))}
+                </div>
+                {/* Postulantes mini */}
+                {[
+                  ['Fernández, Isidora','1° Básico','✓ Entrevistada','#16A34A','#F0FDF4'],
+                  ['González, Mateo','1° Básico','📅 Pendiente','#D97706','#FFFBEB'],
+                  ['Muñoz, Valentina','Kinder','○ Recibido','#9B9A97','#F5F5F3'],
+                  ['Torres, Benjamín','1° Básico','★ Aceptado','#2563EB','#EFF6FF'],
+                ].map(([nombre, nivel, estado, color, bg]) => (
+                  <div key={nombre} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.22rem 0', borderBottom: '1px solid #F5F5F3' }}>
+                    <div style={{ width: '16px', height: '16px', borderRadius: '3px', background: '#F0F0EE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.38rem', fontWeight: 700, color: '#6B6B6B', flexShrink: 0 }}>
+                      {nombre.split(',')[0].slice(0,2).toUpperCase()}
+                    </div>
+                    <span style={{ flex: 1, fontSize: '0.48rem', color: '#37352F', fontWeight: 500 }}>{nombre}</span>
+                    <span style={{ fontSize: '0.42rem', color: '#9B9A97' }}>{nivel}</span>
+                    <span style={{ fontSize: '0.42rem', fontWeight: 600, padding: '0.08rem 0.3rem', borderRadius: '3px', background: bg, color: color }}>{estado}</span>
+                  </div>
+                ))}
+                <div style={{ marginTop: '0.5rem', background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: '4px', padding: '0.25rem 0.4rem', fontSize: '0.48rem', color: '#2563EB', fontWeight: 500 }}>
+                  → Nuevo: proceso propio sin depender del SAE centralizado
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Caption */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+          {[
+            '○ Panel Director con alertas tempranas',
+            '◉ Ficha completa del estudiante',
+            '◈ Admisión escolar propia',
+          ].map(c => (
+            <div key={c} style={{ fontSize: '0.78rem', color: '#999', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>{c}</div>
+          ))}
         </div>
       </div>
 
