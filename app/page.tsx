@@ -108,6 +108,7 @@ export default function LandingPage() {
         .sec-badge { display: inline-block; font-size: 0.7rem; font-weight: 600; color: #666; background: #F5F5F5; padding: 0.22rem 0.7rem; border-radius: 20px; margin-bottom: 0.75rem; }
         .sec-h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.04em; color: #0F2540; line-height: 1.15; margin-bottom: 0.75rem; }
         .sec-p { font-size: 0.88rem; color: #666; line-height: 1.7; margin-bottom: 2rem; }
+        .integ-bg .sec-p { color: rgba(255,255,255,0.6); }
 
         /* FEATURES */
         .feat-bg { background: #FAFAFA; }
@@ -158,12 +159,12 @@ export default function LandingPage() {
         /* INTEGRACIONES */
         .integ-bg { background: #1E3A5F; }
         .integ-h2 { color: white; }
-        .integ-p { color: #555; }
+        .integ-p { color: rgba(255,255,255,0.6); }
         .integ-grid { display: flex; flex-direction: column; gap: 0.75rem; }
-        .integ-card { border: 1px solid #1A1A1A; border-radius: 10px; padding: 1.1rem; }
-        .integ-ic { font-size: 1.1rem; width: 30px; height: 30px; background: #1A1A1A; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; }
+        .integ-card { border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 1.1rem; }
+        .integ-ic { font-size: 1.1rem; width: 30px; height: 30px; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; color: #60A5FA; }
         .integ-t { font-size: 0.88rem; font-weight: 700; color: white; margin-bottom: 0.25rem; }
-        .integ-d { font-size: 0.78rem; color: #555; line-height: 1.6; }
+        .integ-d { font-size: 0.78rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
         .integ-badge { display: inline-block; margin-top: 0.4rem; font-size: 0.62rem; font-weight: 600; color: #16A34A; background: rgba(22,163,74,0.1); padding: 0.12rem 0.45rem; border-radius: 3px; }
 
         /* FAQ */
@@ -175,9 +176,9 @@ export default function LandingPage() {
         /* CTA FINAL */
         .cta-bg { background: #1E3A5F; padding: 4rem 0; text-align: center; }
         .cta-h2 { font-size: 1.9rem; font-weight: 800; color: white; letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 0.75rem; }
-        .cta-p { font-size: 0.9rem; color: #555; margin-bottom: 2rem; line-height: 1.7; }
+        .cta-p { font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 2rem; line-height: 1.7; }
         .cta-btns { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.25rem; }
-        .cta-note { font-size: 0.75rem; color: #444; }
+        .cta-note { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
 
         /* FOOTER */
         .footer { background: #1E3A5F; border-top: 1px solid #1A1A1A; padding: 2rem 0; }
@@ -186,8 +187,8 @@ export default function LandingPage() {
         .footer-k { width: 20px; height: 20px; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
         .footer-n { font-size: 0.82rem; font-weight: 600; color: white; }
         .footer-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
-        .footer-lk { font-size: 0.75rem; color: #555; text-decoration: none; }
-        .footer-copy { font-size: 0.72rem; color: #444; }
+        .footer-lk { font-size: 0.75rem; color: rgba(255,255,255,0.55); text-decoration: none; }
+        .footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
 
         /* ── TABLET 640px+ ── */
         @media (min-width: 640px) {
@@ -508,7 +509,7 @@ export default function LandingPage() {
       {/* INTEGRACIONES */}
       <section className="sec integ-bg">
         <div className="wrap">
-          <div className="sec-badge" style={{ background: '#1A1A1A', color: '#555' }}>Integraciones</div>
+          <div className="sec-badge" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' }}>Integraciones</div>
           <h2 className="sec-h2 integ-h2">Pensado para la realidad educativa chilena</h2>
           <p className="sec-p integ-p" style={{ marginBottom: '2rem' }}>Kiva360 genera los documentos y archivos que el MINEDUC requiere, en el formato correcto.</p>
           <div className="integ-grid">
