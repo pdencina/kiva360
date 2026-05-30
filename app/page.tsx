@@ -12,7 +12,7 @@ export default function LandingPage() {
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: #fff; color: #0A0A0A; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #fff; color: #0F2540; }
 
         /* ── MOBILE FIRST BASE ── */
         .wrap { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; }
@@ -22,25 +22,25 @@ export default function LandingPage() {
         .nav-i { height: 100%; max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; display: flex; align-items: center; justify-content: space-between; }
         .nav-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
         .nav-k { display: flex; align-items: center; justify-content: center; }
-        .nav-n { font-size: 0.88rem; font-weight: 600; color: #0A0A0A; }
+        .nav-n { font-size: 0.88rem; font-weight: 700; color: #0F2540; }
         .nav-links { display: none; }
         .nav-cta { display: flex; align-items: center; gap: 0.5rem; }
         .btn { display: inline-flex; align-items: center; justify-content: center; font-family: inherit; font-weight: 600; border: none; cursor: pointer; text-decoration: none; transition: all 0.15s; border-radius: 8px; }
         .btn-sm { font-size: 0.78rem; padding: 0.4rem 0.85rem; }
         .btn-md { font-size: 0.88rem; padding: 0.55rem 1.1rem; }
         .btn-lg { font-size: 1rem; padding: 0.75rem 1.5rem; border-radius: 10px; }
-        .btn-dark { background: #0A0A0A; color: white; }
+        .btn-dark { background: #1E3A5F; color: white; }
         .btn-dark:hover { background: #222; }
-        .btn-outline { background: white; color: #0A0A0A; border: 1.5px solid #DDD; }
-        .btn-outline:hover { border-color: #0A0A0A; }
+        .btn-outline { background: white; color: #1E3A5F; border: 1.5px solid #DDD; }
+        .btn-outline:hover { border-color: #1E3A5F; }
         .btn-ghost { background: transparent; color: #555; font-weight: 500; }
-        .btn-white { background: white; color: #0A0A0A; }
+        .btn-white { background: white; color: #1E3A5F; }
 
         /* HERO */
         .hero { padding: 5.5rem 0 3rem; text-align: center; }
         .hero-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; font-weight: 500; color: #444; background: #F5F5F5; border: 1px solid #E8E8E8; border-radius: 20px; padding: 0.28rem 0.8rem; margin-bottom: 1.5rem; }
         .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: #16A34A; flex-shrink: 0; }
-        .hero-h1 { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; color: #0A0A0A; margin-bottom: 1rem; }
+        .hero-h1 { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; color: #0F2540; margin-bottom: 1rem; }
         .hero-h1 em { color: #666; font-style: normal; }
         .hero-p { font-size: 0.95rem; color: #555; line-height: 1.7; margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto; }
         .hero-btns { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 2rem; }
@@ -54,7 +54,7 @@ export default function LandingPage() {
         .preview-label { text-align: center; font-size: 0.7rem; font-weight: 600; color: #999; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.25rem; }
         .preview-scroll { display: flex; gap: 0.75rem; overflow-x: auto; padding: 0.5rem 1.25rem 1.25rem; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
         .preview-scroll::-webkit-scrollbar { display: none; }
-        .preview-card { flex-shrink: 0; width: 280px; scroll-snap-align: start; background: #0A0A0A; border-radius: 12px; padding: 1px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+        .preview-card { flex-shrink: 0; width: 280px; scroll-snap-align: start; background: #1E3A5F; border-radius: 12px; padding: 1px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
         .preview-inner { background: white; border-radius: 11px; overflow: hidden; }
         .preview-bar { height: 28px; display: flex; align-items: center; gap: 0.25rem; padding: 0 0.6rem; border-bottom: 1px solid #F0F0F0; background: #FAFAF8; }
         .preview-dot2 { width: 6px; height: 6px; border-radius: 50%; }
@@ -95,7 +95,7 @@ export default function LandingPage() {
         .pv-sae-note { margin-top: 0.4rem; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 4px; padding: 0.22rem 0.4rem; font-size: 0.42rem; color: #2563EB; font-weight: 500; }
         .preview-dots { display: flex; justify-content: center; gap: 0.4rem; margin-top: 0.5rem; }
         .preview-dot-i { width: 5px; height: 5px; border-radius: 50%; background: #E8E8E8; }
-        .preview-dot-i.on { background: #0A0A0A; width: 14px; border-radius: 3px; }
+        .preview-dot-i.on { background: #1E3A5F; width: 14px; border-radius: 3px; }
 
         /* NORMATIVA */
         .norms { border-top: 1px solid #F0F0F0; border-bottom: 1px solid #F0F0F0; padding: 1.5rem 0; margin-bottom: 3.5rem; }
@@ -106,7 +106,7 @@ export default function LandingPage() {
         /* SECTION */
         .sec { padding: 3.5rem 0; }
         .sec-badge { display: inline-block; font-size: 0.7rem; font-weight: 600; color: #666; background: #F5F5F5; padding: 0.22rem 0.7rem; border-radius: 20px; margin-bottom: 0.75rem; }
-        .sec-h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.04em; color: #0A0A0A; line-height: 1.15; margin-bottom: 0.75rem; }
+        .sec-h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.04em; color: #0F2540; line-height: 1.15; margin-bottom: 0.75rem; }
         .sec-p { font-size: 0.88rem; color: #666; line-height: 1.7; margin-bottom: 2rem; }
 
         /* FEATURES */
@@ -114,14 +114,14 @@ export default function LandingPage() {
         .feat-grid { display: flex; flex-direction: column; gap: 0.75rem; }
         .feat-card { background: white; border: 1px solid #E8E8E8; border-radius: 12px; padding: 1.25rem; }
         .feat-ic { width: 32px; height: 32px; background: #F0F0EE; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: #37352F; margin-bottom: 0.75rem; }
-        .feat-t { font-size: 0.95rem; font-weight: 700; color: #0A0A0A; margin-bottom: 0.35rem; }
+        .feat-t { font-size: 0.95rem; font-weight: 700; color: #0F2540; margin-bottom: 0.35rem; }
         .feat-d { font-size: 0.82rem; color: #666; line-height: 1.6; }
         .feat-tag { display: inline-block; margin-top: 0.6rem; font-size: 0.65rem; font-weight: 600; color: #888; background: #F5F5F5; padding: 0.12rem 0.45rem; border-radius: 4px; }
 
         /* ROLES */
         .roles-grid { display: flex; flex-direction: column; gap: 0.75rem; }
         .role-card { border-radius: 12px; padding: 1.5rem; }
-        .role-card.dir { background: #0A0A0A; }
+        .role-card.dir { background: #1E3A5F; }
         .role-card.utp { background: #F0F0EE; }
         .role-card.prof { background: #EFF6FF; }
         .role-card.apod { background: #F0FDF4; }
@@ -140,13 +140,13 @@ export default function LandingPage() {
         .test-txt { font-size: 0.85rem; color: #333; line-height: 1.7; font-style: italic; margin-bottom: 1rem; }
         .test-autor { display: flex; align-items: center; gap: 0.6rem; }
         .test-av2 { width: 34px; height: 34px; border-radius: 50%; background: #E8E8E8; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700; color: #666; flex-shrink: 0; }
-        .test-nom { font-size: 0.8rem; font-weight: 600; color: #0A0A0A; }
+        .test-nom { font-size: 0.8rem; font-weight: 600; color: #0F2540; }
         .test-cargo { font-size: 0.72rem; color: #999; }
 
         /* CONTACTO */
         .contact-grid { display: flex; flex-direction: column; gap: 0.75rem; }
         .contact-card { border-radius: 12px; padding: 1.5rem; border: 1.5px solid #E8E8E8; display: flex; flex-direction: column; gap: 0.65rem; }
-        .contact-card.dark { background: #0A0A0A; border-color: #0A0A0A; }
+        .contact-card.dark { background: #1E3A5F; border-color: #1E3A5F; }
         .contact-ic { font-size: 1.5rem; }
         .contact-t { font-size: 0.95rem; font-weight: 700; }
         .contact-d { font-size: 0.82rem; line-height: 1.6; }
@@ -156,7 +156,7 @@ export default function LandingPage() {
         .contact-lk { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: #555; text-decoration: none; }
 
         /* INTEGRACIONES */
-        .integ-bg { background: #0A0A0A; }
+        .integ-bg { background: #1E3A5F; }
         .integ-h2 { color: white; }
         .integ-p { color: #555; }
         .integ-grid { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -169,18 +169,18 @@ export default function LandingPage() {
         /* FAQ */
         .faq-grid { display: flex; flex-direction: column; gap: 0.75rem; }
         .faq-item { border: 1px solid #F0F0F0; border-radius: 10px; padding: 1.1rem; }
-        .faq-q { font-size: 0.9rem; font-weight: 600; color: #0A0A0A; margin-bottom: 0.4rem; }
+        .faq-q { font-size: 0.9rem; font-weight: 600; color: #0F2540; margin-bottom: 0.4rem; }
         .faq-a { font-size: 0.82rem; color: #666; line-height: 1.65; }
 
         /* CTA FINAL */
-        .cta-bg { background: #0A0A0A; padding: 4rem 0; text-align: center; }
+        .cta-bg { background: #1E3A5F; padding: 4rem 0; text-align: center; }
         .cta-h2 { font-size: 1.9rem; font-weight: 800; color: white; letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 0.75rem; }
         .cta-p { font-size: 0.9rem; color: #555; margin-bottom: 2rem; line-height: 1.7; }
         .cta-btns { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.25rem; }
         .cta-note { font-size: 0.75rem; color: #444; }
 
         /* FOOTER */
-        .footer { background: #0A0A0A; border-top: 1px solid #1A1A1A; padding: 2rem 0; }
+        .footer { background: #1E3A5F; border-top: 1px solid #1A1A1A; padding: 2rem 0; }
         .footer-i { display: flex; flex-direction: column; gap: 1rem; }
         .footer-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
         .footer-k { width: 20px; height: 20px; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
@@ -207,7 +207,7 @@ export default function LandingPage() {
         @media (min-width: 1024px) {
           .nav-links { display: flex; align-items: center; gap: 2rem; }
           .nav-lk { font-size: 0.82rem; color: #666; text-decoration: none; transition: color 0.15s; }
-          .nav-lk:hover { color: #0A0A0A; }
+          .nav-lk:hover { color: #0F2540; }
           .hero { padding: 7rem 0 4rem; }
           .hero-h1 { font-size: 3.6rem; }
           .hero-p { font-size: 1.05rem; }
@@ -434,7 +434,7 @@ export default function LandingPage() {
             ].map(r => (
               <div key={r.t} className={`role-card ${r.cls}`}>
                 <div className="role-ic" style={{ color: r.cls === 'dir' ? 'white' : r.color }}>{r.ic}</div>
-                <div className="role-t" style={{ color: r.cls === 'dir' ? 'white' : '#0A0A0A' }}>{r.t}</div>
+                <div className="role-t" style={{ color: r.cls === 'dir' ? 'white' : '#0F2540' }}>{r.t}</div>
                 <div className="role-d" style={{ color: r.cls === 'dir' ? 'rgba(255,255,255,0.6)' : '#666' }}>{r.d}</div>
                 <ul className="role-items">
                   {r.items.map(i => <li key={i} className="role-item" style={{ color: r.cls === 'dir' ? 'rgba(255,255,255,0.7)' : '#444' }}>{i}</li>)}
@@ -488,9 +488,9 @@ export default function LandingPage() {
             ].map(c => (
               <div key={c.t} className={`contact-card${c.dark ? ' dark' : ''}`}>
                 <div className="contact-ic" style={{ color: c.dark ? 'rgba(255,255,255,0.4)' : '#666' }}>{c.ic}</div>
-                <div className="contact-t" style={{ color: c.dark ? 'white' : '#0A0A0A' }}>{c.t}</div>
+                <div className="contact-t" style={{ color: c.dark ? 'white' : '#0F2540' }}>{c.t}</div>
                 <div className="contact-d" style={{ color: c.dark ? '#666' : '#666' }}>{c.d}</div>
-                <a href={c.href} className="btn btn-md" style={{ marginTop: 'auto', background: c.dark ? 'white' : '#0A0A0A', color: c.dark ? '#0A0A0A' : 'white' }}>{c.cta}</a>
+                <a href={c.href} className="btn btn-md" style={{ marginTop: 'auto', background: c.dark ? 'white' : '#1E3A5F', color: c.dark ? '#1E3A5F' : 'white' }}>{c.cta}</a>
               </div>
             ))}
           </div>
@@ -574,12 +574,12 @@ export default function LandingPage() {
             <a href="/" className="footer-logo">
               <div className="footer-k">
               <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
-                <line x1="16" y1="8"  x2="7"  y2="24" stroke="#0A0A0A" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
-                <line x1="16" y1="8"  x2="25" y2="24" stroke="#0A0A0A" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
-                <line x1="9"  y1="24" x2="23" y2="24" stroke="#0A0A0A" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
-                <circle cx="7"  cy="24" r="3.2" fill="#0A0A0A" fillOpacity="0.6"/>
-                <circle cx="25" cy="24" r="3.2" fill="#0A0A0A" fillOpacity="0.85"/>
-                <circle cx="16" cy="7"  r="4"   fill="#0A0A0A"/>
+                <line x1="16" y1="8"  x2="7"  y2="24" stroke="#1A56DB" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                <line x1="16" y1="8"  x2="25" y2="24" stroke="#1A56DB" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                <line x1="9"  y1="24" x2="23" y2="24" stroke="#1A56DB" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                <circle cx="7"  cy="24" r="3.2" fill="#1A56DB" fillOpacity="0.6"/>
+                <circle cx="25" cy="24" r="3.2" fill="#1A56DB" fillOpacity="0.85"/>
+                <circle cx="16" cy="7"  r="4"   fill="#1A56DB"/>
               </svg>
             </div>
               <span className="footer-n">Kiva360</span>
