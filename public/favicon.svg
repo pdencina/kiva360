@@ -1,0 +1,18 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo -->
+  <rect width="32" height="32" rx="7" fill="#0D1B2A"/>
+
+  <!-- Líneas de conexión -->
+  <line x1="16" y1="9"  x2="7"  y2="24" stroke="#60A5FA" stroke-width="1.5" stroke-opacity="0.35" stroke-linecap="round"/>
+  <line x1="16" y1="9"  x2="25" y2="24" stroke="#60A5FA" stroke-width="1.5" stroke-opacity="0.35" stroke-linecap="round"/>
+  <line x1="9"  y1="24" x2="23" y2="24" stroke="#60A5FA" stroke-width="1.5" stroke-opacity="0.35" stroke-linecap="round"/>
+
+  <!-- Nodo inferior izquierdo -->
+  <circle cx="7"  cy="24" r="3" fill="#60A5FA" fill-opacity="0.6"/>
+
+  <!-- Nodo inferior derecho -->
+  <circle cx="25" cy="24" r="3" fill="#60A5FA" fill-opacity="0.85"/>
+
+  <!-- Nodo superior — principal -->
+  <circle cx="16" cy="8"  r="4" fill="#60A5FA"/>
+</svg>
