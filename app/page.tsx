@@ -21,7 +21,7 @@ export default function LandingPage() {
         .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 52px; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #F0F0F0; }
         .nav-i { height: 100%; max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; display: flex; align-items: center; justify-content: space-between; }
         .nav-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
-        .nav-k { width: 26px; height: 26px; background: #0A0A0A; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: white; }
+        .nav-k { display: flex; align-items: center; justify-content: center; }
         .nav-n { font-size: 0.88rem; font-weight: 600; color: #0A0A0A; }
         .nav-links { display: none; }
         .nav-cta { display: flex; align-items: center; gap: 0.5rem; }
@@ -183,7 +183,7 @@ export default function LandingPage() {
         .footer { background: #0A0A0A; border-top: 1px solid #1A1A1A; padding: 2rem 0; }
         .footer-i { display: flex; flex-direction: column; gap: 1rem; }
         .footer-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
-        .footer-k { width: 20px; height: 20px; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; color: #0A0A0A; }
+        .footer-k { width: 20px; height: 20px; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
         .footer-n { font-size: 0.82rem; font-weight: 600; color: white; }
         .footer-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
         .footer-lk { font-size: 0.75rem; color: #555; text-decoration: none; }
@@ -225,7 +225,16 @@ export default function LandingPage() {
       <nav className="nav">
         <div className="nav-i">
           <a href="/" className="nav-logo">
-            <div className="nav-k">K</div>
+            <div className="nav-k">
+              <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+                <line x1="16" y1="8"  x2="7"  y2="24" stroke="#1A56DB" strokeWidth="1.8" strokeOpacity="0.35" strokeLinecap="round"/>
+                <line x1="16" y1="8"  x2="25" y2="24" stroke="#1A56DB" strokeWidth="1.8" strokeOpacity="0.35" strokeLinecap="round"/>
+                <line x1="9"  y1="24" x2="23" y2="24" stroke="#1A56DB" strokeWidth="1.8" strokeOpacity="0.35" strokeLinecap="round"/>
+                <circle cx="7"  cy="24" r="3.2" fill="#1A56DB" fillOpacity="0.6"/>
+                <circle cx="25" cy="24" r="3.2" fill="#1A56DB" fillOpacity="0.85"/>
+                <circle cx="16" cy="7"  r="4"   fill="#1A56DB"/>
+              </svg>
+            </div>
             <span className="nav-n">Kiva360</span>
           </a>
           <div className="nav-links">
@@ -563,7 +572,16 @@ export default function LandingPage() {
         <div className="wrap">
           <div className="footer-i">
             <a href="/" className="footer-logo">
-              <div className="footer-k">K</div>
+              <div className="footer-k">
+              <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+                <line x1="16" y1="8"  x2="7"  y2="24" stroke="#0A0A0A" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                <line x1="16" y1="8"  x2="25" y2="24" stroke="#0A0A0A" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                <line x1="9"  y1="24" x2="23" y2="24" stroke="#0A0A0A" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                <circle cx="7"  cy="24" r="3.2" fill="#0A0A0A" fillOpacity="0.6"/>
+                <circle cx="25" cy="24" r="3.2" fill="#0A0A0A" fillOpacity="0.85"/>
+                <circle cx="16" cy="7"  r="4"   fill="#0A0A0A"/>
+              </svg>
+            </div>
               <span className="footer-n">Kiva360</span>
             </a>
             <div className="footer-links">

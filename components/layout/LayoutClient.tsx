@@ -20,7 +20,6 @@ const NAV_POR_ROL: Record<Rol, NavGroup[]> = {
         { href: '/evaluaciones',label: 'Evaluaciones',    icon: '✎', badge: 3 },
         { href: '/planificacion',label: 'Planificación',  icon: '◫' },
         { href: '/personal',    label: 'Personal',        icon: '◑' },
-        { href: '/admision',   label: 'Admisión',        icon: '◈' },
         { href: '/colaborativo',label: 'Colaborativo',    icon: '🤝' },
       ]
     },
@@ -182,7 +181,7 @@ export function LayoutClient({ email, iniciales, rol, nombreColegio, children }:
 
         .sb-logo { height: 52px; padding: 0 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8E8E5; flex-shrink: 0; }
         .sb-logo-inner { display: flex; align-items: center; gap: 0.55rem; }
-        .sb-logo-k { width: 24px; height: 24px; background: #37352F; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; }
+        .sb-logo-k { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
         .sb-logo-n { font-size: 0.88rem; font-weight: 600; color: #37352F; letter-spacing: -0.02em; }
         .sb-close-btn { width: 24px; height: 24px; border: none; background: none; cursor: pointer; border-radius: 4px; color: #9B9A97; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.12s; }
         .sb-close-btn:hover { background: #EFEEEB; color: #37352F; }
@@ -241,7 +240,16 @@ export function LayoutClient({ email, iniciales, rol, nombreColegio, children }:
         <aside className={`sb${open ? '' : ' closed'}`}>
           <div className="sb-logo">
             <div className="sb-logo-inner">
-              <div className="sb-logo-k">K</div>
+              <div className="sb-logo-k">
+                <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+                  <line x1="16" y1="8"  x2="7"  y2="24" stroke="#60A5FA" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                  <line x1="16" y1="8"  x2="25" y2="24" stroke="#60A5FA" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                  <line x1="9"  y1="24" x2="23" y2="24" stroke="#60A5FA" strokeWidth="2" strokeOpacity="0.35" strokeLinecap="round"/>
+                  <circle cx="7"  cy="24" r="3.2" fill="#60A5FA" fillOpacity="0.6"/>
+                  <circle cx="25" cy="24" r="3.2" fill="#60A5FA" fillOpacity="0.85"/>
+                  <circle cx="16" cy="7"  r="4"   fill="#60A5FA"/>
+                </svg>
+              </div>
               <span className="sb-logo-n">Kiva360</span>
             </div>
             <button className="sb-close-btn" onClick={() => setOpen(false)}>←</button>
