@@ -182,17 +182,17 @@ export function LayoutClient({ email, iniciales, rol, nombreColegio, children }:
         .sb-logo { height: 52px; padding: 0 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8E8E5; flex-shrink: 0; }
         .sb-logo-inner { display: flex; align-items: center; gap: 0.55rem; }
         .sb-logo-k { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
-        .sb-logo-n { font-size: 0.88rem; font-weight: 600; color: #37352F; letter-spacing: -0.02em; }
+        .sb-logo-n { font-size: 0.88rem; font-weight: 600; color: #1E3A5F; letter-spacing: -0.02em; }
         .sb-close-btn { width: 24px; height: 24px; border: none; background: none; cursor: pointer; border-radius: 4px; color: #9B9A97; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: background 0.12s; }
-        .sb-close-btn:hover { background: #EFEEEB; color: #37352F; }
+        .sb-close-btn:hover { background: #EFF6FF; color: #1E3A5F; }
 
         .sb-colegio { padding: 0.6rem 0.75rem; border-bottom: 1px solid #E8E8E5; flex-shrink: 0; }
-        .sb-colegio-nombre { font-size: 0.72rem; font-weight: 600; color: #37352F; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sb-colegio-nombre { font-size: 0.72rem; font-weight: 600; color: #1E3A5F; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .sb-colegio-rol { font-size: 0.62rem; color: #9B9A97; margin-top: 0.1rem; }
 
         .sb-user { padding: 0.6rem 0.75rem; border-bottom: 1px solid #E8E8E5; display: flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
         .sb-avatar { width: 24px; height: 24px; border-radius: 4px; background: #E8E8E5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.58rem; font-weight: 600; color: #6B6B6B; }
-        .sb-uname { font-size: 0.72rem; color: #37352F; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sb-uname { font-size: 0.72rem; color: #1E3A5F; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .sb-nav { flex: 1; overflow-y: auto; padding: 0.4rem 0.5rem; }
         .sb-nav::-webkit-scrollbar { width: 0; }
@@ -200,16 +200,16 @@ export function LayoutClient({ email, iniciales, rol, nombreColegio, children }:
         .sb-section { font-size: 0.6rem; font-weight: 600; color: #C2C0BB; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.85rem 0.5rem 0.25rem; }
 
         .sb-link { display: flex; align-items: center; gap: 0.55rem; padding: 0.38rem 0.6rem; font-size: 0.8rem; color: #6B6B6B; font-weight: 400; text-decoration: none; border-radius: 5px; transition: background 0.1s, color 0.1s, transform 0.15s; }
-        .sb-link:hover { background: #EFEEEB; color: #37352F; transform: translateX(3px); }
-        .sb-link.active { background: #EFEEEB; color: #37352F; font-weight: 500; }
+        .sb-link:hover { background: #EFF6FF; color: #1E3A5F; transform: translateX(3px); }
+        .sb-link.active { background: #EFF6FF; color: #1E3A5F; font-weight: 500; }
         .sb-link.active .sb-dot { opacity: 1; }
-        .sb-dot { width: 3px; height: 3px; border-radius: 50%; background: #37352F; flex-shrink: 0; opacity: 0; transition: opacity 0.1s; }
+        .sb-dot { width: 3px; height: 3px; border-radius: 50%; background: #1E3A5F; flex-shrink: 0; opacity: 0; transition: opacity 0.1s; }
         .sb-icon { font-size: 0.75rem; color: #B5B3AD; flex-shrink: 0; width: 14px; text-align: center; }
         .sb-badge { margin-left: auto; background: #E8E8E5; color: #9B9A97; font-size: 0.58rem; font-weight: 600; padding: 0.08rem 0.4rem; border-radius: 20px; min-width: 18px; text-align: center; }
 
         .sb-footer { padding: 0.75rem; border-top: 1px solid #E8E8E5; flex-shrink: 0; }
         .sb-out { display: block; text-align: center; font-size: 0.68rem; color: #9B9A97; text-decoration: none; padding: 0.35rem; border-radius: 4px; transition: background 0.1s, color 0.1s; }
-        .sb-out:hover { background: #EFEEEB; color: #37352F; }
+        .sb-out:hover { background: #EFF6FF; color: #1E3A5F; }
 
         .main-wrap { min-height: 100vh; display: flex; flex-direction: column; background: #F5F6FA; margin-left: ${SB_W}px; transition: margin-left 0.22s cubic-bezier(0.4,0,0.2,1); }
         .main-wrap.sb-closed { margin-left: 0; }
@@ -217,15 +217,15 @@ export function LayoutClient({ email, iniciales, rol, nombreColegio, children }:
         .topbar { height: 52px; background: white; border-bottom: 1px solid #EBEBEB; display: flex; align-items: center; justify-content: space-between; padding: 0 1.25rem; position: sticky; top: 0; z-index: 90; }
         .topbar-l { display: flex; align-items: center; gap: 0.6rem; }
         .hamburger { width: 30px; height: 30px; border: none; background: none; cursor: pointer; border-radius: 5px; color: #9B9A97; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: background 0.1s, color 0.1s; }
-        .hamburger:hover { background: #F0F0EE; color: #37352F; }
+        .hamburger:hover { background: #F0F0EE; color: #1E3A5F; }
         .topbar-breadcrumb { font-size: 0.78rem; color: #9B9A97; }
-        .topbar-breadcrumb strong { color: #37352F; font-weight: 500; }
+        .topbar-breadcrumb strong { color: #1E3A5F; font-weight: 500; }
         .topbar-r { display: flex; align-items: center; gap: 0.5rem; }
         .topbar-rol { font-size: 0.65rem; font-weight: 600; color: #6B6B6B; background: #F0F0EE; padding: 0.2rem 0.6rem; border-radius: 4px; }
         .topbar-year { font-size: 0.68rem; font-weight: 500; color: #6B6B6B; background: #F0F0EE; padding: 0.2rem 0.6rem; border-radius: 4px; }
         .topbar-bell { width: 28px; height: 28px; background: none; border: none; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; cursor: pointer; border-radius: 4px; transition: background 0.1s; position: relative; }
         .topbar-bell:hover { background: #F0F0EE; }
-        .bell-dot { position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; background: #37352F; border-radius: 50%; border: 1.5px solid white; }
+        .bell-dot { position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; background: #1E3A5F; border-radius: 50%; border: 1.5px solid white; }
 
         .page { flex: 1; padding: 1.75rem 2rem; }
 
