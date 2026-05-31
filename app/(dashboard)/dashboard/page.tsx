@@ -39,9 +39,9 @@ export default async function DashboardPage() {
 
         .d-banner { background: linear-gradient(135deg, #1E3A5F 0%, #1A56DB 100%); border-radius: 10px; padding: 1.1rem 1.3rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
         .d-banner-title { font-size: 0.88rem; font-weight: 600; color: white; letter-spacing: -0.02em; margin-bottom: 0.2rem; }
-        .d-banner-sub { font-size: 0.75rem; color: #555; }
-        .d-banner-btn { font-size: 0.75rem; font-weight: 500; color: #666; background: #111; border: 1px solid #222; border-radius: 7px; padding: 0.4rem 0.9rem; text-decoration: none; white-space: nowrap; transition: all 0.12s; }
-        .d-banner-btn:hover { color: white; border-color: #333; }
+        .d-banner-sub { font-size: 0.75rem; color: rgba(255,255,255,0.7); }
+        .d-banner-btn { font-size: 0.75rem; font-weight: 500; color: white; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 7px; padding: 0.4rem 0.9rem; text-decoration: none; white-space: nowrap; transition: all 0.12s; }
+        .d-banner-btn:hover { background: rgba(255,255,255,0.25); }
 
         .d-sec-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
         .d-sec-title { font-size: 0.75rem; font-weight: 600; color: #1E3A5F; letter-spacing: -0.01em; }
@@ -66,7 +66,7 @@ export default async function DashboardPage() {
         .d-integ:last-child { border-bottom: none; }
         .d-integ-name { font-size: 0.78rem; font-weight: 600; color: #1E3A5F; flex: 1; }
         .d-integ-desc { font-size: 0.68rem; color: #BBB; }
-        .d-integ-ok { font-size: 0.62rem; font-weight: 600; color: #999; }
+        .d-integ-ok { font-size: 0.62rem; font-weight: 600; color: #1A56DB; }
       `}</style>
 
       <div className="d">
@@ -77,10 +77,10 @@ export default async function DashboardPage() {
 
         <div className="d-stats">
           {[
-            { n: 'Estudiantes',    v: totalAlumnos.toString(),                        t: 'Activos este año' },
-            { n: 'Asistencia hoy', v: pctAsist !== null ? `${pctAsist}%` : '—',       t: `${presentes} presentes hoy` },
-            { n: 'Evaluaciones',   v: totalEval.toString(),                            t: '3 pendientes de calificar' },
-            { n: 'Integraciones',  v: '3',                                             t: 'SIGE · SAE · JUNAEB activos' },
+            { n: 'Estudiantes',     v: totalAlumnos.toString(),                  t: 'Activos este año' },
+            { n: 'Asistencia hoy',  v: pctAsist !== null ? `${pctAsist}%` : '—', t: `${presentes} presentes hoy` },
+            { n: 'Evaluaciones',    v: totalEval.toString(),                     t: '3 pendientes de calificar' },
+            { n: 'Planificaciones', v: '9',                                      t: '4 este año · 5 archivadas' },
           ].map(s => (
             <div key={s.n} className="d-stat">
               <div className="d-stat-n">{s.n}</div>
@@ -92,19 +92,19 @@ export default async function DashboardPage() {
 
         <div className="d-banner">
           <div>
-            <div className="d-banner-title">Kiva360 — Sistema operativo</div>
-            <div className="d-banner-sub">SIGE · SAE · JUNAEB integrados. Sin doble digitación.</div>
+            <div className="d-banner-title">Kiva360 — Gestión centralizada</div>
+            <div className="d-banner-sub">Libro de clases, evaluaciones y planificación en un solo lugar. Sin doble digitación.</div>
           </div>
-          <a href="/integraciones/sige" className="d-banner-btn">Ver integraciones →</a>
+          <a href="/planificacion" className="d-banner-btn">Ir a planificación →</a>
         </div>
 
         <div className="d-sec-hd"><span className="d-sec-title">Acciones rápidas</span></div>
         <div className="d-qa">
           {[
-            { icon: '✅', label: 'Pasar asistencia', href: '/libro'              },
-            { icon: '📝', label: 'Nueva evaluación', href: '/evaluaciones'        },
-            { icon: '✉️', label: 'Enviar aviso',     href: '/comunicacion'        },
-            { icon: '🔗', label: 'SIGE',             href: '/integraciones/sige' },
+            { icon: '✅', label: 'Pasar asistencia', href: '/libro'         },
+            { icon: '📝', label: 'Nueva evaluación', href: '/evaluaciones'   },
+            { icon: '✉️', label: 'Enviar aviso',     href: '/comunicacion'   },
+            { icon: '📚', label: 'Planificar',       href: '/planificacion'  },
           ].map(a => (
             <a key={a.label} href={a.href} className="d-qa-a">
               <span className="d-qa-icon">{a.icon}</span>
@@ -122,9 +122,9 @@ export default async function DashboardPage() {
             {[
               { color: '#22C55E', text: 'Sofía Alarcón — nota 6,8 en Control Fracciones', time: 'Hace 5 min' },
               { color: '#F59E0B', text: 'Matías Cárdenas acumula 2 inasistencias esta semana', time: 'Hoy 08:30' },
-              { color: '#6366F1', text: 'Jorge Soto respondió tu mensaje sobre el SAE', time: 'Ayer 18:42' },
+              { color: '#6366F1', text: 'Jorge Soto respondió tu mensaje sobre la planificación', time: 'Ayer 18:42' },
               { color: '#EF4444', text: 'Prueba de Lenguaje 3°A — 3 sin calificar', time: 'Ayer 14:15' },
-              { color: '#22C55E', text: 'Declaración SIGE mayo 1–15 enviada correctamente', time: 'Hace 5 días' },
+              { color: '#22C55E', text: 'Planificación de Matemáticas 3°A publicada', time: 'Hace 5 días' },
             ].map((a, i) => (
               <div key={i} className="d-act">
                 <div className="d-act-dot" style={{ background: a.color }} />
@@ -134,11 +134,11 @@ export default async function DashboardPage() {
             ))}
           </div>
           <div className="d-card">
-            <div className="d-sec-hd"><span className="d-sec-title">Integraciones</span></div>
+            <div className="d-sec-hd"><span className="d-sec-title">Por hacer esta semana</span></div>
             {[
-              { icon: '🔗', name: 'SIGE',   desc: 'Declaración may 16–31 pendiente' },
-              { icon: '🎓', name: 'SAE',    desc: 'Proceso 2027 · 4 pendientes'     },
-              { icon: '🍽️', name: 'JUNAEB', desc: '141 desayunos · 200 almuerzos'  },
+              { icon: '📝', name: 'Calificar evaluaciones', desc: '3 pruebas pendientes' },
+              { icon: '📚', name: 'Publicar planificación', desc: 'Ciencias 3°A en borrador' },
+              { icon: '⚠️', name: 'Alumnos en riesgo',      desc: '3 requieren atención' },
             ].map(i => (
               <div key={i.name} className="d-integ">
                 <span style={{ fontSize: '1rem' }}>{i.icon}</span>
@@ -146,7 +146,7 @@ export default async function DashboardPage() {
                   <div className="d-integ-name">{i.name}</div>
                   <div className="d-integ-desc">{i.desc}</div>
                 </div>
-                <span className="d-integ-ok">● Activo</span>
+                <span className="d-integ-ok">→</span>
               </div>
             ))}
           </div>

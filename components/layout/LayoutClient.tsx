@@ -24,14 +24,6 @@ const NAV_POR_ROL: Record<Rol, NavGroup[]> = {
       ]
     },
     {
-      section: 'Integración',
-      items: [
-        { href: '/integraciones/sige',   label: 'SIGE',   icon: '⬡' },
-        { href: '/integraciones/sae',    label: 'SAE',    icon: '⬢' },
-        { href: '/integraciones/junaeb', label: 'JUNAEB', icon: '⬟', badge: 2 },
-      ]
-    },
-    {
       section: 'Comunidad',
       items: [
         { href: '/comunicacion', label: 'Comunicación',    icon: '◉', badge: 5 },
