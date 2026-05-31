@@ -28,29 +28,29 @@ export default async function DashboardPage() {
         .d { font-family: 'Inter', -apple-system, sans-serif; }
         .d-header { margin-bottom: 1.75rem; }
         .d-eyebrow { font-size: 0.72rem; color: #999; margin-bottom: 0.3rem; text-transform: capitalize; }
-        .d-title { font-size: 1.5rem; font-weight: 700; color: #0A0A0A; letter-spacing: -0.04em; }
+        .d-title { font-size: 1.5rem; font-weight: 700; color: #1E3A5F; letter-spacing: -0.04em; }
 
         .d-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #EBEBEB; border: 1px solid #EBEBEB; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; }
         .d-stat { background: white; padding: 1.25rem; }
         .d-stat:hover { background: #FAFAFA; }
         .d-stat-n { font-size: 0.68rem; font-weight: 500; color: #999; letter-spacing: 0.04em; margin-bottom: 0.6rem; text-transform: uppercase; }
-        .d-stat-v { font-size: 1.75rem; font-weight: 700; color: #0A0A0A; letter-spacing: -0.04em; line-height: 1; margin-bottom: 0.4rem; }
+        .d-stat-v { font-size: 1.75rem; font-weight: 700; color: #1E3A5F; letter-spacing: -0.04em; line-height: 1; margin-bottom: 0.4rem; }
         .d-stat-t { font-size: 0.72rem; color: #BBB; }
 
-        .d-banner { background: #0A0A0A; border-radius: 10px; padding: 1.1rem 1.3rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+        .d-banner { background: linear-gradient(135deg, #1E3A5F 0%, #1A56DB 100%); border-radius: 10px; padding: 1.1rem 1.3rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
         .d-banner-title { font-size: 0.88rem; font-weight: 600; color: white; letter-spacing: -0.02em; margin-bottom: 0.2rem; }
         .d-banner-sub { font-size: 0.75rem; color: #555; }
         .d-banner-btn { font-size: 0.75rem; font-weight: 500; color: #666; background: #111; border: 1px solid #222; border-radius: 7px; padding: 0.4rem 0.9rem; text-decoration: none; white-space: nowrap; transition: all 0.12s; }
         .d-banner-btn:hover { color: white; border-color: #333; }
 
         .d-sec-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-        .d-sec-title { font-size: 0.75rem; font-weight: 600; color: #0A0A0A; letter-spacing: -0.01em; }
+        .d-sec-title { font-size: 0.75rem; font-weight: 600; color: #1E3A5F; letter-spacing: -0.01em; }
         .d-sec-link { font-size: 0.72rem; color: #999; text-decoration: none; }
-        .d-sec-link:hover { color: #0A0A0A; }
+        .d-sec-link:hover { color: #1E3A5F; }
 
         .d-qa { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #EBEBEB; border: 1px solid #EBEBEB; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; }
         .d-qa-a { background: white; padding: 1rem; text-align: center; text-decoration: none; color: #444; font-size: 0.75rem; font-weight: 500; transition: background 0.12s, color 0.12s; display: block; }
-        .d-qa-a:hover { background: #FAFAFA; color: #0A0A0A; }
+        .d-qa-a:hover { background: #FAFAFA; color: #1E3A5F; }
         .d-qa-icon { font-size: 1.1rem; display: block; margin-bottom: 0.4rem; }
 
         .d-bottom { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
@@ -64,7 +64,7 @@ export default async function DashboardPage() {
 
         .d-integ { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid #F5F5F5; }
         .d-integ:last-child { border-bottom: none; }
-        .d-integ-name { font-size: 0.78rem; font-weight: 600; color: #0A0A0A; flex: 1; }
+        .d-integ-name { font-size: 0.78rem; font-weight: 600; color: #1E3A5F; flex: 1; }
         .d-integ-desc { font-size: 0.68rem; color: #BBB; }
         .d-integ-ok { font-size: 0.62rem; font-weight: 600; color: #999; }
       `}</style>
